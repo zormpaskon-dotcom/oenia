@@ -17,6 +17,8 @@ const STATIC_ROUTES = [
   "/pos-leitourgoume",
   "/gia-oinopoieia",
   "/politiki-aporritou",
+  "/oroi-xrisis",
+  "/politiki-moderation",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

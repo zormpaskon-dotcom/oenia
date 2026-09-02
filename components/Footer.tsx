@@ -34,6 +34,14 @@ const footerColumns = [
       { href: "/sygkrisi", label: "Σύγκριση ετικετών" },
     ],
   },
+  {
+    title: "Νομικά",
+    links: [
+      { href: "/politiki-aporritou", label: "Πολιτική απορρήτου" },
+      { href: "/oroi-xrisis", label: "Όροι χρήσης" },
+      { href: "/politiki-moderation", label: "Πολιτική moderation" },
+    ],
+  },
 ];
 
 export default function Footer() {
