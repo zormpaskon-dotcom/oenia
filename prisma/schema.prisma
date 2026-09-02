@@ -1,0 +1,414 @@
+// Oenia — Prisma schema
+// Ελληνικό κρασί: ετικέτες, οινοποιεία, ποικιλίες, άρθρα
+// Χωρίς e-commerce: καμία οντότητα παραγγελίας/πληρωμής.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")  // pooled (pgbouncer, transaction mode) — για runtime queries
+  directUrl = env("DIRECT_URL")    // απευθείας σύνδεση (session mode) — για migrations
+}
+
+// ─────────────────────────────────────────────
+// ΓΕΩΓΡΑΦΙΑ
+// ─────────────────────────────────────────────
+
+model Region {
+  id          String   @id @default(cuid())
+  name        String   @unique              // "Νάουσα"
+  slug        String   @unique              // "naoussa"
+  macroRegion MacroRegion                    // Βόρεια Ελλάδα, Πελοπόννησος...
+  appellation Appellation?                   // ΠΟΠ / ΠΓΕ
+  recognizedYear Int?                        // 1971
+  altitudeMin Int?                           // μέτρα
+  altitudeMax Int?
+  areaHectares Int?
+  climate     String?  @db.Text
+  soil        String?  @db.Text
+  description String?  @db.Text
+  heroImage   String?
+  latitude    Float?
+  longitude   Float?
+
+  wineries  Winery[]
+  wines     Wine[]
+  varieties VarietyOnRegion[]
+  articles  Article[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([macroRegion])
+}
+
+enum MacroRegion {
+  NORTHERN_GREECE   // Μακεδονία, Θράκη
+  CENTRAL_GREECE    // Θεσσαλία, Στερεά
+  PELOPONNESE
+  IONIAN_ISLANDS
+  AEGEAN_ISLANDS
+  CRETE
+  EPIRUS
+}
+
+enum Appellation {
+  PDO   // ΠΟΠ
+  PGI   // ΠΓΕ
+  TABLE // Τοπικός / επιτραπέζιος
+}
+
+// ─────────────────────────────────────────────
+// ΟΙΝΟΠΟΙΕΙΑ
+// ─────────────────────────────────────────────
+
+model Winery {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  regionId    String
+  region      Region   @relation(fields: [regionId], references: [id])
+  subRegion   String?                        // "Γιαννακοχώρι"
+  foundedYear Int?
+  generation  Int?                           // 3η γενιά
+  description String?  @db.Text
+  story       String?  @db.Text
+  philosophy  String?  @db.Text
+
+  vineyardHectares Float?
+  isOrganic        Boolean @default(false)
+  isBiodynamic     Boolean @default(false)
+
+  // Οινοτουρισμός
+  acceptsVisitors Boolean @default(false)
+  visitingHours   String?
+  visitingNotes   String? @db.Text
+
+  // Επικοινωνία & τοποθεσία
+  websiteUrl  String?
+  email       String?
+  phone       String?
+  address     String?
+  latitude    Float?
+  longitude   Float?
+  socialLinks Json?                          // { instagram, facebook, ... }
+
+  logoImage   String?
+  coverImage  String?
+
+  // Επαλήθευση / claim από τον ίδιο τον παραγωγό
+  status      ContentStatus @default(PENDING)
+  isVerified  Boolean       @default(false)
+  claimedById String?
+  claimedBy   User?         @relation("WineryClaims", fields: [claimedById], references: [id])
+
+  wines    Wine[]
+  articles ArticleOnWinery[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([regionId])
+  @@index([status])
+}
+
+enum ContentStatus {
+  PENDING    // υποβλήθηκε, αναμένει έλεγχο
+  PUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
+// ─────────────────────────────────────────────
+// ΠΟΙΚΙΛΙΕΣ
+// ─────────────────────────────────────────────
+
+model Variety {
+  id             String      @id @default(cuid())
+  name           String      @unique          // "Ξινόμαυρο"
+  slug           String      @unique
+  nameLatin      String?                      // "Xinomavro"
+  pronunciation  String?                      // "ksi-NO-mav-ro"
+  audioUrl       String?                      // οδηγός προφοράς
+  type           VarietyType
+  originRegion   String?
+  description    String?     @db.Text
+  characteristics String?    @db.Text
+
+  // Προφίλ γεύσης (0-100) για τα visual trait bars
+  acidity        Int?
+  body           Int?
+  tannins        Int?
+  aromaIntensity Int?
+  ageingPotential Int?
+
+  similarTo      String?                      // "Nebbiolo"
+  comparisonNote String?     @db.Text
+
+  wines   VarietyOnWine[]
+  regions VarietyOnRegion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum VarietyType {
+  WHITE
+  RED
+}
+
+// Join: ποικιλία ↔ περιοχή
+model VarietyOnRegion {
+  varietyId String
+  regionId  String
+  variety   Variety @relation(fields: [varietyId], references: [id], onDelete: Cascade)
+  region    Region  @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@id([varietyId, regionId])
+}
+
+// ─────────────────────────────────────────────
+// ΕΤΙΚΕΤΕΣ
+// ─────────────────────────────────────────────
+
+model Wine {
+  id       String @id @default(cuid())
+  name     String
+  slug     String @unique
+  wineryId String
+  winery   Winery @relation(fields: [wineryId], references: [id], onDelete: Cascade)
+  regionId String
+  region   Region @relation(fields: [regionId], references: [id])
+
+  vintage      Int?                          // null = non-vintage
+  color        WineColor
+  style        WineStyle  @default(DRY)
+  isSparkling  Boolean    @default(false)
+  abv          Float?
+  appellation  Appellation?
+
+  priceRange   PriceRange?                   // €/€€/€€€ — ένδειξη, όχι τιμή
+  labelImage   String?
+  description  String? @db.Text
+  tastingNotes String? @db.Text
+  servingTemp  String?                       // "8–10°C"
+  foodPairings String[]                      // ["Θαλασσινά", "Φάβα"]
+
+  // Denormalized για γρήγορα sorts/φίλτρα
+  avgRating    Float @default(0)
+  reviewCount  Int   @default(0)
+
+  status ContentStatus @default(PUBLISHED)
+
+  varieties VarietyOnWine[]
+  reviews   Review[]
+  cellar    CellarEntry[]
+  articles  ArticleOnWine[]
+  pairings  FoodPairing[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([wineryId])
+  @@index([regionId])
+  @@index([color])
+  @@index([avgRating])
+}
+
+enum WineColor {
+  WHITE
+  RED
+  ROSE
+  ORANGE
+}
+
+enum WineStyle {
+  DRY
+  OFF_DRY
+  SEMI_SWEET
+  SWEET
+}
+
+enum PriceRange {
+  BUDGET    // €
+  MID       // €€
+  PREMIUM   // €€€
+}
+
+// Join: κρασί ↔ ποικιλία, με ποσοστό blend
+model VarietyOnWine {
+  wineId     String
+  varietyId  String
+  percentage Int?                            // null αν άγνωστο/μονοποικιλιακό
+  wine       Wine    @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  variety    Variety @relation(fields: [varietyId], references: [id], onDelete: Cascade)
+
+  @@id([wineId, varietyId])
+}
+
+// ─────────────────────────────────────────────
+// ΧΡΗΣΤΕΣ & COMMUNITY
+// ─────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String                        // bcrypt hash
+  name      String
+  slug      String?  @unique
+  avatar    String?
+  bio       String?  @db.Text
+  city      String?
+  role      UserRole @default(MEMBER)
+
+  isPublicProfile   Boolean @default(true)
+  newsletterOptIn   Boolean @default(false)
+
+  reviews        Review[]
+  cellar         CellarEntry[]
+  claimedWineries Winery[] @relation("WineryClaims")
+  articles       Article[] @relation("ArticleAuthor")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  MEMBER
+  PRODUCER   // εκπρόσωπος οινοποιείου
+  EDITOR
+  ADMIN
+}
+
+model Review {
+  id     String @id @default(cuid())
+  userId String
+  wineId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wine   Wine   @relation(fields: [wineId], references: [id], onDelete: Cascade)
+
+  rating Int                                 // 1–5
+  note   String? @db.Text
+
+  isFlagged Boolean @default(false)
+  status    ContentStatus @default(PUBLISHED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, wineId])                 // μία αξιολόγηση ανά χρήστη/κρασί
+  @@index([wineId])
+}
+
+// «Το κελάρι μου» — θέλω να δοκιμάσω / το δοκίμασα
+model CellarEntry {
+  id     String      @id @default(cuid())
+  userId String
+  wineId String
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wine   Wine        @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  status CellarStatus
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, wineId])
+  @@index([userId, status])
+}
+
+enum CellarStatus {
+  WANT_TO_TRY
+  TRIED
+}
+
+// ─────────────────────────────────────────────
+// ΑΡΘΡΑ
+// ─────────────────────────────────────────────
+
+model Article {
+  id       String @id @default(cuid())
+  title    String
+  slug     String @unique
+  excerpt  String? @db.Text
+  body     String  @db.Text                  // markdown ή portable text
+  coverImage String?
+
+  category   ArticleCategory
+  readMinutes Int?
+  tags       String[]
+
+  authorId String?
+  author   User?   @relation("ArticleAuthor", fields: [authorId], references: [id])
+
+  regionId String?
+  region   Region? @relation(fields: [regionId], references: [id])
+
+  isSponsored Boolean @default(false)        // διαφάνεια: σήμανση χορηγίας
+  sponsorName String?
+
+  status      ContentStatus @default(PUBLISHED)
+  publishedAt DateTime?
+
+  relatedWineries ArticleOnWinery[]
+  relatedWines    ArticleOnWine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([publishedAt])
+}
+
+enum ArticleCategory {
+  VARIETIES
+  REGIONS
+  GUIDES
+  PEOPLE
+  NEWS
+}
+
+model ArticleOnWinery {
+  articleId String
+  wineryId  String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  winery    Winery  @relation(fields: [wineryId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, wineryId])
+}
+
+model ArticleOnWine {
+  articleId String
+  wineId    String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  wine      Wine    @relation(fields: [wineId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, wineId])
+}
+
+// ─────────────────────────────────────────────
+// ΤΑΙΡΙΑΣΜΑ ΦΑΓΗΤΟΥ (αντίστροφη αναζήτηση)
+// ─────────────────────────────────────────────
+
+model FoodCategory {
+  id       String @id @default(cuid())
+  name     String @unique                    // "Κόκκινο κρέας"
+  slug     String @unique
+  emoji    String?
+  blurb    String? @db.Text                  // γιατί ταιριάζει αυτό το προφίλ
+  sortOrder Int    @default(0)
+
+  pairings FoodPairing[]
+}
+
+model FoodPairing {
+  id             String @id @default(cuid())
+  foodCategoryId String
+  wineId         String
+  foodCategory   FoodCategory @relation(fields: [foodCategoryId], references: [id], onDelete: Cascade)
+  wine           Wine         @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  reason         String? @db.Text            // "Η οξύτητα κόβει τη λιπαρότητα"
+  sortOrder      Int     @default(0)
+
+  @@unique([foodCategoryId, wineId])
+}

@@ -1,0 +1,874 @@
+/* Oenia — design tokens
+   Μεταφορά από τα HTML prototypes (design-tokens.css). */
+
+:root{
+  /* Χρώματα */
+  --ink:        #362B22;   /* κύριο κείμενο */
+  --wine:       #4A2117;   /* brand, από το λογότυπο */
+  --wine-deep:  #301209;   /* hover σε κουμπιά */
+  --paper:      #FDFBF7;   /* φόντο */
+  --paper-alt:  #F7F2E9;   /* εναλλασσόμενο φόντο ενοτήτων */
+  --gold:       #C99A4F;   /* kickers, accents */
+  --olive:      #7C8A6A;   /* φύλλα, θετικές ενδείξεις */
+  --line:       #EDE5D6;   /* hairline διαχωριστικά */
+  --muted:      #8A7A68;   /* δευτερεύον κείμενο */
+  --error:      #A23B2E;
+
+  /* Σχήμα */
+  --radius:     14px;      /* κάρτες, κουμπιά */
+  --radius-sm:  10px;      /* inputs */
+  --radius-pill: 20px;     /* chips */
+
+  /* Τυπογραφία — οι μεταβλητές --font-fraunces/--font-inter/--font-alex-brush
+     γεμίζουν από το next/font στο app/layout.tsx */
+  --font-display: var(--font-fraunces), Georgia, 'Times New Roman', serif;
+  --font-body:    var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-brand:   var(--font-alex-brush), cursive;
+
+  /* Layout */
+  --wrap-max:   1180px;
+  --wrap-wide:  1280px;    /* σελίδα αναζήτησης */
+  --wrap-pad:   32px;
+
+  /* Ρυθμός ενοτήτων */
+  --section-y:  78px;
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+
+body{
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3{
+  font-family: var(--font-display);
+  font-weight: 500;
+  margin: 0;
+  color: var(--ink);
+}
+
+a{ color: inherit; text-decoration: none; }
+img{ max-width: 100%; display: block; }
+
+.wrap{
+  max-width: var(--wrap-max);
+  margin: 0 auto;
+  padding: 0 var(--wrap-pad);
+}
+
+.kicker{
+  font-size: 14px;
+  color: var(--gold);
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+
+/* Frosted glass — sticky header, modals */
+.glass{
+  background: rgba(253,251,247,0.7);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.glass-strong{
+  background: rgba(253,251,247,0.78);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 24px 60px rgba(54,43,34,0.14);
+}
+
+/* Hero slideshow — Ken Burns + crossfade */
+.hero-photo img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center 42%;
+  opacity:0; transform:scale(1.05);
+  transition: opacity 1.1s cubic-bezier(0.4,0,0.2,1), transform 7s ease-out;
+}
+.hero-photo img.is-active{ opacity:1; transform:scale(1); }
+
+.hero-photo::after{
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(180deg,
+    rgba(20,12,7,0) 0%,
+    rgba(20,12,7,0) 55%,
+    rgba(18,10,6,0.55) 100%);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-photo img{ transition: opacity .4s ease; transform:none; }
+  .hero-photo img.is-active{ transform:none; }
+}
+
+/* Animated underline links (nav, inline CTAs) */
+.link-underline{ position:relative; padding-bottom:2px; }
+.link-underline::after{
+  content:''; position:absolute; left:0; bottom:0;
+  width:100%; height:1px; background:currentColor;
+  transform:scaleX(1); transform-origin:left;
+}
+nav a.link-underline::after{ transform:scaleX(0); transition:transform .25s ease; }
+nav a.link-underline:hover::after{ transform:scaleX(1); }
+
+/* Nav — λιτό, διάστιχο, κεφαλαία (T-oinos-inspired) */
+.nav-link{
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.75;
+  transition:opacity .15s ease;
+}
+.nav-link:hover{ opacity:1; }
+
+/* ── Header ───────────────────────────────── */
+.site-header{
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.site-header .wrap{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.logo{
+  font-family: var(--font-brand);
+  font-size: 38px;
+  color: var(--wine);
+  line-height: 1;
+}
+.site-header nav{ display:flex; gap:30px; align-items:center; }
+.site-header nav a{
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color: var(--ink);
+  opacity:0.75;
+  transition:opacity .15s ease;
+}
+.site-header nav a:hover{ opacity:1; }
+.nav-avatar{
+  width:34px; height:34px; border-radius:50%; background:var(--wine); color:var(--paper);
+  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600;
+  font-family:var(--font-display);
+}
+.nav-search{
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  color: var(--wine);
+  background:none;
+  cursor:pointer;
+}
+@media (max-width:820px){
+  .site-header .nav-links{ display:none; }
+}
+
+/* ── Footer ───────────────────────────────── */
+.site-footer{
+  border-top: 1px solid var(--line);
+  padding: 52px 0 40px;
+}
+.site-footer .wrap{
+  display:flex; justify-content:space-between; align-items:flex-start;
+  flex-wrap:wrap; gap:32px;
+}
+.footer-note{ font-size:14px; color:var(--muted); max-width:34ch; margin-top:10px; }
+.footer-links{ display:flex; gap:60px; flex-wrap:wrap; }
+.footer-col h4{ font-size:13px; font-weight:500; color:var(--muted); margin:0 0 12px; }
+.footer-col a{ display:block; font-size:14.5px; margin-bottom:9px; opacity:0.9; }
+.footer-col a:hover{ opacity:1; }
+.footer-bottom{
+  margin-top:48px; padding-top:20px; border-top:1px solid var(--line);
+  font-size:13px; color:var(--muted);
+}
+
+/* Accessibility floor — μην το αφαιρέσεις */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{
+  outline: 2px solid var(--wine);
+  outline-offset: 2px;
+}
+
+/* ── Ροή ενοτήτων (χρησιμοποιείται σε σελίδες ετικέτας/περιοχής/κ.λπ.) ── */
+section{ padding:60px 0; }
+.section-title{ font-size:22px; margin-bottom:28px; }
+
+.wave-divider{ display:block; line-height:0; margin-bottom:-2px; position:relative; z-index:1; }
+.wave-divider svg{ width:100%; height:64px; display:block; }
+.wave-divider.flip{ transform:scaleY(-1); }
+
+.breadcrumb{ padding:20px 0; font-size:13.5px; color:var(--muted); }
+.breadcrumb a{ color:var(--muted); }
+.breadcrumb a:hover{ color:var(--wine); }
+
+/* ── Σελίδα λίστας ετικετών (/krasia) ── */
+.page-head{ padding:36px 0 4px; }
+.result-count{ font-size:14px; color:var(--muted); margin-top:10px; }
+
+.layout{ display:grid; grid-template-columns:240px 1fr; gap:44px; padding:32px 0 80px; align-items:start; }
+
+.filters{ position:sticky; top:24px; }
+.filter-group{ padding-bottom:26px; margin-bottom:26px; border-bottom:1px solid var(--line); }
+.filter-group:last-child{ border-bottom:none; }
+.filter-group h3{ font-size:14px; font-weight:500; margin-bottom:14px; }
+.filter-option{
+  display:flex; align-items:center; gap:10px;
+  font-size:14.5px; color:var(--ink); margin-bottom:10px; cursor:pointer;
+}
+.filter-option .count{ color:var(--muted); font-size:13px; margin-left:auto; }
+
+.rating-filter{ display:flex; flex-direction:column; gap:8px; }
+.rating-filter a{
+  display:block; border:1px solid transparent; border-radius:var(--radius);
+  padding:8px 10px; font-size:14px; color:var(--ink);
+}
+.rating-filter a:hover{ background:var(--paper-alt); }
+.rating-filter a.is-active{ border-color:var(--wine); background:var(--paper-alt); color:var(--wine); }
+
+.price-row{ display:flex; gap:8px; }
+.price-chip{
+  flex:1; text-align:center; padding:9px 0; border:1px solid var(--line);
+  border-radius:var(--radius); font-size:14px; display:block;
+}
+.price-chip.is-active{ background:var(--wine); color:var(--paper); border-color:var(--wine); }
+
+.clear-filters{
+  display:inline-block; font-size:13.5px; color:var(--muted);
+  border-bottom:1px solid var(--line); padding-bottom:2px; margin-bottom:20px;
+}
+.clear-filters:hover{ color:var(--wine); border-color:var(--wine); }
+
+.results-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
+.active-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.active-chip{
+  font-size:13px; background:var(--paper-alt); border:1px solid var(--line);
+  border-radius:20px; padding:6px 12px 6px 14px; display:flex; align-items:center; gap:8px;
+}
+.active-chip a{ color:var(--muted); font-size:14px; line-height:1; }
+.active-chip a:hover{ color:var(--wine); }
+
+.sort-select{
+  font-size:14px; padding:9px 14px; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--paper); font-family:var(--font-body); color:var(--ink); cursor:pointer;
+}
+
+.wine-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.wine-card{
+  border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--paper); overflow:hidden;
+  transition:box-shadow .2s ease, transform .2s ease;
+  position:relative;
+}
+.wine-card:hover{ transform:translateY(-3px); }
+.card-top{ padding:18px 18px 0; display:flex; gap:14px; }
+.card-photo{ width:64px; height:86px; border-radius:2px; flex-shrink:0; }
+.card-info{ flex:1; min-width:0; }
+.card-info h3{ font-size:16px; line-height:1.3; margin-bottom:4px; }
+.card-winery{ font-size:13px; color:var(--muted); margin-bottom:6px; }
+.card-region{ font-size:12.5px; color:var(--gold); }
+
+.rating-badge{ display:flex; align-items:center; gap:10px; padding:14px 18px; margin-top:14px; border-top:1px solid var(--line); }
+.rating-number{
+  font-family:var(--font-display); font-size:22px; font-weight:600; color:var(--wine);
+  background:var(--paper-alt); width:44px; height:44px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.rating-meta{ font-size:12.5px; color:var(--muted); line-height:1.4; }
+.rating-meta strong{ display:block; color:var(--ink); font-size:13.5px; font-weight:500; }
+
+@media (max-width:980px){ .wine-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:820px){ .layout{ grid-template-columns:1fr; } .filters{ position:static; } }
+@media (max-width:560px){ .wine-grid{ grid-template-columns:1fr; } }
+
+/* ── Σελίδα ετικέτας (/krasia/[slug]) ── */
+.wine-header{ display:grid; grid-template-columns:320px 1fr; gap:56px; padding:20px 0 60px; border-bottom:1px solid var(--line); }
+.wine-photo{
+  aspect-ratio:3/4; border-radius:var(--radius);
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.12), transparent 55%), linear-gradient(160deg,#D8AE95,#B8825F);
+}
+.region-tag{ font-size:13px; color:var(--gold); margin-bottom:10px; display:block; }
+.wine-header h1{ font-size:clamp(30px,3.6vw,44px); margin-bottom:10px; }
+.winery-link{ font-size:16px; color:var(--muted); margin-bottom:22px; display:inline-block; border-bottom:1px solid var(--line); padding-bottom:2px; }
+.winery-link:hover{ color:var(--wine); border-color:var(--wine); }
+
+.fact-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin:26px 0 30px; }
+.fact{ background:var(--paper); padding:16px 18px; }
+.fact .label{ font-size:12px; color:var(--muted); display:block; margin-bottom:4px; }
+.fact .value{ font-size:15px; font-family:var(--font-display); }
+
+.rating-block{ display:flex; align-items:center; gap:14px; margin-bottom:26px; flex-wrap:wrap; }
+.dots-lg{ display:flex; gap:6px; }
+.dot-lg{ width:11px; height:11px; border-radius:50%; background:var(--line); }
+.dot-lg.filled{ background:var(--wine); }
+.rating-count{ font-size:14px; color:var(--muted); }
+.share-btn{
+  margin-left:auto; display:flex; align-items:center; gap:7px;
+  background:none; border:1px solid var(--line); border-radius:20px;
+  padding:8px 16px; font-size:13.5px; color:var(--ink); cursor:pointer;
+  font-family:var(--font-body); transition:border-color .2s ease,color .2s ease;
+}
+.share-btn:hover{ border-color:var(--wine); color:var(--wine); }
+
+.share-overlay{
+  position:fixed; inset:0; background:rgba(43,24,16,.55);
+  display:flex; align-items:center; justify-content:center; z-index:300; padding:24px;
+}
+.share-modal{ background:var(--paper); border-radius:var(--radius); padding:32px; max-width:420px; width:100%; text-align:center; }
+.share-modal h3{ font-size:18px; margin-bottom:18px; }
+.share-modal canvas{ width:100%; max-width:260px; border-radius:4px; margin:0 auto 22px; display:block; box-shadow:0 12px 30px rgba(43,24,16,.18); }
+.share-actions{ display:flex; gap:10px; }
+.share-actions button{ flex:1; padding:11px 14px; border-radius:var(--radius); font-size:14px; cursor:pointer; font-family:var(--font-body); }
+.download-btn{ background:var(--wine); color:var(--paper); border:none; }
+.download-btn:hover{ background:var(--wine-deep); }
+.close-btn{ background:none; border:1px solid var(--line); color:var(--muted); }
+.close-btn:hover{ border-color:var(--wine); color:var(--wine); }
+
+.desc{ font-size:16px; color:var(--ink); max-width:60ch; margin-bottom:10px; }
+.tasting-notes{ background:var(--paper-alt); padding:24px; border-radius:var(--radius); margin-top:24px; }
+.tasting-notes h3{ font-size:16px; margin-bottom:10px; }
+.tasting-notes p{ font-size:14.5px; color:var(--muted); margin:0; max-width:56ch; }
+
+.pairing-row{ display:flex; gap:12px; flex-wrap:wrap; }
+.pairing-chip{ border:1px solid var(--line); border-radius:20px; padding:9px 18px; font-size:14px; color:var(--ink); }
+
+.winery-card{ display:flex; align-items:center; gap:20px; border:1px solid var(--line); padding:22px; border-radius:var(--radius); text-decoration:none; color:inherit; }
+.winery-thumb{ width:64px; height:64px; border-radius:50%; background:linear-gradient(150deg,#D8BFA0,#B99872); flex-shrink:0; }
+.winery-card h3{ font-size:18px; margin-bottom:4px; }
+.winery-card p{ font-size:13.5px; color:var(--muted); margin:0; }
+
+@media (max-width:760px){
+  .wine-header{ grid-template-columns:1fr; }
+  .fact-grid{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* ── Σελίδα οινοποιείου (/oinopoieia/[slug]) ── */
+.cover{
+  height:340px; border-radius:var(--radius);
+  background: radial-gradient(circle at 75% 20%, rgba(255,255,255,.10), transparent 55%), linear-gradient(150deg,#D8BFA0,#B99872);
+  margin-bottom:36px;
+}
+.winery-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; padding-bottom:34px; border-bottom:1px solid var(--line); margin-bottom:44px; }
+.winery-head h1{ font-size:clamp(28px,3.6vw,40px); margin-bottom:8px; }
+.winery-sub{ font-size:15px; color:var(--muted); }
+.winery-badges{ display:flex; gap:8px; flex-wrap:wrap; }
+.visit-badge{ font-size:13.5px; color:var(--olive); border:1px solid var(--line); padding:9px 16px; border-radius:20px; white-space:nowrap; }
+
+.story-grid{ display:grid; grid-template-columns:1fr 280px; gap:56px; padding-bottom:60px; border-bottom:1px solid var(--line); margin-bottom:56px; }
+.story p{ font-size:16px; color:var(--ink); max-width:66ch; margin:0 0 18px; }
+.facts-side .fact{ padding:16px 0; border-bottom:1px solid var(--line); }
+.facts-side .fact:last-child{ border-bottom:none; }
+.facts-side .label{ font-size:12px; color:var(--muted); display:block; margin-bottom:4px; }
+.facts-side .value{ font-size:15px; font-family:var(--font-display); }
+
+.label-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin-bottom:60px; }
+.label-card{ background:var(--paper); padding:26px; display:block; }
+.label-photo{ aspect-ratio:3/4; border-radius:var(--radius); margin-bottom:16px; }
+.label-card h3{ font-size:17px; margin-bottom:4px; }
+.label-card .meta{ font-size:13px; color:var(--muted); }
+
+@media (max-width:820px){
+  .story-grid{ grid-template-columns:1fr; }
+  .label-grid{ grid-template-columns:1fr; }
+  .cover{ height:200px; }
+}
+
+/* ── Σελίδα ποικιλίας (/poikilies/[slug]) ── */
+.variety-hero{ padding:20px 0 50px; border-bottom:1px solid var(--line); }
+.leaf-badge{
+  width:56px; height:56px; border-radius:50%;
+  background:var(--paper-alt); color:var(--olive);
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:22px; flex-shrink:0;
+}
+.type-tag{ font-size:13px; color:var(--gold); display:block; margin-bottom:10px; }
+.variety-hero h1{ font-size:clamp(32px,4vw,50px); margin-bottom:16px; }
+.variety-hero .lead{ font-size:17px; color:var(--muted); max-width:62ch; margin:0; }
+
+.trait-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:36px; }
+.trait{ background:var(--paper); padding:18px 20px; }
+.trait .label{ font-size:12px; color:var(--muted); display:block; margin-bottom:8px; }
+.trait-bar{ height:4px; background:var(--paper-alt); border-radius:2px; overflow:hidden; }
+.trait-bar span{ display:block; height:100%; background:var(--wine); }
+
+.body-text{ font-size:16px; color:var(--ink); max-width:66ch; margin:0 0 18px; }
+.region-list{ display:flex; gap:12px; flex-wrap:wrap; }
+.region-chip{ border:1px solid var(--line); border-radius:20px; padding:9px 18px; font-size:14px; }
+
+.compare-box{ background:var(--paper-alt); padding:24px; border-radius:var(--radius); max-width:60ch; }
+.compare-box h3{ font-size:16px; margin-bottom:8px; }
+.compare-box p{ font-size:14.5px; color:var(--muted); margin:0; }
+
+.variety-list{ border-top:1px solid var(--line); }
+.variety-item{
+  display:grid; grid-template-columns:48px 200px 1fr 90px; gap:22px; align-items:center;
+  padding:22px 4px; border-bottom:1px solid var(--line); text-decoration:none; color:inherit;
+  transition:background .2s ease;
+}
+a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.03); }
+.variety-item .v-name{ font-size:16.5px; margin-bottom:3px; }
+.variety-item .v-region{ font-size:12.5px; color:var(--muted); }
+.variety-item .v-detail{ font-size:14px; color:var(--muted); margin:0; }
+.variety-item .v-color{ font-size:12px; color:var(--muted); text-align:right; justify-self:end; }
+
+@media (max-width:820px){
+  .trait-row{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:760px){
+  .variety-item{ grid-template-columns:40px 1fr; grid-template-areas:"icon name" "icon region" ". detail"; row-gap:4px; }
+  .variety-item .leaf-badge{ grid-area:icon; margin-bottom:0; width:40px; height:40px; }
+  .variety-item .v-name{ grid-area:name; }
+  .variety-item .v-region{ grid-area:region; }
+  .variety-item .v-detail{ grid-area:detail; margin-top:6px; }
+  .variety-item .v-color{ display:none; }
+}
+
+/* ── Σελίδα περιοχής (/perioches/[slug]) ── */
+.region-hero{
+  height:360px; border-radius:var(--radius); overflow:hidden; position:relative;
+  background:linear-gradient(150deg,#D8BFA0,#B99872);
+  display:flex; align-items:flex-end; padding:34px; margin-bottom:40px;
+}
+.region-hero::after{
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg,rgba(20,12,7,0) 40%,rgba(18,10,6,0.6) 100%);
+}
+.region-hero-text{ position:relative; z-index:1; }
+.region-hero .kicker{ font-size:13px; color:#E8CFA8; margin-bottom:8px; }
+.region-hero h1{ font-size:clamp(30px,4vw,46px); color:var(--paper); }
+
+.region-intro{ display:grid; grid-template-columns:1.2fr 0.8fr; gap:56px; padding-bottom:50px; border-bottom:1px solid var(--line); margin-bottom:50px; }
+.region-intro p{ font-size:16px; margin:0 0 18px; max-width:62ch; }
+
+.chip-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.chip-static{ border:1px solid var(--line); border-radius:20px; padding:9px 18px; font-size:14px; }
+
+.card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.mini-card{ border:1px solid var(--line); border-radius:var(--radius); padding:20px; background:var(--paper); display:block; transition:border-color .2s ease,transform .2s ease; }
+.mini-card:hover{ border-color:var(--wine); transform:translateY(-3px); }
+.mini-photo{ aspect-ratio:3/4; border-radius:8px; margin-bottom:14px; }
+.mini-card h3{ font-size:16px; margin-bottom:3px; }
+.mini-card .meta{ font-size:12.5px; color:var(--muted); }
+
+.winery-row{ display:flex; align-items:center; gap:18px; padding:18px 0; border-bottom:1px solid var(--line); text-decoration:none; color:inherit; }
+.winery-thumb{ width:54px; height:54px; border-radius:50%; flex-shrink:0; background:linear-gradient(150deg,#D8BFA0,#B99872); }
+.winery-row h3{ font-size:16.5px; margin-bottom:2px; }
+.winery-row .meta{ font-size:13px; color:var(--muted); }
+.winery-row .visit{ margin-left:auto; font-size:12.5px; color:var(--olive); white-space:nowrap; }
+
+@media (max-width:900px){
+  .region-intro{ grid-template-columns:1fr; gap:32px; }
+  .card-grid{ grid-template-columns:1fr; }
+  .region-hero{ height:240px; padding:24px; }
+}
+
+/* ── Λίστες (/oinopoieia, /poikilies, /perioches) ── */
+.index-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; padding:32px 0 80px; }
+.index-card{
+  border:1px solid var(--line); border-radius:var(--radius); background:var(--paper);
+  padding:24px; display:block; transition:border-color .2s ease, transform .2s ease;
+}
+.index-card:hover{ border-color:var(--wine); transform:translateY(-3px); }
+.index-card h3{ font-size:18px; margin-bottom:6px; }
+.index-card .meta{ font-size:13px; color:var(--muted); margin-bottom:10px; }
+.index-card p{ font-size:14px; color:var(--muted); margin:0; }
+.index-card .badges{ display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+.badge-pill{ font-size:11.5px; color:var(--olive); background:var(--paper-alt); border-radius:20px; padding:4px 10px; }
+
+@media (max-width:980px){ .index-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .index-grid{ grid-template-columns:1fr; } }
+
+/* ── Σύνδεση / Εγγραφή (/login) ── */
+.auth-shell{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:50px 20px; position:relative; overflow:hidden;
+}
+.liquid-blob{ position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; z-index:0; }
+.blob-1{ width:420px; height:420px; background:var(--wine); opacity:.12; top:-120px; left:-100px; animation:driftA 20s ease-in-out infinite alternate; }
+.blob-2{ width:300px; height:300px; background:var(--gold); opacity:.14; bottom:-90px; right:-60px; animation:driftB 24s ease-in-out infinite alternate; }
+@keyframes driftA{ from{ transform:translate(0,0); } to{ transform:translate(30px,-30px); } }
+@keyframes driftB{ from{ transform:translate(0,0); } to{ transform:translate(-25px,30px); } }
+@media (prefers-reduced-motion: reduce){ .liquid-blob{ animation:none; } }
+
+.auth-card{
+  position:relative; z-index:1;
+  background:rgba(253,251,247,0.78);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.5);
+  border-radius:20px; padding:44px 40px; max-width:420px; width:100%;
+  box-shadow:0 24px 60px rgba(54,43,34,0.14);
+}
+.auth-card .kicker{ text-align:center; margin-bottom:8px; }
+.auth-card h1{ font-size:26px; text-align:center; margin-bottom:28px; }
+
+.tab-row{ display:flex; background:var(--paper-alt); border-radius:12px; padding:4px; margin-bottom:28px; }
+.tab-btn{
+  flex:1; padding:10px; border:none; background:none; border-radius:9px;
+  font-family:var(--font-body); font-size:14px; color:var(--muted); cursor:pointer;
+  transition:background .2s ease,color .2s ease;
+}
+.tab-btn.is-active{ background:var(--paper); color:var(--wine); box-shadow:0 2px 8px rgba(54,43,34,0.08); }
+
+.field{ margin-bottom:18px; }
+.field label{ display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+.field input, .field select, .field textarea{
+  width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:10px;
+  font-family:var(--font-body); font-size:15px; color:var(--ink); background:var(--paper);
+}
+.field textarea{ resize:vertical; }
+.auth-form .field input{ background:rgba(255,255,255,0.5); }
+.field.has-error input{ border-color:var(--error); }
+.error-msg{ font-size:12px; color:var(--error); margin-top:5px; display:block; }
+
+/* ── Κελάρι (try/tried) στη σελίδα ετικέτας ── */
+.cellar-actions{ display:flex; gap:10px; margin:4px 0 26px; flex-wrap:wrap; }
+.cellar-btn{
+  display:flex; align-items:center; gap:8px; padding:10px 18px; border-radius:20px;
+  border:1px solid var(--line); background:none; font-size:13.5px; color:var(--ink);
+  cursor:pointer; font-family:var(--font-body); transition:border-color .2s ease,color .2s ease,background .2s ease;
+}
+.cellar-btn:hover{ border-color:var(--wine); color:var(--wine); }
+.cellar-btn.is-on{ background:var(--wine); border-color:var(--wine); color:var(--paper); }
+
+/* ── Αξιολογήσεις χρηστών ── */
+.review-form{ max-width:520px; margin-bottom:40px; }
+.reviews{ border-top:1px solid var(--line); }
+.review{ padding:26px 0; border-bottom:1px solid var(--line); }
+.review-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.review-user{ font-size:14.5px; font-weight:500; }
+.review-date{ font-size:13px; color:var(--muted); }
+.review p{ font-size:14.5px; color:var(--muted); margin:0; max-width:64ch; }
+.stars{ display:flex; gap:3px; margin-bottom:8px; }
+.dot-sm{ width:7px; height:7px; border-radius:50%; background:var(--line); }
+.dot-sm.filled{ background:var(--wine); }
+
+/* ── Προφίλ (/profil) ── */
+.profile-head{ padding:44px 0 30px; display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
+.avatar-lg{
+  width:76px; height:76px; border-radius:50%; background:var(--wine); color:var(--paper);
+  display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:600;
+  font-family:var(--font-display); flex-shrink:0;
+}
+.profile-head h1{ font-size:26px; margin-bottom:4px; }
+.profile-head .meta{ font-size:14px; color:var(--muted); }
+
+.stat-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-bottom:40px; }
+.stat-cell{ background:var(--paper); padding:20px 22px; text-align:center; display:block; }
+.stat-cell .num{ font-family:var(--font-display); font-size:26px; color:var(--wine); display:block; margin-bottom:4px; }
+.stat-cell .label{ font-size:12.5px; color:var(--muted); }
+
+.tab-nav{ display:flex; gap:8px; border-bottom:1px solid var(--line); margin-bottom:36px; flex-wrap:wrap; }
+.tab-nav a{
+  padding:12px 18px; font-size:14.5px; color:var(--muted);
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:color .2s ease,border-color .2s ease;
+}
+.tab-nav a.is-active{ color:var(--wine); border-color:var(--wine); }
+
+.tab-panel{ padding-bottom:80px; }
+
+.cellar-filters{ display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
+.cellar-filters a{
+  font-size:13.5px; padding:8px 16px; border-radius:20px; border:1px solid var(--line);
+  color:var(--muted); transition:border-color .2s ease,color .2s ease,background .2s ease;
+}
+.cellar-filters a.is-active{ background:var(--wine); border-color:var(--wine); color:var(--paper); }
+
+.cellar-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.cellar-card{ border:1px solid var(--line); border-radius:14px; padding:18px; display:flex; gap:14px; background:var(--paper); }
+.cellar-photo{ width:48px; height:64px; border-radius:6px; flex-shrink:0; }
+.cellar-card h3{ font-size:15px; margin-bottom:3px; }
+.cellar-card .winery{ font-size:12.5px; color:var(--muted); margin-bottom:6px; }
+.status-tag{ font-size:11.5px; padding:3px 9px; border-radius:10px; display:inline-block; }
+.status-tag.tried{ background:var(--paper-alt); color:var(--olive); }
+.status-tag.want{ background:var(--paper-alt); color:var(--gold); }
+
+.review-row{ display:flex; gap:16px; padding:22px 0; border-bottom:1px solid var(--line); }
+.review-row .review-photo{ width:44px; height:58px; border-radius:5px; flex-shrink:0; }
+.review-row h3{ font-size:15.5px; margin-bottom:4px; }
+.review-row p{ font-size:14px; color:var(--muted); margin:0; }
+.review-row .date{ font-size:12.5px; color:var(--muted); opacity:.8; }
+
+.toggle-row{ display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); gap:16px; }
+.toggle-row .label-text{ font-size:14.5px; }
+.toggle-row .hint{ font-size:12.5px; color:var(--muted); }
+.switch{ position:relative; width:40px; height:22px; flex-shrink:0; }
+.switch input{ opacity:0; width:0; height:0; }
+.slider{ position:absolute; inset:0; background:var(--line); border-radius:20px; cursor:pointer; transition:background .2s ease; }
+.slider::before{ content:''; position:absolute; width:16px; height:16px; left:3px; top:3px; background:var(--paper); border-radius:50%; transition:transform .2s ease; }
+.switch input:checked + .slider{ background:var(--wine); }
+.switch input:checked + .slider::before{ transform:translateX(18px); }
+
+.danger-link{ font-size:13px; color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:2px; }
+.danger-link:hover{ color:var(--error); border-color:var(--error); }
+
+@media (max-width:900px){ .cellar-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:700px){ .stat-row{ grid-template-columns:1fr; } .cellar-grid{ grid-template-columns:1fr; } }
+
+.submit-btn{
+  width:100%; background:var(--wine); color:var(--paper); border:none;
+  padding:13px; border-radius:10px; font-size:15px; font-weight:500;
+  cursor:pointer; font-family:var(--font-body); transition:background .15s ease;
+}
+.submit-btn:hover{ background:var(--wine-deep); }
+.submit-btn:disabled{ opacity:.7; cursor:default; }
+
+/* ── Αρχική σελίδα (/) ── */
+.btn-primary{
+  background:var(--wine); color:var(--paper); padding:13px 26px; border-radius:var(--radius);
+  font-size:15px; font-weight:500; display:inline-block; transition:background .15s ease;
+}
+.btn-primary:hover{ background:var(--wine-deep); }
+.btn-text{ font-size:15px; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+.stat-line{
+  margin-top:22px; font-size:13.5px; color:var(--muted);
+  padding-top:16px; border-top:1px solid var(--line); max-width:40ch;
+}
+.section-head{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-bottom:44px; gap:24px; flex-wrap:wrap;
+}
+.section-head h2{ font-size:clamp(26px,3vw,34px); }
+
+/* Hero */
+.home-hero{
+  position:relative; overflow:hidden; min-height:78vh;
+  display:flex; align-items:flex-end; padding:0 0 90px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,.10), transparent 55%),
+    linear-gradient(160deg,#6B4A38 0%,#4A2117 55%,#301209 100%);
+}
+.home-hero-content{ position:relative; z-index:1; max-width:640px; }
+.home-hero-content .kicker{ color:var(--gold); }
+.home-hero-content h1{
+  font-size:clamp(36px,5.6vw,64px); line-height:1.08; letter-spacing:-0.01em;
+  color:var(--paper); margin:14px 0 26px;
+}
+.home-hero-readmore{
+  display:inline-block; font-size:14px; letter-spacing:.03em; color:var(--paper);
+  border-bottom:1px solid rgba(253,251,247,0.55); padding-bottom:4px;
+  transition:border-color .2s ease,opacity .2s ease;
+}
+.home-hero-readmore:hover{ border-color:var(--paper); opacity:.85; }
+
+/* Map-explore section */
+.map-explore-layout{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:56px; align-items:center; }
+.map-explore-copy h2{ font-size:clamp(26px,3.2vw,36px); margin:12px 0 18px; max-width:12ch; }
+.map-explore-copy .lead{ color:var(--muted); max-width:40ch; margin:0 0 24px; font-size:15.5px; }
+@media (max-width:900px){ .map-explore-layout{ grid-template-columns:1fr; gap:40px; } }
+
+.vine-wrap{ position:relative; }
+.vine-wrap svg{ width:100%; height:auto; }
+.region-label{ font-family:var(--font-display); font-size:15px; fill:var(--ink); transition:fill .2s ease; }
+.region-sub{ font-family:var(--font-body); font-size:11px; fill:var(--muted); }
+.region-marker{ cursor:pointer; }
+.region-marker .hit{ fill:transparent; }
+.region-marker circle.dot-marker{ transition:r .2s ease,fill .2s ease; }
+.region-marker:hover circle.dot-marker,
+.region-marker:focus circle.dot-marker{ r:6.5; fill:var(--wine); }
+.region-marker:hover .region-label,
+.region-marker:focus .region-label{ fill:var(--wine); }
+.region-marker:focus{ outline:none; }
+.vine-wrap.has-active .region-marker:not(.is-active){ opacity:.4; }
+.vine-caption{ margin-top:22px; padding-top:18px; border-top:1px solid var(--line); min-height:56px; }
+.vine-caption strong{ font-family:var(--font-display); font-size:16px; font-weight:500; display:block; margin-bottom:4px; }
+.vine-caption p{ font-size:13.5px; color:var(--muted); margin:0; max-width:44ch; }
+.vine-hint{ font-size:12.5px; color:var(--muted); opacity:.75; }
+
+/* Label grid (ετικέτες που ξεχωρίζουν) */
+.filter-row{ display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+.chip{
+  font-size:13.5px; padding:8px 16px; border-radius:20px; border:1px solid var(--line);
+  color:var(--muted); background:transparent; cursor:pointer;
+  transition:border-color .2s ease,color .2s ease,background .2s ease; font-family:var(--font-body);
+}
+.chip:hover{ border-color:var(--wine); color:var(--wine); }
+.chip.is-active{ background:var(--wine); border-color:var(--wine); color:var(--paper); }
+
+.home-label-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+.home-label-grid .label-card{ transition:transform .25s ease, box-shadow .25s ease; }
+.home-label-grid .label-card::before{ content:''; position:absolute; top:0; left:0; height:2px; width:0; background:var(--wine); transition:width .3s ease; }
+.home-label-grid .label-card:hover::before{ width:100%; }
+.home-label-grid .label-card:hover{ transform:translateY(-4px); }
+.home-label-grid .label-card.is-highlighted{ box-shadow:0 0 0 1px var(--wine) inset; }
+.home-label-grid .label-photo{ margin-bottom:20px; }
+.winery-name{ font-size:14px; color:var(--muted); margin-bottom:10px; }
+.meta-row{ display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--muted); padding-top:12px; border-top:1px solid var(--line); }
+.dots{ display:flex; gap:4px; }
+.dot{ width:6px; height:6px; border-radius:50%; background:var(--line); }
+.dot.filled{ background:var(--wine); }
+@media (max-width:1000px){ .home-label-grid{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){ .home-label-grid{ grid-template-columns:1fr; } }
+
+/* Winery spotlight */
+.spotlight{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px; align-items:center; }
+.spotlight-photo{
+  aspect-ratio:4/5; border-radius:var(--radius);
+  background: radial-gradient(circle at 70% 15%, rgba(255,255,255,.10), transparent 55%), linear-gradient(150deg,#D8BFA0,#B99872);
+}
+.spotlight-text .kicker{ margin-bottom:14px; }
+.spotlight-text h2{ font-size:clamp(24px,3vw,32px); margin-bottom:18px; }
+.spotlight-text p{ color:var(--muted); max-width:52ch; margin:0 0 22px; }
+.spotlight-link{ font-size:15px; border-bottom:1px solid var(--ink); padding-bottom:2px; }
+@media (max-width:820px){ .spotlight{ grid-template-columns:1fr; gap:32px; } }
+
+/* Articles */
+.article-list{ border-top:1px solid var(--line); }
+.article-row{ display:grid; grid-template-columns:160px 1fr auto; gap:28px; align-items:baseline; padding:28px 0; border-bottom:1px solid var(--line); }
+.article-row > a{ display:block; color:inherit; text-decoration:none; }
+.article-row .region{ font-size:13px; color:var(--gold); }
+.article-row h3{
+  font-size:21px; margin-bottom:8px;
+  background-image:linear-gradient(var(--wine),var(--wine)); background-repeat:no-repeat;
+  background-position:0 100%; background-size:0% 1px; transition:background-size .3s ease; display:inline;
+}
+.article-row:hover h3{ background-size:100% 1px; }
+.article-row p{ font-size:14.5px; color:var(--muted); margin:0; max-width:60ch; }
+.article-row .read-time{ font-size:13px; color:var(--muted); white-space:nowrap; }
+@media (max-width:700px){ .article-row{ grid-template-columns:1fr; gap:8px; } }
+
+/* ── Χάρτης (/chartis) ── */
+.wine-map{
+  height:520px; width:100%; border-radius:var(--radius); overflow:hidden;
+  border:1px solid var(--line); background:var(--paper-alt);
+}
+.wine-map-pin span{
+  display:block; width:14px; height:14px; border-radius:50%;
+  background:var(--wine); border:2px solid var(--paper); box-shadow:0 1px 4px rgba(54,43,34,0.4);
+}
+.wine-map-popup{ font-family:var(--font-body); min-width:160px; }
+.wine-map-popup strong{ display:block; font-family:var(--font-display); font-size:15px; margin-bottom:2px; }
+.wine-map-popup span{ display:block; font-size:12.5px; color:var(--muted); margin-bottom:8px; }
+.wine-map-popup-link{ font-size:13px; color:var(--wine); border-bottom:1px solid var(--wine); padding-bottom:1px; }
+.leaflet-popup-content-wrapper{ border-radius:10px; }
+.leaflet-popup-content{ margin:12px 14px; }
+
+/* ── Τι θα φας; (/tairiasma) ── */
+.pairing-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+.pairing-card{ display:flex; gap:16px; border:1px solid var(--line); border-radius:var(--radius); padding:22px; background:var(--paper); }
+.pairing-card .mini-photo{ width:64px; height:86px; border-radius:8px; flex-shrink:0; display:block; }
+.pairing-card .pairing-body h3{ font-size:16px; margin-bottom:2px; }
+.pairing-card .pairing-meta{ font-size:12.5px; color:var(--muted); margin:0 0 10px; }
+.pairing-card .pairing-reason{ font-size:13.5px; color:var(--ink); margin:0; }
+@media (max-width:700px){ .pairing-grid{ grid-template-columns:1fr; } }
+
+/* ── Σύγκριση ετικετών (/sygkrisi) ── */
+.compare-slots{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.compare-slot{ border:1px dashed var(--line); border-radius:var(--radius); padding:16px; min-height:96px; display:flex; align-items:center; }
+.compare-slot-filled{ display:flex; align-items:center; gap:14px; width:100%; }
+.compare-slot-filled .mini-photo{ width:48px; height:64px; border-radius:6px; flex-shrink:0; display:block; }
+.compare-slot-filled strong{ font-family:var(--font-display); font-size:15px; font-weight:500; }
+.compare-remove{ margin-left:auto; background:none; border:none; color:var(--muted); font-size:12.5px; cursor:pointer; font-family:var(--font-body); text-decoration:underline; align-self:flex-start; }
+.compare-remove:hover{ color:var(--error); }
+.compare-table{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+.compare-row{ display:grid; grid-template-columns:160px repeat(3,1fr); border-bottom:1px solid var(--line); }
+.compare-row:last-child{ border-bottom:none; }
+.compare-row-label{ background:var(--paper-alt); font-size:12.5px; color:var(--muted); display:flex; align-items:center; padding:14px 16px; }
+.compare-cell{ padding:14px 16px; font-size:14px; display:flex; align-items:center; }
+@media (max-width:820px){
+  .compare-slots{ grid-template-columns:1fr; }
+  .compare-row{ grid-template-columns:130px repeat(3,1fr); font-size:12.5px; }
+}
+
+/* ── Διαβατήριο (/diavatirio) ── */
+.passport-progress{ display:flex; align-items:center; gap:14px; max-width:420px; }
+.passport-progress-bar{ flex:1; height:6px; border-radius:4px; background:var(--line); overflow:hidden; }
+.passport-progress-bar span{ display:block; height:100%; background:var(--wine); border-radius:4px; transition:width .3s ease; }
+.passport-progress-label{ font-size:13px; color:var(--muted); white-space:nowrap; }
+
+.passport-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:36px; }
+.passport-stamp{
+  aspect-ratio:1; border-radius:50%; border:2px solid var(--wine);
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  transform:rotate(-3deg); transition:transform .2s ease;
+}
+.passport-stamp:nth-child(3n+1){ transform:rotate(2deg); }
+.passport-stamp:nth-child(3n+2){ transform:rotate(-2deg); }
+.passport-stamp:hover{ transform:rotate(0deg) scale(1.03); }
+.passport-stamp-inner{ display:flex; flex-direction:column; align-items:center; gap:2px; padding:14px; color:inherit; text-decoration:none; }
+.passport-stamp-region{ font-family:var(--font-display); font-size:15px; font-weight:500; line-height:1.2; }
+.passport-stamp-meta{ font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.passport-stamp-variety{ font-size:11px; color:var(--gold); margin-top:2px; }
+.passport-stamp.is-locked{ border:2px dashed var(--line); }
+.passport-stamp.is-locked .passport-stamp-region{ color:var(--muted); }
+.passport-lock{ font-size:18px; opacity:.5; margin-bottom:2px; }
+@media (max-width:900px){ .passport-grid{ grid-template-columns:repeat(3,1fr); } }
+@media (max-width:620px){ .passport-grid{ grid-template-columns:repeat(2,1fr); } }
+
+/* ── Διαχείριση (/admin) ── */
+.admin-empty{ color:var(--muted); font-size:14.5px; }
+.admin-review-card{ border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-bottom:16px; background:var(--paper); }
+.admin-review-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+.admin-review-meta{ font-size:13px; color:var(--muted); margin:6px 0 0; }
+.admin-review-desc{ font-size:14px; color:var(--ink); margin:14px 0 0; max-width:60ch; }
+.admin-review-actions{ display:flex; gap:10px; margin-top:18px; }
+.approve-btn{ background:var(--olive); color:var(--paper); border:none; padding:9px 18px; border-radius:var(--radius); font-size:13.5px; cursor:pointer; font-family:var(--font-body); }
+.approve-btn:hover{ opacity:.9; }
+.reject-btn{ background:none; border:1px solid var(--error); color:var(--error); padding:9px 18px; border-radius:var(--radius); font-size:13.5px; cursor:pointer; font-family:var(--font-body); }
+.reject-btn:hover{ background:var(--error); color:var(--paper); }
+.admin-history-row{ display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); font-size:13.5px; }
+.status-pill{ font-size:11px; padding:3px 10px; border-radius:10px; white-space:nowrap; }
+.status-pill.published{ background:var(--paper-alt); color:var(--olive); }
+.status-pill.rejected{ background:var(--paper-alt); color:var(--error); }
+
+/* ── Age gate ── */
+.age-gate{
+  position:fixed; inset:0; z-index:200;
+  background:rgba(54,43,34,0.45);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center; padding:24px;
+}
+.age-gate-box{
+  background:rgba(253,251,247,0.9);
+  backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.5);
+  max-width:400px; width:100%; padding:44px 36px; border-radius:18px;
+  text-align:center; box-shadow:0 20px 60px rgba(54,43,34,0.18);
+}
+.age-gate-box .logo{ font-size:34px; margin-bottom:18px; justify-content:center; display:flex; }
+.age-gate-box p{ font-size:14.5px; color:var(--muted); margin:0 0 26px; }
+.age-gate-actions{ display:flex; gap:12px; justify-content:center; }
+.btn-ghost{
+  padding:12px 22px; border-radius:var(--radius); border:1px solid var(--line);
+  font-size:14.5px; background:transparent; cursor:pointer; font-family:var(--font-body); color:var(--muted);
+}
+.btn-ghost:hover{ border-color:var(--wine); color:var(--wine); }
+.age-gate-fine{ font-size:12px; color:var(--muted); opacity:.7; margin-top:20px; }
+
+/* ── Cookie banner ── */
+.cookie-banner{
+  position:fixed; left:24px; right:24px; bottom:24px; z-index:150;
+  max-width:560px; margin:0 auto;
+  background:rgba(54,43,34,0.85);
+  backdrop-filter:blur(18px) saturate(150%); -webkit-backdrop-filter:blur(18px) saturate(150%);
+  color:var(--paper); padding:22px 24px; border-radius:16px;
+  border:1px solid rgba(255,255,255,0.12);
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  transform:translateY(140%); transition:transform .4s ease;
+  box-shadow:0 16px 44px rgba(54,43,34,0.22);
+}
+.cookie-banner.is-visible{ transform:translateY(0); }
+.cookie-banner p{ font-size:13.5px; margin:0; color:#E8DFD3; flex:1; min-width:200px; }
+.cookie-banner a{ color:inherit; text-decoration:underline; }
+.cookie-actions{ display:flex; gap:10px; }
+.cookie-actions button{
+  font-size:13px; padding:9px 16px; border-radius:var(--radius); cursor:pointer;
+  font-family:var(--font-body); border:none;
+}
+.cookie-accept{ background:var(--paper); color:var(--ink); }
+.cookie-decline{ background:transparent; color:#DAD0C0; border:1px solid #4a3e30 !important; }
