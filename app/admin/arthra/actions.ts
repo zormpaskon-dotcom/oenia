@@ -6,6 +6,7 @@ import { ArticleCategory, ContentStatus, UserRole } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
+import { optionalFile, uploadImage } from "@/lib/upload";
 
 export type ArticleFormState = { error: string | null };
 
@@ -70,6 +71,14 @@ export async function createArticleAction(
     return { error: "Διάλεξε κατηγορία." };
   }
 
+  let coverImage: string | null = null;
+  const coverFile = optionalFile(formData, "coverImage");
+  if (coverFile) {
+    const result = await uploadImage(coverFile, "articles");
+    if (!result.ok) return { error: result.error };
+    coverImage = result.url;
+  }
+
   const slug = await uniqueArticleSlug(slugify(f.slugInput || f.title));
 
   await prisma.article.create({
@@ -84,6 +93,7 @@ export async function createArticleAction(
       tags: f.tags,
       isSponsored: f.isSponsored,
       sponsorName: f.isSponsored ? f.sponsorName || null : null,
+      coverImage,
       status: f.publishNow ? ContentStatus.PUBLISHED : ContentStatus.PENDING,
       publishedAt: f.publishNow ? new Date() : null,
     },
@@ -112,6 +122,14 @@ export async function updateArticleAction(
     return { error: "Διάλεξε κατηγορία." };
   }
 
+  let coverImage = existing.coverImage;
+  const coverFile = optionalFile(formData, "coverImage");
+  if (coverFile) {
+    const result = await uploadImage(coverFile, "articles");
+    if (!result.ok) return { error: result.error };
+    coverImage = result.url;
+  }
+
   const slug = await uniqueArticleSlug(slugify(f.slugInput || f.title), id);
   const wasPublished = existing.status === ContentStatus.PUBLISHED;
 
@@ -128,6 +146,7 @@ export async function updateArticleAction(
       tags: f.tags,
       isSponsored: f.isSponsored,
       sponsorName: f.isSponsored ? f.sponsorName || null : null,
+      coverImage,
       status: f.publishNow ? ContentStatus.PUBLISHED : ContentStatus.PENDING,
       publishedAt: f.publishNow ? existing.publishedAt ?? new Date() : wasPublished ? existing.publishedAt : null,
     },

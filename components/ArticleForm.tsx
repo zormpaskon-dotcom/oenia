@@ -19,6 +19,7 @@ export type EditableArticle = {
   tags: string[];
   isSponsored: boolean;
   sponsorName: string | null;
+  coverImage: string | null;
   status: ContentStatus;
 };
 
@@ -80,6 +81,14 @@ export default function ArticleForm({
       <div className="field">
         <label htmlFor="body">Κείμενο άρθρου * (κενή γραμμή = νέα παράγραφος)</label>
         <textarea id="body" name="body" rows={12} required defaultValue={article?.body} />
+      </div>
+
+      <div className="field">
+        <label htmlFor="coverImage">
+          Εικόνα εξωφύλλου {article?.coverImage ? "(θα αντικατασταθεί αν ανεβάσεις νέα)" : "(προαιρετικό)"} —
+          έως 5MB, JPEG/PNG/WebP
+        </label>
+        <input type="file" id="coverImage" name="coverImage" accept="image/jpeg,image/png,image/webp" />
       </div>
 
       <div className="field">

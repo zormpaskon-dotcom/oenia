@@ -22,6 +22,14 @@ export default function WinerySubmitForm({ regions }: { regions: { id: string; n
 
   return (
     <form action={formAction} style={{ maxWidth: 520 }}>
+      <input
+        type="text"
+        name="company"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+      />
       <div className={`field${state.error ? " has-error" : ""}`}>
         <label htmlFor="name">Όνομα οινοποιείου *</label>
         <input type="text" id="name" name="name" required />
@@ -64,6 +72,11 @@ export default function WinerySubmitForm({ regions }: { regions: { id: string; n
       <div className="field">
         <label htmlFor="phone">Τηλέφωνο</label>
         <input type="tel" id="phone" name="phone" />
+      </div>
+
+      <div className="field">
+        <label htmlFor="coverImage">Φωτογραφία (προαιρετικό, έως 5MB — JPEG/PNG/WebP)</label>
+        <input type="file" id="coverImage" name="coverImage" accept="image/jpeg,image/png,image/webp" />
       </div>
 
       <div className="toggle-row" style={{ padding: "10px 0" }}>

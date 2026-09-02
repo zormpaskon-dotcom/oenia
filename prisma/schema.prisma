@@ -401,6 +401,20 @@ model FoodCategory {
   pairings FoodPairing[]
 }
 
+// ─────────────────────────────────────────────
+// ANTI-SPAM
+// ─────────────────────────────────────────────
+
+// Ένα «χτύπημα» ανά προσπάθεια (login, signup, υποβολή οινοποιείου...).
+// Παλιές εγγραφές καθαρίζονται ευκαιριακά από το lib/rate-limit.ts.
+model RateLimitHit {
+  id        String   @id @default(cuid())
+  key       String // π.χ. "signup:203.0.113.5"
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
+
 model FoodPairing {
   id             String @id @default(cuid())
   foodCategoryId String

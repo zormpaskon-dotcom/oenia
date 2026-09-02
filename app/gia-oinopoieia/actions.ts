@@ -3,6 +3,8 @@
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { optionalFile, uploadImage } from "@/lib/upload";
 
 export type WinerySubmitState = { error: string | null; success: boolean };
 
@@ -20,6 +22,17 @@ export async function submitWineryAction(
   _prevState: WinerySubmitState,
   formData: FormData
 ): Promise<WinerySubmitState> {
+  // Honeypot: αόρατο πεδίο για ανθρώπους, ελκυστικό για bots.
+  if (String(formData.get("company") ?? "").trim()) {
+    return { error: "Κάτι πήγε στραβό. Δοκίμασε ξανά.", success: false };
+  }
+
+  const ip = await clientIp();
+  const allowed = await rateLimit(`winery-submit:${ip}`, 3, 60 * 60 * 1000);
+  if (!allowed) {
+    return { error: "Πάρα πολλές αιτήσεις από εδώ. Δοκίμασε ξανά αργότερα.", success: false };
+  }
+
   const name = String(formData.get("name") ?? "").trim();
   const regionId = String(formData.get("regionId") ?? "");
   const foundedYearRaw = String(formData.get("foundedYear") ?? "").trim();
@@ -41,6 +54,14 @@ export async function submitWineryAction(
     return { error: "Το έτος ίδρυσης δεν είναι έγκυρο.", success: false };
   }
 
+  let coverImage: string | null = null;
+  const coverFile = optionalFile(formData, "coverImage");
+  if (coverFile) {
+    const result = await uploadImage(coverFile, "wineries");
+    if (!result.ok) return { error: result.error, success: false };
+    coverImage = result.url;
+  }
+
   const slug = await uniqueSlug(slugify(name));
 
   await prisma.winery.create({
@@ -55,6 +76,7 @@ export async function submitWineryAction(
       phone: phone || null,
       acceptsVisitors,
       isOrganic,
+      coverImage,
       status: ContentStatus.PENDING,
       isVerified: false,
     },
