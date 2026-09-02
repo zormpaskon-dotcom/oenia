@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Ποικιλίες | Oenia",
-  description: "Οι βασικές ελληνικές ποικιλίες κρασιού, λευκές και κόκκινες.",
+  description: "Ελληνικές και διεθνείς ποικιλίες κρασιού που καλλιεργούνται στην Ελλάδα, λευκές και κόκκινες.",
 };
 
 function LeafIcon() {

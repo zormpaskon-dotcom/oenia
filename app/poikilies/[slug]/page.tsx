@@ -47,7 +47,7 @@ export async function generateMetadata({
   const variety = await getVariety(slug);
   if (!variety) return {};
   return {
-    title: `${variety.name} — Ελληνική ποικιλία | Oenia`,
+    title: `${variety.name} — Ποικιλία | Oenia`,
     description: variety.description ?? undefined,
   };
 }
