@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+import ExploreMenu from "@/components/ExploreMenu";
 
 const navLinks = [
   { href: "/krasia", label: "Ετικέτες" },
@@ -33,6 +34,7 @@ export default async function Header() {
                 {link.label}
               </Link>
             ))}
+            <ExploreMenu />
           </div>
           {session?.user ? (
             <Link href="/profil" aria-label="Το προφίλ μου">

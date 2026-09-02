@@ -44,6 +44,7 @@ export default async function AdminPage({
             {t.label}
           </Link>
         ))}
+        <Link href="/admin/arthra">Άρθρα</Link>
       </div>
 
       {tab === "wineries" ? <WineriesTab /> : <ReviewsTab />}

@@ -175,6 +175,27 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
   .site-header .nav-links{ display:none; }
 }
 
+.explore-menu{ position:relative; }
+.explore-trigger{
+  background:none; border:none; cursor:pointer; padding:0;
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--font-body); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink); opacity:.75; transition:opacity .15s ease;
+}
+.explore-trigger:hover{ opacity:1; }
+.explore-panel{
+  position:absolute; top:calc(100% + 16px); left:50%; transform:translateX(-50%);
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:0 16px 40px rgba(54,43,34,0.16); padding:8px; min-width:210px;
+  display:flex; flex-direction:column; gap:2px; z-index:110;
+}
+.explore-panel a{
+  font-size:14px; padding:9px 12px; border-radius:8px;
+  text-transform:none; letter-spacing:normal; color:var(--ink); opacity:1;
+  transition:background .15s ease, color .15s ease;
+}
+.explore-panel a:hover{ background:var(--paper-alt); color:var(--wine); }
+
 /* ── Footer ───────────────────────────────── */
 .site-footer{
   border-top: 1px solid var(--line);
