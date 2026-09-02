@@ -71,7 +71,14 @@ export default async function WineryDetailPage({
       <p className="breadcrumb">
         <Link href="/">Αρχική</Link> / <Link href="/oinopoieia">Οινοποιεία</Link> / {winery.name}
       </p>
-      <div className="cover" />
+      <div
+        className="cover"
+        style={
+          winery.coverImage
+            ? { backgroundImage: `url(${winery.coverImage})`, backgroundSize: "cover", backgroundPosition: "center" }
+            : undefined
+        }
+      />
 
       <div className="winery-head">
         <div>

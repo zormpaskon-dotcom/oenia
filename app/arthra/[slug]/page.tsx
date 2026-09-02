@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContentStatus } from "@prisma/client";
@@ -78,6 +79,16 @@ export default async function ArticleDetailPage({
       </div>
 
       <div style={{ maxWidth: 680, paddingBottom: 60 }}>
+        {article.coverImage && (
+          <Image
+            src={article.coverImage}
+            alt=""
+            width={1200}
+            height={675}
+            style={{ width: "100%", height: "auto", borderRadius: "var(--radius)", marginBottom: 32, display: "block" }}
+            priority
+          />
+        )}
         {paragraphs.map((p, i) => (
           <p className="desc" key={i} style={{ marginBottom: 20 }}>
             {p}
