@@ -1,0 +1,442 @@
+[
+  {
+    "name": "Anhydrous Winery",
+    "region": "Σαντορίνη",
+    "url": "https://www.anhydrouswinery.com"
+  },
+  {
+    "name": "Artemis Karamolegos",
+    "region": "Σαντορίνη",
+    "url": "https://www.artemiskaramolegos-winery.com"
+  },
+  {
+    "name": "Avantis Estate",
+    "region": "Εύβοια",
+    "url": "https://www.avantiswines.gr"
+  },
+  {
+    "name": "Boutari",
+    "region": "Νάουσα",
+    "url": "https://boutari.gr"
+  },
+  {
+    "name": "Bairaktaris Winery",
+    "region": "Νεμέα",
+    "url": "https://bairaktariswines.gr"
+  },
+  {
+    "name": "Canava Chrissou Tselepos",
+    "region": "Σαντορίνη",
+    "url": "https://tselepos.gr"
+  },
+  {
+    "name": "Domaine Hatzimichalis",
+    "region": "Αταλάντη Φθιώτιδα",
+    "url": "https://www.hatzimichalis.com"
+  },
+  {
+    "name": "Costa Lazaridi",
+    "region": "Δράμα",
+    "url": "https://www.domaine-lazaridi.gr"
+  },
+  {
+    "name": "Dalamaras Winery",
+    "region": "Νάουσα",
+    "url": "https://dalamara.gr"
+  },
+  {
+    "name": "Diamantakos Winery",
+    "region": "Νάουσα",
+    "url": "https://diamantakos.gr"
+  },
+  {
+    "name": "Domaine Economou",
+    "region": "Σητεία Κρήτη",
+    "url": "https://domaine-economou.com"
+  },
+  {
+    "name": "Domaine Florian",
+    "region": "Τρίλοφος Θεσσαλονίκης",
+    "url": "https://www.domaineflorian.com"
+  },
+  {
+    "name": "Domaine Glinavos",
+    "region": "Ζίτσα Ιωάννινα",
+    "url": "https://glinavos.gr"
+  },
+  {
+    "name": "Domaine Karanika",
+    "region": "Αμύνταιο",
+    "url": "https://karanika.com"
+  },
+  {
+    "name": "Domaine Kikones",
+    "region": "Μαρώνεια Ροδόπη",
+    "url": "https://www.kikones.gr"
+  },
+  {
+    "name": "Domaine Nerantzi",
+    "region": "Σέρρες",
+    "url": "https://www.nerantzi.com"
+  },
+  {
+    "name": "Douloufakis Winery",
+    "region": "Δαφνές Ηρακλείου",
+    "url": "https://douloufakis.wine"
+  },
+  {
+    "name": "Estate Argyros",
+    "region": "Σαντορίνη",
+    "url": "https://estateargyros.com"
+  },
+  {
+    "name": "Gaia Wines",
+    "region": "Νεμέα / Σαντορίνη",
+    "url": "https://gaiawines.gr"
+  },
+  {
+    "name": "Garalis Winery",
+    "region": "Λήμνος",
+    "url": "https://garaliswinery.gr"
+  },
+  {
+    "name": "Gentilini Winery",
+    "region": "Κεφαλονιά",
+    "url": "https://gentilini.gr"
+  },
+  {
+    "name": "Hatzidakis Winery",
+    "region": "Σαντορίνη",
+    "url": "https://www.hatzidakiswines.gr"
+  },
+  {
+    "name": "Idaia Winery",
+    "region": "Κρήτη",
+    "url": "https://www.idaiawinery.com"
+  },
+  {
+    "name": "Karavitakis Winery",
+    "region": "Χανιά Κρήτη",
+    "url": "https://www.karavitakiswines.com"
+  },
+  {
+    "name": "Katogi Averoff",
+    "region": "Μέτσοβο",
+    "url": "https://katogiaveroff.gr"
+  },
+  {
+    "name": "Kechris Winery",
+    "region": "Θεσσαλονίκη",
+    "url": "https://www.kechris.gr"
+  },
+  {
+    "name": "Kitrvs Winery",
+    "region": "Πιερία",
+    "url": "https://kitrus.gr"
+  },
+  {
+    "name": "Kir-Yianni",
+    "region": "Νάουσα / Αμύνταιο",
+    "url": "https://kiryianni.gr"
+  },
+  {
+    "name": "Pavlidis Estate",
+    "region": "Δράμα",
+    "url": "https://ktima-pavlidis.gr"
+  },
+  {
+    "name": "Tselepos Winery",
+    "region": "Μαντινεία",
+    "url": "https://tselepos.gr"
+  },
+  {
+    "name": "Voyatzi Winery",
+    "region": "Βελβεντό Κοζάνης",
+    "url": "https://ktimavoyatzi.gr"
+  },
+  {
+    "name": "Lyrarakis Winery",
+    "region": "Κρήτη",
+    "url": "https://www.lyrarakis.com"
+  },
+  {
+    "name": "Matsa Estate",
+    "region": "Κάντζα Αττικής",
+    "url": "https://www.roxanematsaestate.com"
+  },
+  {
+    "name": "Manolesakis Estate",
+    "region": "Δράμα",
+    "url": "https://manolesakis.gr"
+  },
+  {
+    "name": "Manousakis Winery",
+    "region": "Χανιά",
+    "url": "https://www.manousakiswinery.com"
+  },
+  {
+    "name": "Markou Vineyards",
+    "region": "Αττική",
+    "url": "http://markouvineyards.gr"
+  },
+  {
+    "name": "Mercouri Estate",
+    "region": "Ηλεία",
+    "url": "http://www.mercouri.gr"
+  },
+  {
+    "name": "Mesimvria Winery",
+    "region": "Θεσσαλονίκη",
+    "url": "https://mesimvriawines.gr"
+  },
+  {
+    "name": "Mikra Thira",
+    "region": "Θηρασία",
+    "url": "https://mikrathira.com"
+  },
+  {
+    "name": "Monemvasia Winery Tsimbidi",
+    "region": "Μονεμβασιά",
+    "url": "https://www.monemvasiawinery.gr"
+  },
+  {
+    "name": "Muses Estate",
+    "region": "Βοιωτία",
+    "url": "https://www.musesestate.com"
+  },
+  {
+    "name": "Nico Lazaridi",
+    "region": "Δράμα",
+    "url": "https://chateau-lazaridi.com"
+  },
+  {
+    "name": "Oenops Wines",
+    "region": "Δράμα",
+    "url": "https://oenopswines.gr"
+  },
+  {
+    "name": "Papaioannou Estate",
+    "region": "Νεμέα",
+    "url": "https://papaioannouwines.gr"
+  },
+  {
+    "name": "Papagiannakos Winery",
+    "region": "Μεσόγεια Αττικής",
+    "url": "https://papagiannakos.gr"
+  },
+  {
+    "name": "Petrakopoulos Wines",
+    "region": "Κεφαλονιά",
+    "url": "https://petrakopouloswines.gr"
+  },
+  {
+    "name": "Pnevmatikakis Winery",
+    "region": "Κίσσαμος Κρήτη",
+    "url": "https://pnevmatikakiswinery.gr"
+  },
+  {
+    "name": "Porto Carras",
+    "region": "Χαλκιδική",
+    "url": "https://www.portocarras.com"
+  },
+  {
+    "name": "Rouvalis Winery",
+    "region": "Αιγιαλεία",
+    "url": "https://www.rouvaliswinery.gr"
+  },
+  {
+    "name": "Sclavos Wines",
+    "region": "Κεφαλονιά",
+    "url": "https://sclavoswines.gr"
+  },
+  {
+    "name": "Semeli Estate",
+    "region": "Νεμέα",
+    "url": "https://www.semeliestate.gr"
+  },
+  {
+    "name": "Sigalas Winery",
+    "region": "Σαντορίνη",
+    "url": "https://sigalas-wine.com"
+  },
+  {
+    "name": "Santo Wines",
+    "region": "Σαντορίνη",
+    "url": "https://santowines.gr"
+  },
+  {
+    "name": "Tetramythos Winery",
+    "region": "Αιγιαλεία",
+    "url": "https://www.tetramythoswines.com"
+  },
+  {
+    "name": "Theopetra Estate",
+    "region": "Τρίκαλα",
+    "url": "https://www.tsililis.gr"
+  },
+  {
+    "name": "T-Oinos",
+    "region": "Τήνος",
+    "url": "https://toinos.com"
+  },
+  {
+    "name": "Troupis Winery",
+    "region": "Μαντινεία",
+    "url": "https://www.troupiswinery.gr"
+  },
+  {
+    "name": "Vassaltis Vineyards",
+    "region": "Σαντορίνη",
+    "url": "https://vassaltis.com"
+  },
+  {
+    "name": "Venetsanos Winery",
+    "region": "Σαντορίνη",
+    "url": "https://venetsanoswinery.com"
+  },
+  {
+    "name": "Vriniotis Winery",
+    "region": "Εύβοια",
+    "url": "https://www.vriniotiswinery.gr"
+  },
+  {
+    "name": "Zacharias Winery",
+    "region": "Νεμέα",
+    "url": "https://zacharias.gr"
+  },
+  {
+    "name": "Zafeirakis Estate",
+    "region": "Τύρναβος",
+    "url": "https://www.domainezafeirakis.com"
+  },
+  {
+    "name": "Anatolikos Vineyards",
+    "region": "Ξάνθη",
+    "url": "https://anatolikoswinery.gr"
+  },
+  {
+    "name": "Acra Winery",
+    "region": "Νεμέα",
+    "url": "http://acrawinery.com"
+  },
+  {
+    "name": "Artisans Vignerons de Naoussa",
+    "region": "Νάουσα",
+    "url": "https://artisansvignerons.gr"
+  },
+  {
+    "name": "Aoton Winery",
+    "region": "Παιανία",
+    "url": "https://aoton.gr"
+  },
+  {
+    "name": "Argyriou Winery",
+    "region": "Πολύδροσο Παρνασσού",
+    "url": "https://www.argyriouwinery.gr"
+  },
+  {
+    "name": "Cair Winery",
+    "region": "Ρόδος",
+    "url": "https://cair.gr"
+  },
+  {
+    "name": "Karamitros Winery",
+    "region": "Καρδίτσα",
+    "url": "https://www.winerymonsieurnicolas.gr"
+  },
+  {
+    "name": "Magoutes Vineyard",
+    "region": "Αρκαδία",
+    "url": "https://www.magoutes.com"
+  },
+  {
+    "name": "Moraitis Winery",
+    "region": "Πάρος",
+    "url": "https://moraitiswines.gr"
+  },
+  {
+    "name": "Orealios Gaea",
+    "region": "Κεφαλονιά",
+    "url": "https://www.orealios.gr"
+  },
+  {
+    "name": "Patoinos Winery",
+    "region": "Πάτμος",
+    "url": "https://gr.patoinos.ch"
+  },
+  {
+    "name": "Sarris Winery",
+    "region": "Κεφαλονιά",
+    "url": "https://sarriswinery.com"
+  },
+  {
+    "name": "Harlaftis Estate",
+    "region": "Ηλεία",
+    "url": "https://www.harlaftis.gr"
+  },
+  {
+    "name": "Helioterra Wines",
+    "region": "Δράμα",
+    "url": "https://www.helioterrawines.com"
+  },
+  {
+    "name": "Kontozisis Organic Vineyards",
+    "region": "Καρδίτσα",
+    "url": "https://kontozisiswines.com"
+  },
+  {
+    "name": "Kamara Pure Winery",
+    "region": "Θεσσαλονίκη",
+    "url": "https://www.kamarawinery.com"
+  },
+  {
+    "name": "Vourvoukeli Estate",
+    "region": "Αβδήρα Ξάνθης",
+    "url": "https://vourvoukeli.gr"
+  },
+  {
+    "name": "Vasilikon Winery",
+    "region": "Εύβοια",
+    "url": "https://vasilikon.com"
+  },
+  {
+    "name": "Gavalas Winery",
+    "region": "Σαντορίνη",
+    "url": "https://www.gavalaswines.gr"
+  },
+  {
+    "name": "Koutsoyannopoulos Winery",
+    "region": "Σαντορίνη",
+    "url": "https://kwm.gr"
+  },
+  {
+    "name": "Lafazanis Winery",
+    "region": "Νεμέα",
+    "url": "https://lafazanis.gr"
+  },
+  {
+    "name": "Kokotos Estate",
+    "region": "Αττική",
+    "url": "https://kokotosestate.gr"
+  },
+  {
+    "name": "Strataridakis Winery",
+    "region": "Κρήτη",
+    "url": "https://www.strataridakis.gr"
+  },
+  {
+    "name": "Akriotou Microwinery",
+    "region": "Πλαγιές Κιθαιρώνα",
+    "url": "https://akriotouwines.gr"
+  },
+  {
+    "name": "Greek Wine Cellars (Κουρτάκης)",
+    "region": "Αττική",
+    "url": "https://www.seaop.gr"
+  },
+  {
+    "name": "Mikro Ktima Titou",
+    "region": "Γουμένισσα",
+    "url": "https://www.mikroktimatitos.com"
+  }
+]
