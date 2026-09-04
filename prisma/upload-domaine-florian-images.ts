@@ -31,6 +31,10 @@ const IMAGE_MAP: Record<string, string> = {
   "domaine-florian-sauvignon-blanc": "SB-20.jpg",
   "domaine-florian-sauvignon-blanc-fume": "SBF-21.jpg",
   "domaine-florian-syrah-rose": "ROS-SYR-22.jpg",
+  "domaine-florian-symphony": "SYM-21.jpg",
+  "domaine-florian-symphony-rose": "ROS-SYM-20.jpg",
+  "domaine-florian-terzetto": "TER-20.jpg",
+  "domaine-florian-rondo-blanc": "RON-20.jpg",
 };
 
 async function main() {

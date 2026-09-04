@@ -1,14 +1,12 @@
-// Domaine Florian — 8 ετικέτες με επιβεβαιωμένη σύνθεση ποικιλίας από
-// το επίσημο site (domaineflorian.com), με άδεια του οινοποιείου.
-// 2 από τις 8 (Σύρα 2015, Καζανόβα Μπαρίκ) έχουν πλήρη τεχνικά
-// στοιχεία/γευστικές σημειώσεις από τη σελίδα προϊόντος τους — οι
-// υπόλοιπες 6 έχουν μόνο επιβεβαιωμένη ποικιλία (καμία περιγραφή στο
-// site τους), οπότε το description/tastingNotes μένει ελάχιστο/κενό
-// αντί να μαντέψουμε.
-//
-// Παραλείπονται σκόπιμα 4 blends της λίστας (Symphony, Symphony Rosé,
-// Terzetto, Rondo Blanc) — το site δεν αναφέρει τη σύνθεση ποικιλιών
-// τους πουθενά, εκκρεμεί επιβεβαίωση απευθείας από το οινοποιείο.
+// Domaine Florian — 12 ετικέτες, με άδεια του οινοποιείου να
+// χρησιμοποιήσουμε το περιεχόμενο του site τους (domaineflorian.com).
+// 2 (Σύρα 2015, Καζανόβα Μπαρίκ) έχουν πλήρη τεχνικά στοιχεία/
+// γευστικές σημειώσεις από τη σελίδα προϊόντος τους. 6 έχουν μόνο
+// επιβεβαιωμένη μονοποικιλιακή σύνθεση (καμία περιγραφή στο site).
+// Οι τελευταίες 4 (Symphony, Symphony Rosé, Terzetto, Rondo Blanc)
+// είναι blends των οποίων η ακριβής σύνθεση ποικιλιών δεν αναφέρεται
+// πουθενά στο site — καταχωρούνται σκόπιμα χωρίς VarietyOnWine link
+// αντί να μαντέψουμε τις ποικιλίες/ποσοστά.
 
 import { Appellation, ContentStatus, WineColor, WineStyle } from "@prisma/client";
 import { prisma } from "../lib/prisma";
@@ -33,7 +31,7 @@ async function main() {
     tastingNotes: string | null;
     servingTemp: string | null;
     foodPairings: string[];
-    varietyId: string;
+    varietyId?: string;
   }) {
     const wine = await prisma.wine.upsert({
       where: { slug: spec.slug },
@@ -67,11 +65,13 @@ async function main() {
         status: ContentStatus.PUBLISHED,
       },
     });
-    await prisma.varietyOnWine.upsert({
-      where: { wineId_varietyId: { wineId: wine.id, varietyId: spec.varietyId } },
-      update: { percentage: 100 },
-      create: { wineId: wine.id, varietyId: spec.varietyId, percentage: 100 },
-    });
+    if (spec.varietyId) {
+      await prisma.varietyOnWine.upsert({
+        where: { wineId_varietyId: { wineId: wine.id, varietyId: spec.varietyId } },
+        update: { percentage: 100 },
+        create: { wineId: wine.id, varietyId: spec.varietyId, percentage: 100 },
+      });
+    }
     return wine;
   }
 
@@ -199,7 +199,64 @@ async function main() {
     varietyId: syrah.id,
   });
 
-  console.log("Done: 8 ετικέτες Domaine Florian (1 ενημέρωση + 7 νέες).");
+  // Τα 4 blends χωρίς δημοσιευμένη σύνθεση ποικιλιών — καμία VarietyOnWine.
+  await upsertWine({
+    slug: "domaine-florian-symphony",
+    name: "Symphony",
+    vintage: 2021,
+    color: WineColor.RED,
+    style: WineStyle.DRY,
+    abv: null,
+    description:
+      "Κόκκινο κρασί (χαρμάνι) από τον αμπελώνα του κτήματος στον Τρίλοφο Θεσσαλονίκης. Η ακριβής σύνθεση ποικιλιών δεν δημοσιεύεται από το οινοποιείο.",
+    tastingNotes: null,
+    servingTemp: null,
+    foodPairings: [],
+  });
+
+  await upsertWine({
+    slug: "domaine-florian-symphony-rose",
+    name: "Symphony Ροζέ",
+    vintage: 2020,
+    color: WineColor.ROSE,
+    style: WineStyle.DRY,
+    abv: null,
+    description:
+      "Ροζέ κρασί (χαρμάνι) από τον αμπελώνα του κτήματος στον Τρίλοφο Θεσσαλονίκης. Η ακριβής σύνθεση ποικιλιών δεν δημοσιεύεται από το οινοποιείο.",
+    tastingNotes: null,
+    servingTemp: null,
+    foodPairings: [],
+  });
+
+  await upsertWine({
+    slug: "domaine-florian-terzetto",
+    name: "Terzetto",
+    vintage: 2020,
+    color: WineColor.WHITE,
+    style: WineStyle.DRY,
+    abv: null,
+    description:
+      "Λευκό κρασί, χαρμάνι τριών ποικιλιών όπως υποδηλώνει και το όνομά του («τερτσέτο» = τρίο), από τον αμπελώνα του κτήματος στον Τρίλοφο Θεσσαλονίκης. Η ακριβής σύνθεση δεν δημοσιεύεται από το οινοποιείο.",
+    tastingNotes: null,
+    servingTemp: null,
+    foodPairings: [],
+  });
+
+  await upsertWine({
+    slug: "domaine-florian-rondo-blanc",
+    name: "Rondo Blanc",
+    vintage: 2020,
+    color: WineColor.WHITE,
+    style: WineStyle.DRY,
+    abv: null,
+    description:
+      "Λευκό κρασί από τον αμπελώνα του κτήματος στον Τρίλοφο Θεσσαλονίκης. Η ακριβής ποικιλιακή σύνθεση δεν δημοσιεύεται από το οινοποιείο.",
+    tastingNotes: null,
+    servingTemp: null,
+    foodPairings: [],
+  });
+
+  console.log("Done: 12 ετικέτες Domaine Florian (1 ενημέρωση + 11 νέες).");
 }
 
 main()
