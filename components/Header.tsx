@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import ExploreMenu from "@/components/ExploreMenu";
+import SearchOverlay from "@/components/SearchOverlay";
 
 const navLinks = [
   { href: "/krasia", label: "Ετικέτες" },
@@ -45,12 +46,7 @@ export default async function Header() {
               Σύνδεση
             </Link>
           )}
-          <button className="nav-search" aria-label="Αναζήτηση">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="7" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </button>
+          <SearchOverlay />
         </nav>
       </div>
     </header>
