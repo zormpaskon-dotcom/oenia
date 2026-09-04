@@ -20,8 +20,17 @@ export default function WinePhoto({
     return <div className={className} style={{ background: COLOR_GRADIENT[color] }} />;
   }
   return (
-    <div className={className} style={{ position: "relative", overflow: "hidden" }}>
-      <Image src={labelImage} alt={wineName} fill sizes={sizes ?? "200px"} style={{ objectFit: "contain" }} />
+    // Ανοιχτόχρωμο, σταθερό φόντο (όχι το ανά-χρώμα gradient) — το mix-blend-mode
+    // "multiply" χρειάζεται ανοιχτό φόντο για να "σβήσει" το λευκό φόντο των
+    // φωτογραφιών προϊόντος χωρίς να σκουραίνει το ίδιο το μπουκάλι.
+    <div className={className} style={{ position: "relative", overflow: "hidden", background: "var(--paper-alt)" }}>
+      <Image
+        src={labelImage}
+        alt={wineName}
+        fill
+        sizes={sizes ?? "200px"}
+        style={{ objectFit: "contain", mixBlendMode: "multiply" }}
+      />
     </div>
   );
 }
