@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { PriceRange, WineColor } from "@prisma/client";
-import { COLOR_GRADIENT, COLOR_NAME, PRICE_SYMBOL, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import { COLOR_NAME, PRICE_SYMBOL, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import WinePhoto from "@/components/WinePhoto";
 
 export type WineCardData = {
   slug: string;
@@ -10,6 +11,7 @@ export type WineCardData = {
   priceRange: PriceRange | null;
   avgRating: number;
   reviewCount: number;
+  labelImage: string | null;
   winery: { name: string; slug: string };
   region: { name: string; slug: string };
   varieties: { variety: { name: string } }[];
@@ -22,7 +24,7 @@ export default function WineCard({ wine }: { wine: WineCardData }) {
     <div className="wine-card">
       <Link href={`/krasia/${wine.slug}`} style={{ color: "inherit", textDecoration: "none", display: "block" }}>
         <div className="card-top">
-          <div className="card-photo" style={{ background: COLOR_GRADIENT[wine.color] }} />
+          <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="card-photo" sizes="64px" />
           <div className="card-info">
             <h3>{wine.name}</h3>
             <p className="card-winery">{wine.winery.name}</p>

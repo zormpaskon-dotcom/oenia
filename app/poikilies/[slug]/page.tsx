@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContentStatus, VarietyType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { COLOR_GRADIENT } from "@/lib/labels";
+import WinePhoto from "@/components/WinePhoto";
 
 const TRAITS: { key: "acidity" | "body" | "tannins" | "aromaIntensity" | "ageingPotential"; label: string }[] = [
   { key: "acidity", label: "Οξύτητα" },
@@ -150,7 +150,7 @@ export default async function VarietyDetailPage({
             <div className="label-grid" style={{ gridTemplateColumns: "repeat(4,1fr)" }}>
               {publishedWines.map((wine) => (
                 <Link key={wine.id} href={`/krasia/${wine.slug}`} className="label-card">
-                  <div className="label-photo" style={{ background: COLOR_GRADIENT[wine.color] }} />
+                  <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="label-photo" sizes="(max-width: 820px) 100vw, 25vw" />
                   <h3 style={{ fontSize: 16 }}>{wine.name}</h3>
                   <p className="meta">{wine.winery.name}</p>
                 </Link>

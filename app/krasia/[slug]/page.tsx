@@ -8,6 +8,7 @@ import ShareCard from "@/components/ShareCard";
 import CellarButtons from "@/components/CellarButtons";
 import ReviewForm from "@/components/ReviewForm";
 import JsonLd from "@/components/JsonLd";
+import WinePhoto from "@/components/WinePhoto";
 import { reportReviewAction } from "@/lib/actions/reviews";
 import { APPELLATION_LABEL, COLOR_NAME, PRICE_SYMBOL, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
 
@@ -93,7 +94,7 @@ export default async function WineDetailPage({
       </div>
 
       <div className="wrap wine-header">
-        <div className="wine-photo" />
+        <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="wine-photo" sizes="320px" />
         <div>
           <span className="region-tag">
             {wine.region.name}

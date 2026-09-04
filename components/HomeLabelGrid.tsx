@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { WineColor } from "@prisma/client";
-import { COLOR_GRADIENT, COLOR_NAME } from "@/lib/labels";
+import { COLOR_NAME } from "@/lib/labels";
+import WinePhoto from "@/components/WinePhoto";
 
 export type HomeLabelWine = {
   slug: string;
   name: string;
   color: WineColor;
   avgRating: number;
+  labelImage: string | null;
   winery: { name: string };
   region: { name: string; slug: string };
   varieties: { variety: { name: string } }[];
@@ -56,7 +58,7 @@ export default function HomeLabelGrid({ wines }: { wines: HomeLabelWine[] }) {
               data-region={wine.region.slug}
               style={{ display: "block" }}
             >
-              <div className="label-photo" style={{ background: COLOR_GRADIENT[wine.color] }} />
+              <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="label-photo" sizes="(max-width: 1000px) 50vw, 25vw" />
               <h3>{wine.name}</h3>
               <p className="winery-name">{wine.winery.name}</p>
               <div className="meta-row">

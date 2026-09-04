@@ -3,8 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { COLOR_GRADIENT } from "@/lib/labels";
 import JsonLd from "@/components/JsonLd";
+import WinePhoto from "@/components/WinePhoto";
 
 async function getWinery(slug: string) {
   return prisma.winery.findUnique({
@@ -141,7 +141,7 @@ export default async function WineryDetailPage({
           <div className="label-grid">
             {winery.wines.map((wine) => (
               <Link key={wine.id} href={`/krasia/${wine.slug}`} className="label-card">
-                <div className="label-photo" style={{ background: COLOR_GRADIENT[wine.color] }} />
+                <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="label-photo" sizes="(max-width: 820px) 100vw, 33vw" />
                 <h3>{wine.name}</h3>
                 <p className="meta">
                   {wine.color === "WHITE" ? "Λευκό" : wine.color === "RED" ? "Κόκκινο" : "Ροζέ"}

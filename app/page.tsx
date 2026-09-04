@@ -56,7 +56,7 @@ export default async function Home() {
         where: { slug: { in: VARIETY_ORDER } },
       }),
       prisma.winery.findFirst({
-        where: { slug: "ampelones-asimeniou-lofou" },
+        where: { slug: "douloufakis" },
         include: { region: { select: { name: true } } },
       }),
       prisma.article.findMany({
