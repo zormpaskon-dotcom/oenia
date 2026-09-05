@@ -3,6 +3,18 @@ import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import HeroVineMap, { type VineRegion } from "@/components/HeroVineMap";
 import HomeLabelGrid from "@/components/HomeLabelGrid";
+import HeroSlideshow from "@/components/HeroSlideshow";
+
+const HERO_IMAGES = [
+  "/hero/01_vineyard_estate.jpg",
+  "/hero/02_wine_glass_sunset.jpg",
+  "/hero/03_grapes_sunlight.jpg",
+  "/hero/04_barrel_cellar.jpg",
+  "/hero/05_al_fresco_wine_table.jpg",
+  "/hero/06_red_wine_pour.jpg",
+  "/hero/07_vineyard_path_sunset.jpg",
+  "/hero/08_stone_estate_terracotta.jpg",
+];
 
 const MAP_REGIONS: { slug: string; variety: string; x: number; y: number; labelDx: number; labelDy: number }[] = [
   { slug: "mantineia", variety: "Μοσχοφίλερο", x: 60, y: 40, labelDx: 16, labelDy: 0 },
@@ -94,17 +106,20 @@ export default async function Home() {
 
   return (
     <>
-      <section className="home-hero">
+      <section className="home-hero hero-photo">
+        <HeroSlideshow images={HERO_IMAGES} />
         <div className="wrap home-hero-content">
-          <p className="kicker">Ένας οδηγός για το ελληνικό κρασί</p>
-          <h1>
-            Το κρασί της Ελλάδας,
-            <br />
-            σε βάθος.
-          </h1>
-          <Link href="/krasia" className="home-hero-readmore">
-            Εξερεύνησε τις ετικέτες
-          </Link>
+          <div className="hero-glass-panel">
+            <p className="kicker">Ένας οδηγός για το ελληνικό κρασί</p>
+            <h1>
+              Το κρασί της Ελλάδας,
+              <br />
+              σε βάθος.
+            </h1>
+            <Link href="/krasia" className="home-hero-readmore">
+              Εξερεύνησε τις ετικέτες
+            </Link>
+          </div>
         </div>
       </section>
 
