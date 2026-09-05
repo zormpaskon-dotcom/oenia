@@ -10,13 +10,13 @@ import ReviewForm from "@/components/ReviewForm";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
 import { reportReviewAction } from "@/lib/actions/reviews";
-import { APPELLATION_LABEL, COLOR_NAME, PRICE_SYMBOL, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import { APPELLATION_LABEL, COLOR_NAME, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
 
 async function getWine(slug: string) {
   return prisma.wine.findUnique({
     where: { slug },
     include: {
-      winery: { select: { name: true, slug: true, subRegion: true, foundedYear: true } },
+      winery: { select: { name: true, slug: true, subRegion: true, foundedYear: true, websiteUrl: true } },
       region: { select: { name: true, slug: true } },
       varieties: { include: { variety: { select: { name: true, slug: true } } } },
     },
@@ -155,8 +155,22 @@ export default async function WineDetailPage({
               </span>
             </div>
             <div className="fact">
-              <span className="label">Ένδειξη τιμής</span>
-              <span className="value">{wine.priceRange ? PRICE_SYMBOL[wine.priceRange] : "—"}</span>
+              <span className="label">Τιμή</span>
+              <span className="value">
+                {wine.winery.websiteUrl ? (
+                  <a
+                    href={wine.winery.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-underline"
+                    style={{ color: "var(--wine)" }}
+                  >
+                    Δες στο site του οινοποιείου
+                  </a>
+                ) : (
+                  "—"
+                )}
+              </span>
             </div>
           </div>
 
