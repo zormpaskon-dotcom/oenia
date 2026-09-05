@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ContentStatus, WineColor } from "@prisma/client";
+import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import HeroVineMap, { type VineRegion } from "@/components/HeroVineMap";
 import HomeLabelGrid from "@/components/HomeLabelGrid";
@@ -36,29 +35,8 @@ function LeafIcon() {
   );
 }
 
-async function getHeroBottles() {
-  const colors: WineColor[] = [WineColor.RED, WineColor.WHITE, WineColor.ROSE];
-  const usedWineryIds = new Set<string>();
-  const result: { slug: string; name: string; labelImage: string | null }[] = [];
-
-  for (const color of colors) {
-    const candidates = await prisma.wine.findMany({
-      where: { status: ContentStatus.PUBLISHED, color, labelImage: { not: null } },
-      select: { slug: true, name: true, labelImage: true, wineryId: true },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-    });
-    const pick = candidates.find((w) => !usedWineryIds.has(w.wineryId)) ?? candidates[0];
-    if (pick) {
-      usedWineryIds.add(pick.wineryId);
-      result.push(pick);
-    }
-  }
-  return result;
-}
-
 export default async function Home() {
-  const [regionRows, topWines, varietyRows, spotlightWinery, articles, heroBottles, [wineCount, wineryCount, varietyCount]] =
+  const [regionRows, topWines, varietyRows, spotlightWinery, articles, [wineCount, wineryCount, varietyCount]] =
     await Promise.all([
       prisma.region.findMany({
         where: { slug: { in: MAP_REGIONS.map((r) => r.slug) } },
@@ -87,7 +65,6 @@ export default async function Home() {
         take: 3,
         include: { region: { select: { name: true } } },
       }),
-      getHeroBottles(),
       Promise.all([
         prisma.wine.count({ where: { status: ContentStatus.PUBLISHED } }),
         prisma.winery.count({ where: { status: ContentStatus.PUBLISHED } }),
@@ -129,15 +106,6 @@ export default async function Home() {
             Εξερεύνησε τις ετικέτες
           </Link>
         </div>
-        {heroBottles.length > 0 && (
-          <div className="hero-bottles" aria-hidden="true">
-            {heroBottles.map((wine) => (
-              <div key={wine.slug} className="hero-bottle">
-                <Image src={wine.labelImage!} alt="" fill sizes="180px" style={{ objectFit: "contain" }} />
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       <section id="map-explore">
