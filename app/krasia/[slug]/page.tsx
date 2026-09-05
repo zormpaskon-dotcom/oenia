@@ -9,6 +9,7 @@ import CellarButtons from "@/components/CellarButtons";
 import ReviewForm from "@/components/ReviewForm";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
+import WineCard from "@/components/WineCard";
 import { reportReviewAction } from "@/lib/actions/reviews";
 import { APPELLATION_LABEL, COLOR_NAME, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
 
@@ -21,6 +22,39 @@ async function getWine(slug: string) {
       varieties: { include: { variety: { select: { name: true, slug: true } } } },
     },
   });
+}
+
+const RELATED_WINE_INCLUDE = {
+  winery: { select: { name: true, slug: true } },
+  region: { select: { name: true, slug: true } },
+  varieties: { include: { variety: { select: { name: true } } } },
+} as const;
+
+async function getRelatedWines(wine: NonNullable<Awaited<ReturnType<typeof getWine>>>) {
+  const varietySlug = wine.varieties[0]?.variety.slug;
+  const [sameWinery, sameVariety] = await Promise.all([
+    prisma.wine.findMany({
+      where: { wineryId: wine.wineryId, id: { not: wine.id }, status: ContentStatus.PUBLISHED },
+      take: 4,
+      include: RELATED_WINE_INCLUDE,
+    }),
+    varietySlug
+      ? prisma.wine.findMany({
+          where: {
+            id: { not: wine.id },
+            status: ContentStatus.PUBLISHED,
+            varieties: { some: { variety: { slug: varietySlug } } },
+          },
+          take: 4,
+          include: RELATED_WINE_INCLUDE,
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const seen = new Set([wine.id]);
+  return [...sameWinery, ...sameVariety]
+    .filter((w) => (seen.has(w.id) ? false : (seen.add(w.id), true)))
+    .slice(0, 4);
 }
 
 export async function generateMetadata({
@@ -48,7 +82,7 @@ export default async function WineDetailPage({
 
   const session = await auth();
 
-  const [cellarEntry, reviews] = await Promise.all([
+  const [cellarEntry, reviews, relatedWines] = await Promise.all([
     session?.user
       ? prisma.cellarEntry.findUnique({
           where: { userId_wineId: { userId: session.user.id, wineId: wine.id } },
@@ -59,6 +93,7 @@ export default async function WineDetailPage({
       include: { user: { select: { name: true } } },
       orderBy: { createdAt: "desc" },
     }),
+    getRelatedWines(wine),
   ]);
 
   const myReview = session?.user ? reviews.find((r) => r.userId === session.user.id) : undefined;
@@ -227,6 +262,19 @@ export default async function WineDetailPage({
           <path d="M0,32 C 240,64 480,0 720,28 C 960,56 1200,8 1440,32 L1440,64 L0,64 Z" fill="var(--paper-alt)" />
         </svg>
       </div>
+
+      {relatedWines.length > 0 && (
+        <section>
+          <div className="wrap">
+            <h2 className="section-title">Δες επίσης</h2>
+            <div className="wine-grid">
+              {relatedWines.map((related) => (
+                <WineCard key={related.id} wine={related} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section>
         <div className="wrap">

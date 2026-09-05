@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ContentStatus } from "@prisma/client";
+import Image from "next/image";
+import { ContentStatus, WineColor } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import HeroVineMap, { type VineRegion } from "@/components/HeroVineMap";
 import HomeLabelGrid from "@/components/HomeLabelGrid";
@@ -35,8 +36,22 @@ function LeafIcon() {
   );
 }
 
+async function getHeroBottles() {
+  const colors: WineColor[] = [WineColor.RED, WineColor.WHITE, WineColor.ROSE];
+  const perColor = await Promise.all(
+    colors.map((color) =>
+      prisma.wine.findFirst({
+        where: { status: ContentStatus.PUBLISHED, color, labelImage: { not: null } },
+        select: { slug: true, name: true, labelImage: true },
+        orderBy: { createdAt: "desc" },
+      })
+    )
+  );
+  return perColor.filter((w): w is NonNullable<typeof w> => !!w);
+}
+
 export default async function Home() {
-  const [regionRows, topWines, varietyRows, spotlightWinery, articles, [wineCount, wineryCount, varietyCount]] =
+  const [regionRows, topWines, varietyRows, spotlightWinery, articles, heroBottles, [wineCount, wineryCount, varietyCount]] =
     await Promise.all([
       prisma.region.findMany({
         where: { slug: { in: MAP_REGIONS.map((r) => r.slug) } },
@@ -65,6 +80,7 @@ export default async function Home() {
         take: 3,
         include: { region: { select: { name: true } } },
       }),
+      getHeroBottles(),
       Promise.all([
         prisma.wine.count({ where: { status: ContentStatus.PUBLISHED } }),
         prisma.winery.count({ where: { status: ContentStatus.PUBLISHED } }),
@@ -106,6 +122,15 @@ export default async function Home() {
             Εξερεύνησε τις ετικέτες
           </Link>
         </div>
+        {heroBottles.length > 0 && (
+          <div className="hero-bottles" aria-hidden="true">
+            {heroBottles.map((wine) => (
+              <div key={wine.slug} className="hero-bottle">
+                <Image src={wine.labelImage!} alt="" fill sizes="180px" style={{ objectFit: "contain" }} />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section id="map-explore">

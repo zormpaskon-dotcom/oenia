@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ContentStatus, VarietyType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import WinePhoto from "@/components/WinePhoto";
+import PronounceButton from "@/components/PronounceButton";
 
 const TRAITS: { key: "acidity" | "body" | "tannins" | "aromaIntensity" | "ageingPotential"; label: string }[] = [
   { key: "acidity", label: "Οξύτητα" },
@@ -78,7 +79,11 @@ export default async function VarietyDetailPage({
           <LeafIcon />
         </div>
         <span className="type-tag">{variety.type === VarietyType.WHITE ? "Λευκή ποικιλία" : "Κόκκινη ποικιλία"}</span>
-        <h1>{variety.name}</h1>
+        <div className="variety-name-row">
+          <h1>{variety.name}</h1>
+          <PronounceButton text={variety.name} />
+        </div>
+        {variety.nameLatin && <p className="variety-latin">{variety.nameLatin}</p>}
         {variety.description && <p className="lead">{variety.description}</p>}
 
         <div className="trait-row">
