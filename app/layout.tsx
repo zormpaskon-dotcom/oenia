@@ -7,6 +7,7 @@ import AgeGate from "@/components/AgeGate";
 import CookieBanner from "@/components/CookieBanner";
 import LanguageProvider from "@/components/LanguageProvider";
 import ThemeProvider from "@/components/ThemeProvider";
+import ScrollReveal from "@/components/ScrollReveal";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -51,6 +52,7 @@ export default function RootLayout({
     <html
       lang="el"
       className={`${fraunces.variable} ${inter.variable} ${alexBrush.variable}`}
+      suppressHydrationWarning
     >
       <body>
         {/* Εφαρμόζει αποθηκευμένο (ρητό) θέμα πριν το πρώτο paint, ώστε να μη
@@ -65,6 +67,7 @@ export default function RootLayout({
             {children}
             <Footer />
             <CookieBanner />
+            <ScrollReveal />
           </LanguageProvider>
         </ThemeProvider>
       </body>

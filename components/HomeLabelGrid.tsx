@@ -54,7 +54,7 @@ export default function HomeLabelGrid({ wines }: { wines: HomeLabelWine[] }) {
             <Link
               key={wine.slug}
               href={`/krasia/${wine.slug}`}
-              className="label-card"
+              className="label-card reveal"
               data-region={wine.region.slug}
               style={{ display: "block" }}
             >

@@ -156,7 +156,7 @@ export default async function WineryDetailPage({
           <h2 className="section-title">Ετικέτες του οινοποιείου</h2>
           <div className="label-grid">
             {winery.wines.map((wine) => (
-              <Link key={wine.id} href={`/krasia/${wine.slug}`} className="label-card">
+              <Link key={wine.id} href={`/krasia/${wine.slug}`} className="label-card reveal">
                 <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="label-photo" sizes="(max-width: 820px) 100vw, 33vw" />
                 <h3>{wine.name}</h3>
                 <p className="meta">

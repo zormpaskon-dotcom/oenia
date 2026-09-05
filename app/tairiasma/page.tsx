@@ -21,7 +21,7 @@ export default async function PairingIndexPage() {
 
       <div className="index-grid" style={{ marginTop: 32 }}>
         {categories.map((c) => (
-          <Link key={c.id} href={`/tairiasma/${c.slug}`} className="index-card">
+          <Link key={c.id} href={`/tairiasma/${c.slug}`} className="index-card reveal">
             <span style={{ fontSize: 32, display: "block", marginBottom: 10 }}>{c.emoji}</span>
             <h3>{c.name}</h3>
             {c.blurb && <p>{c.blurb}</p>}

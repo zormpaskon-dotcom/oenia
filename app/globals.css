@@ -88,6 +88,13 @@
   --shadow-color:    0,0,0;
 }
 
+/* Scroll-reveal — δες components/ScrollReveal.tsx */
+.reveal{ opacity:0; transform:translateY(18px); transition:opacity .55s ease, transform .55s ease; }
+.reveal.is-visible{ opacity:1; transform:translateY(0); }
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity:1; transform:none; transition:none; }
+}
+
 *{ box-sizing: border-box; }
 html{ scroll-behavior: smooth; }
 

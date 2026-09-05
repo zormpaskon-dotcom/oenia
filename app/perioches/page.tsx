@@ -32,7 +32,7 @@ export default async function RegionsPage() {
 
       <div className="wrap index-grid">
         {regions.map((r) => (
-          <Link key={r.id} href={`/perioches/${r.slug}`} className="index-card">
+          <Link key={r.id} href={`/perioches/${r.slug}`} className="index-card reveal">
             <h3>{r.name}</h3>
             <p className="meta">
               {MACRO_REGION_LABEL[r.macroRegion] ?? r.macroRegion}

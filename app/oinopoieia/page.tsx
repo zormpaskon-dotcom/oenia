@@ -28,7 +28,7 @@ export default async function WineriesPage() {
 
       <div className="wrap index-grid">
         {wineries.map((w) => (
-          <Link key={w.id} href={`/oinopoieia/${w.slug}`} className="index-card">
+          <Link key={w.id} href={`/oinopoieia/${w.slug}`} className="index-card reveal">
             <h3>{w.name}</h3>
             <p className="meta">
               {w.region.name}

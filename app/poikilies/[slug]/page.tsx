@@ -149,7 +149,7 @@ export default async function VarietyDetailPage({
             <h2 className="section-title">Ετικέτες με {variety.name}</h2>
             <div className="label-grid" style={{ gridTemplateColumns: "repeat(4,1fr)" }}>
               {publishedWines.map((wine) => (
-                <Link key={wine.id} href={`/krasia/${wine.slug}`} className="label-card">
+                <Link key={wine.id} href={`/krasia/${wine.slug}`} className="label-card reveal">
                   <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="label-photo" sizes="(max-width: 820px) 100vw, 25vw" />
                   <h3 style={{ fontSize: 16 }}>{wine.name}</h3>
                   <p className="meta">{wine.winery.name}</p>

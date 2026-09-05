@@ -124,7 +124,7 @@ export default async function RegionDetailPage({
           <h2 className="section-title">Ετικέτες από {region.name}</h2>
           <div className="card-grid">
             {region.wines.map((wine) => (
-              <Link key={wine.id} href={`/krasia/${wine.slug}`} className="mini-card">
+              <Link key={wine.id} href={`/krasia/${wine.slug}`} className="mini-card reveal">
                 <div className="mini-photo" style={{ background: COLOR_GRADIENT[wine.color] }} />
                 <h3>{wine.name}</h3>
                 <p className="meta">

@@ -67,7 +67,7 @@ export default async function ArticlesPage({
       ) : (
         <div className="index-grid" style={{ marginTop: 12 }}>
           {articles.map((a) => (
-            <Link key={a.slug} href={`/arthra/${a.slug}`} className="index-card">
+            <Link key={a.slug} href={`/arthra/${a.slug}`} className="index-card reveal">
               <span style={{ fontSize: 12.5, color: "var(--gold)", display: "block", marginBottom: 8 }}>
                 {a.region?.name ?? CATEGORY_LABEL[a.category]}
               </span>

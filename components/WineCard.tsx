@@ -20,7 +20,7 @@ export default function WineCard({ wine }: { wine: WineCardData }) {
   const mainVariety = wine.varieties[0]?.variety.name;
 
   return (
-    <div className="wine-card">
+    <div className="wine-card reveal">
       <Link href={`/krasia/${wine.slug}`} style={{ color: "inherit", textDecoration: "none", display: "block" }}>
         <div className="card-top">
           <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="card-photo" sizes="64px" />
