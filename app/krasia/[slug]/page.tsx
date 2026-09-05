@@ -17,7 +17,7 @@ async function getWine(slug: string) {
   return prisma.wine.findUnique({
     where: { slug },
     include: {
-      winery: { select: { name: true, slug: true, subRegion: true, foundedYear: true, websiteUrl: true } },
+      winery: { select: { name: true, slug: true, subRegion: true, foundedYear: true } },
       region: { select: { name: true, slug: true } },
       varieties: { include: { variety: { select: { name: true, slug: true } } } },
     },
@@ -187,24 +187,6 @@ export default async function WineDetailPage({
               <span className="label">Χρώμα</span>
               <span className="value">
                 {COLOR_NAME[wine.color]} {STYLE_NAME[wine.style] ?? ""}
-              </span>
-            </div>
-            <div className="fact">
-              <span className="label">Τιμή</span>
-              <span className="value">
-                {wine.winery.websiteUrl ? (
-                  <a
-                    href={wine.winery.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-underline"
-                    style={{ color: "var(--wine)" }}
-                  >
-                    Δες στο site του οινοποιείου
-                  </a>
-                ) : (
-                  "—"
-                )}
               </span>
             </div>
           </div>

@@ -38,16 +38,23 @@ function LeafIcon() {
 
 async function getHeroBottles() {
   const colors: WineColor[] = [WineColor.RED, WineColor.WHITE, WineColor.ROSE];
-  const perColor = await Promise.all(
-    colors.map((color) =>
-      prisma.wine.findFirst({
-        where: { status: ContentStatus.PUBLISHED, color, labelImage: { not: null } },
-        select: { slug: true, name: true, labelImage: true },
-        orderBy: { createdAt: "desc" },
-      })
-    )
-  );
-  return perColor.filter((w): w is NonNullable<typeof w> => !!w);
+  const usedWineryIds = new Set<string>();
+  const result: { slug: string; name: string; labelImage: string | null }[] = [];
+
+  for (const color of colors) {
+    const candidates = await prisma.wine.findMany({
+      where: { status: ContentStatus.PUBLISHED, color, labelImage: { not: null } },
+      select: { slug: true, name: true, labelImage: true, wineryId: true },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    });
+    const pick = candidates.find((w) => !usedWineryIds.has(w.wineryId)) ?? candidates[0];
+    if (pick) {
+      usedWineryIds.add(pick.wineryId);
+      result.push(pick);
+    }
+  }
+  return result;
 }
 
 export default async function Home() {

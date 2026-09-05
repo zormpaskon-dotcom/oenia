@@ -31,7 +31,7 @@ export default async function ComparePage({
       ? prisma.wine.findMany({
           where: { slug: { in: slugs }, status: ContentStatus.PUBLISHED },
           include: {
-            winery: { select: { name: true, websiteUrl: true } },
+            winery: { select: { name: true } },
             region: { select: { name: true } },
             varieties: { include: { variety: { select: { name: true } } } },
           },
@@ -58,17 +58,6 @@ export default async function ComparePage({
     { label: "Χρονιά", render: (w) => (w.vintage ? String(w.vintage) : "—") },
     { label: "Αλκοόλ", render: (w) => (w.abv ? `${w.abv}%` : "—") },
     { label: "Ονομασία", render: (w) => (w.appellation ? APPELLATION_LABEL[w.appellation] : "—") },
-    {
-      label: "Τιμή",
-      render: (w) =>
-        w.winery.websiteUrl ? (
-          <a href={w.winery.websiteUrl} target="_blank" rel="noopener noreferrer" className="link-underline" style={{ color: "var(--wine)" }}>
-            Site οινοποιείου
-          </a>
-        ) : (
-          "—"
-        ),
-    },
     {
       label: "Βαθμολογία",
       render: (w) => `${w.avgRating.toFixed(1).replace(".", ",")} · ${reviewCountLabel(w.reviewCount)}`,
