@@ -29,6 +29,7 @@ export default function HeroSlideshow({ images }: { images: string[] }) {
           aria-hidden="true"
           fill
           sizes="100vw"
+          quality={95}
           priority={i === 0}
           className={i === active ? "is-active" : ""}
           style={{ objectFit: "cover", objectPosition: "center 42%" }}
