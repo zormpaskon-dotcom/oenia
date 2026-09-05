@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 const links = [
-  { href: "/chartis", label: "Χάρτης" },
-  { href: "/tairiasma", label: "Τι θα φας;" },
-  { href: "/sygkrisi", label: "Σύγκριση ετικετών" },
-  { href: "/diavatirio", label: "Το διαβατήριό σου" },
-];
+  { href: "/chartis", key: "explore_map" },
+  { href: "/tairiasma", key: "explore_pairing" },
+  { href: "/sygkrisi", key: "explore_compare" },
+  { href: "/diavatirio", key: "explore_passport" },
+] as const;
 
 export default function ExploreMenu() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -38,7 +40,7 @@ export default function ExploreMenu() {
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        Εξερεύνηση
+        {t("nav_explore")}
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
           <path d="M6 9l6 6 6-6" />
         </svg>
@@ -47,7 +49,7 @@ export default function ExploreMenu() {
         <div className="explore-panel" role="menu">
           {links.map((l) => (
             <Link key={l.href} href={l.href} role="menuitem" onClick={() => setOpen(false)}>
-              {l.label}
+              {t(l.key)}
             </Link>
           ))}
         </div>

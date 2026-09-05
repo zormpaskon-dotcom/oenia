@@ -148,7 +148,7 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
   color: var(--wine);
   line-height: 1;
 }
-.site-header nav{ display:flex; gap:30px; align-items:center; }
+.site-header nav{ display:flex; gap:30px; align-items:center; line-height:1; }
 .site-header nav a{
   font-size:12px;
   letter-spacing:.08em;
@@ -163,6 +163,17 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
   display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600;
   font-family:var(--font-display);
 }
+.lang-toggle{
+  display:inline-flex; align-items:center; gap:4px;
+  font-family:var(--font-body); font-size:12px; letter-spacing:.04em;
+  background:none; border:none; cursor:pointer; padding:0; color:var(--ink);
+}
+.lang-toggle span{ opacity:.5; transition:opacity .15s ease; }
+.lang-toggle span.is-active{ opacity:1; color:var(--wine); font-weight:600; }
+.lang-toggle-sep{ opacity:.3 !important; }
+.lang-toggle:hover span{ opacity:.8; }
+.lang-toggle:hover span.is-active{ opacity:1; }
+
 .nav-search{
   width:34px; height:34px; border-radius:50%;
   border:1px solid var(--line);

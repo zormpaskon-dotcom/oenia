@@ -1,50 +1,59 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/components/LanguageProvider";
+import type { TranslationKey } from "@/lib/i18n";
 
 const footerColumns = [
   {
-    title: "Ανακάλυψη",
+    titleKey: "footer_col_discover",
     links: [
-      { href: "/tairiasma", label: "Τι θα φας;" },
-      { href: "/diavatirio", label: "Το διαβατήριό σου" },
-      { href: "/chartis", label: "Χάρτης" },
+      { href: "/tairiasma", key: "explore_pairing" },
+      { href: "/diavatirio", key: "explore_passport" },
+      { href: "/chartis", key: "explore_map" },
     ],
   },
   {
-    title: "Εξερεύνηση",
+    titleKey: "footer_col_explore",
     links: [
-      { href: "/krasia", label: "Ετικέτες" },
-      { href: "/oinopoieia", label: "Οινοποιεία" },
-      { href: "/poikilies", label: "Ποικιλίες" },
-      { href: "/perioches", label: "Περιοχές" },
+      { href: "/krasia", key: "nav_wines" },
+      { href: "/oinopoieia", key: "nav_wineries" },
+      { href: "/poikilies", key: "nav_varieties" },
+      { href: "/perioches", key: "footer_regions" },
     ],
   },
   {
-    title: "Περιεχόμενο",
+    titleKey: "footer_col_content",
     links: [
-      { href: "/arthra", label: "Άρθρα" },
-      { href: "/perioches", label: "Περιοχές" },
-      { href: "/arthra", label: "Οδηγοί" },
+      { href: "/arthra", key: "nav_articles" },
+      { href: "/perioches", key: "footer_regions" },
+      { href: "/arthra", key: "footer_guides" },
     ],
   },
   {
-    title: "Σχετικά",
+    titleKey: "footer_col_about",
     links: [
-      { href: "/pos-leitourgoume", label: "Πώς λειτουργούμε" },
-      { href: "/gia-oinopoieia", label: "Για οινοποιεία" },
-      { href: "/sygkrisi", label: "Σύγκριση ετικετών" },
+      { href: "/pos-leitourgoume", key: "footer_how_it_works" },
+      { href: "/gia-oinopoieia", key: "footer_for_wineries" },
+      { href: "/sygkrisi", key: "explore_compare" },
     ],
   },
   {
-    title: "Νομικά",
+    titleKey: "footer_col_legal",
     links: [
-      { href: "/politiki-aporritou", label: "Πολιτική απορρήτου" },
-      { href: "/oroi-xrisis", label: "Όροι χρήσης" },
-      { href: "/politiki-moderation", label: "Πολιτική moderation" },
+      { href: "/politiki-aporritou", key: "footer_privacy" },
+      { href: "/oroi-xrisis", key: "footer_terms" },
+      { href: "/politiki-moderation", key: "footer_moderation" },
     ],
   },
-];
+] as const satisfies ReadonlyArray<{
+  titleKey: TranslationKey;
+  links: ReadonlyArray<{ href: string; key: TranslationKey }>;
+}>;
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="site-footer">
       <div className="wrap">
@@ -52,24 +61,22 @@ export default function Footer() {
           <div className="logo" style={{ fontSize: 30 }}>
             oenia
           </div>
-          <p className="footer-note">
-            Το Oenia καταγράφει και ενημερώνει για το ελληνικό κρασί. Δεν πουλάμε προϊόντα.
-          </p>
+          <p className="footer-note">{t("footer_note")}</p>
         </div>
         <div className="footer-links">
           {footerColumns.map((col) => (
-            <div className="footer-col" key={col.title}>
-              <h4>{col.title}</h4>
+            <div className="footer-col" key={col.titleKey}>
+              <h4>{t(col.titleKey)}</h4>
               {col.links.map((link, i) => (
                 <Link key={`${link.href}-${i}`} href={link.href}>
-                  {link.label}
+                  {t(link.key)}
                 </Link>
               ))}
             </div>
           ))}
         </div>
       </div>
-      <div className="wrap footer-bottom">© 2026 Oenia. Με αγάπη για το ελληνικό κρασί.</div>
+      <div className="wrap footer-bottom">{t("footer_bottom")}</div>
     </footer>
   );
 }

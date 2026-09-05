@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import ExploreMenu from "@/components/ExploreMenu";
+import NavLinks from "@/components/NavLinks";
+import AuthNavLink from "@/components/AuthNavLink";
 import SearchOverlay from "@/components/SearchOverlay";
-
-const navLinks = [
-  { href: "/krasia", label: "Ετικέτες" },
-  { href: "/oinopoieia", label: "Οινοποιεία" },
-  { href: "/poikilies", label: "Ποικιλίες" },
-  { href: "/arthra", label: "Άρθρα" },
-];
+import LanguageToggle from "@/components/LanguageToggle";
 
 function initialsOf(name: string) {
   return name
@@ -21,6 +16,7 @@ function initialsOf(name: string) {
 
 export default async function Header() {
   const session = await auth();
+  const initials = session?.user ? initialsOf(session.user.name ?? session.user.email ?? "?") : null;
 
   return (
     <header className="site-header glass">
@@ -29,23 +25,9 @@ export default async function Header() {
           oenia
         </Link>
         <nav>
-          <div className="nav-links" style={{ display: "flex", gap: 34 }}>
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="link-underline">
-                {link.label}
-              </Link>
-            ))}
-            <ExploreMenu />
-          </div>
-          {session?.user ? (
-            <Link href="/profil" aria-label="Το προφίλ μου">
-              <span className="nav-avatar">{initialsOf(session.user.name ?? session.user.email ?? "?")}</span>
-            </Link>
-          ) : (
-            <Link href="/login" className="link-underline" style={{ fontSize: 15 }}>
-              Σύνδεση
-            </Link>
-          )}
+          <NavLinks />
+          <AuthNavLink initials={initials} />
+          <LanguageToggle />
           <SearchOverlay />
         </nav>
       </div>

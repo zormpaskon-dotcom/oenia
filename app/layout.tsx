@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AgeGate from "@/components/AgeGate";
 import CookieBanner from "@/components/CookieBanner";
+import LanguageProvider from "@/components/LanguageProvider";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -50,11 +51,13 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} ${alexBrush.variable}`}
     >
       <body>
-        <AgeGate />
-        <Header />
-        {children}
-        <Footer />
-        <CookieBanner />
+        <LanguageProvider>
+          <AgeGate />
+          <Header />
+          {children}
+          <Footer />
+          <CookieBanner />
+        </LanguageProvider>
       </body>
     </html>
   );
