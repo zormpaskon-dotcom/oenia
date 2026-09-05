@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import CompareSlots, { type CompareOption } from "@/components/CompareSlots";
-import { APPELLATION_LABEL, COLOR_NAME, PRICE_SYMBOL, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import { APPELLATION_LABEL, COLOR_NAME, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
 
 export const metadata: Metadata = {
   title: "Σύγκριση ετικετών | Oenia",
@@ -31,7 +31,7 @@ export default async function ComparePage({
       ? prisma.wine.findMany({
           where: { slug: { in: slugs }, status: ContentStatus.PUBLISHED },
           include: {
-            winery: { select: { name: true } },
+            winery: { select: { name: true, websiteUrl: true } },
             region: { select: { name: true } },
             varieties: { include: { variety: { select: { name: true } } } },
           },
@@ -58,7 +58,17 @@ export default async function ComparePage({
     { label: "Χρονιά", render: (w) => (w.vintage ? String(w.vintage) : "—") },
     { label: "Αλκοόλ", render: (w) => (w.abv ? `${w.abv}%` : "—") },
     { label: "Ονομασία", render: (w) => (w.appellation ? APPELLATION_LABEL[w.appellation] : "—") },
-    { label: "Ένδειξη τιμής", render: (w) => (w.priceRange ? PRICE_SYMBOL[w.priceRange] : "—") },
+    {
+      label: "Τιμή",
+      render: (w) =>
+        w.winery.websiteUrl ? (
+          <a href={w.winery.websiteUrl} target="_blank" rel="noopener noreferrer" className="link-underline" style={{ color: "var(--wine)" }}>
+            Site οινοποιείου
+          </a>
+        ) : (
+          "—"
+        ),
+    },
     {
       label: "Βαθμολογία",
       render: (w) => `${w.avgRating.toFixed(1).replace(".", ",")} · ${reviewCountLabel(w.reviewCount)}`,

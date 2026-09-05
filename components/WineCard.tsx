@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { PriceRange, WineColor } from "@prisma/client";
-import { COLOR_NAME, PRICE_SYMBOL, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import type { WineColor } from "@prisma/client";
+import { COLOR_NAME, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
 import WinePhoto from "@/components/WinePhoto";
 
 export type WineCardData = {
@@ -8,7 +8,6 @@ export type WineCardData = {
   name: string;
   color: WineColor;
   style: string;
-  priceRange: PriceRange | null;
   avgRating: number;
   reviewCount: number;
   labelImage: string | null;
@@ -39,7 +38,6 @@ export default function WineCard({ wine }: { wine: WineCardData }) {
           <span className="rating-meta">
             <strong>{reviewCountLabel(wine.reviewCount)}</strong>
             {COLOR_NAME[wine.color]} {STYLE_NAME[wine.style] ?? ""}
-            {wine.priceRange ? ` · ${PRICE_SYMBOL[wine.priceRange]}` : ""}
           </span>
         </div>
       </Link>

@@ -108,6 +108,22 @@ export default async function WineryDetailPage({
           )}
         </div>
         <div className="facts-side">
+          {winery.websiteUrl && (
+            <div className="fact">
+              <span className="label">Επίσημο site</span>
+              <span className="value">
+                <a
+                  href={winery.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline"
+                  style={{ color: "var(--wine)" }}
+                >
+                  Δες τιμές &amp; προϊόντα
+                </a>
+              </span>
+            </div>
+          )}
           {winery.foundedYear && (
             <div className="fact">
               <span className="label">Ίδρυση</span>

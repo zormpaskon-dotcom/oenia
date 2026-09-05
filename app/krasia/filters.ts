@@ -1,4 +1,4 @@
-import { PriceRange, WineColor, WineStyle } from "@prisma/client";
+import { WineColor, WineStyle } from "@prisma/client";
 
 export const COLOR_LABELS: Record<string, string> = {
   white: "Λευκό",
@@ -19,18 +19,6 @@ export const COLOR_SLUG_BY_ENUM: Record<WineColor, string> = {
   RED: "red",
   ROSE: "rose",
   ORANGE: "orange",
-};
-
-export const PRICE_LABELS: Record<string, string> = {
-  budget: "€",
-  mid: "€€",
-  premium: "€€€",
-};
-
-export const PRICE_ENUM: Record<string, PriceRange> = {
-  budget: PriceRange.BUDGET,
-  mid: PriceRange.MID,
-  premium: PriceRange.PREMIUM,
 };
 
 export const STYLE_LABELS: Record<string, string> = {

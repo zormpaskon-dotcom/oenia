@@ -189,7 +189,6 @@ model Wine {
   abv          Float?
   appellation  Appellation?
 
-  priceRange   PriceRange?                   // €/€€/€€€ — ένδειξη, όχι τιμή
   labelImage   String?
   description  String? @db.Text
   tastingNotes String? @db.Text
@@ -229,12 +228,6 @@ enum WineStyle {
   OFF_DRY
   SEMI_SWEET
   SWEET
-}
-
-enum PriceRange {
-  BUDGET    // €
-  MID       // €€
-  PREMIUM   // €€€
 }
 
 // Join: κρασί ↔ ποικιλία, με ποσοστό blend

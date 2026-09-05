@@ -12,12 +12,6 @@ export const STYLE_NAME: Record<string, string> = {
   SWEET: "γλυκό",
 };
 
-export const PRICE_SYMBOL: Record<string, string> = {
-  BUDGET: "€",
-  MID: "€€",
-  PREMIUM: "€€€",
-};
-
 export const APPELLATION_LABEL: Record<string, string> = {
   PDO: "ΠΟΠ",
   PGI: "ΠΓΕ",

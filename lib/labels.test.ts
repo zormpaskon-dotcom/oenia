@@ -3,7 +3,6 @@ import {
   ArticleCategory,
   Appellation,
   MacroRegion,
-  PriceRange,
   WineColor,
   WineStyle,
 } from "@prisma/client";
@@ -13,7 +12,6 @@ import {
   COLOR_GRADIENT,
   COLOR_NAME,
   MACRO_REGION_LABEL,
-  PRICE_SYMBOL,
   STYLE_NAME,
   reviewCountLabel,
 } from "./labels";
@@ -38,12 +36,6 @@ describe("label map completeness", () => {
   it("STYLE_NAME covers every WineStyle", () => {
     for (const style of Object.values(WineStyle)) {
       expect(STYLE_NAME[style], `missing STYLE_NAME for ${style}`).toBeDefined();
-    }
-  });
-
-  it("PRICE_SYMBOL covers every PriceRange", () => {
-    for (const price of Object.values(PriceRange)) {
-      expect(PRICE_SYMBOL[price], `missing PRICE_SYMBOL for ${price}`).toBeDefined();
     }
   });
 
