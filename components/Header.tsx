@@ -4,6 +4,7 @@ import NavLinks from "@/components/NavLinks";
 import AuthNavLink from "@/components/AuthNavLink";
 import SearchOverlay from "@/components/SearchOverlay";
 import LanguageToggle from "@/components/LanguageToggle";
+import ThemeToggle from "@/components/ThemeToggle";
 
 function initialsOf(name: string) {
   return name
@@ -28,6 +29,7 @@ export default async function Header() {
           <NavLinks />
           <AuthNavLink initials={initials} />
           <LanguageToggle />
+          <ThemeToggle />
           <SearchOverlay />
         </nav>
       </div>

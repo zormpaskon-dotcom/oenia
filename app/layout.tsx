@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Fraunces, Inter, Alex_Brush } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AgeGate from "@/components/AgeGate";
 import CookieBanner from "@/components/CookieBanner";
 import LanguageProvider from "@/components/LanguageProvider";
+import ThemeProvider from "@/components/ThemeProvider";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -51,13 +53,20 @@ export default function RootLayout({
       className={`${fraunces.variable} ${inter.variable} ${alexBrush.variable}`}
     >
       <body>
-        <LanguageProvider>
-          <AgeGate />
-          <Header />
-          {children}
-          <Footer />
-          <CookieBanner />
-        </LanguageProvider>
+        {/* Εφαρμόζει αποθηκευμένο (ρητό) θέμα πριν το πρώτο paint, ώστε να μη
+            γίνεται flash λάθος θέματος όταν διαφέρει από το system preference. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`try{var t=localStorage.getItem('oenia-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}`}
+        </Script>
+        <ThemeProvider>
+          <LanguageProvider>
+            <AgeGate />
+            <Header />
+            {children}
+            <Footer />
+            <CookieBanner />
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
