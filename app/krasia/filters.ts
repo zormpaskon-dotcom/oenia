@@ -1,4 +1,4 @@
-import { PriceRange, WineColor } from "@prisma/client";
+import { PriceRange, WineColor, WineStyle } from "@prisma/client";
 
 export const COLOR_LABELS: Record<string, string> = {
   white: "Λευκό",
@@ -33,6 +33,27 @@ export const PRICE_ENUM: Record<string, PriceRange> = {
   premium: PriceRange.PREMIUM,
 };
 
+export const STYLE_LABELS: Record<string, string> = {
+  dry: "Ξηρό",
+  off_dry: "Ημίξηρο",
+  semi_sweet: "Ημίγλυκο",
+  sweet: "Γλυκό",
+};
+
+export const STYLE_ENUM: Record<string, WineStyle> = {
+  dry: WineStyle.DRY,
+  off_dry: WineStyle.OFF_DRY,
+  semi_sweet: WineStyle.SEMI_SWEET,
+  sweet: WineStyle.SWEET,
+};
+
+export const STYLE_SLUG_BY_ENUM: Record<WineStyle, string> = {
+  DRY: "dry",
+  OFF_DRY: "off_dry",
+  SEMI_SWEET: "semi_sweet",
+  SWEET: "sweet",
+};
+
 export const SORT_OPTIONS = [
   { value: "popular", label: "Δημοφιλή" },
   { value: "rating", label: "Καλύτερη βαθμολογία" },
@@ -47,7 +68,7 @@ export type FilterState = {
   region: string[];
   variety: string[];
   minRating?: number;
-  price?: string;
+  style?: string;
   sort?: string;
 };
 
@@ -67,7 +88,7 @@ export function hrefFor(state: FilterState): string {
   if (state.region.length) params.set("region", state.region.join(","));
   if (state.variety.length) params.set("variety", state.variety.join(","));
   if (state.minRating) params.set("minRating", String(state.minRating));
-  if (state.price) params.set("price", state.price);
+  if (state.style) params.set("style", state.style);
   if (state.sort) params.set("sort", state.sort);
   const qs = params.toString();
   return qs ? `/krasia?${qs}` : "/krasia";

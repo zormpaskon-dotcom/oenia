@@ -46,7 +46,7 @@ describe("hrefFor", () => {
       color: ["red", "rose"],
       region: ["naoussa"],
       minRating: 4,
-      price: "mid",
+      style: "dry",
       sort: "rating",
     });
     const url = new URL(href, "http://example.com");
@@ -54,7 +54,7 @@ describe("hrefFor", () => {
     expect(url.searchParams.get("color")).toBe("red,rose");
     expect(url.searchParams.get("region")).toBe("naoussa");
     expect(url.searchParams.get("minRating")).toBe("4");
-    expect(url.searchParams.get("price")).toBe("mid");
+    expect(url.searchParams.get("style")).toBe("dry");
     expect(url.searchParams.get("sort")).toBe("rating");
   });
 

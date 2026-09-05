@@ -9,8 +9,8 @@ import {
   COLOR_ENUM,
   COLOR_LABELS,
   COLOR_SLUG_BY_ENUM,
-  PRICE_ENUM,
-  PRICE_LABELS,
+  STYLE_ENUM,
+  STYLE_LABELS,
   hrefFor,
   toList,
   toggleValue,
@@ -43,7 +43,7 @@ export default async function KrasiaPage({
     region: toList(sp.region),
     variety: toList(sp.variety),
     minRating: sp.minRating ? Number(sp.minRating) : undefined,
-    price: typeof sp.price === "string" ? sp.price : undefined,
+    style: typeof sp.style === "string" ? sp.style : undefined,
     sort: typeof sp.sort === "string" ? sp.sort : undefined,
   };
 
@@ -57,7 +57,7 @@ export default async function KrasiaPage({
       ? { varieties: { some: { variety: { slug: { in: state.variety } } } } }
       : {}),
     ...(state.minRating ? { avgRating: { gte: state.minRating } } : {}),
-    ...(state.price && PRICE_ENUM[state.price] ? { priceRange: PRICE_ENUM[state.price] } : {}),
+    ...(state.style && STYLE_ENUM[state.style] ? { style: STYLE_ENUM[state.style] } : {}),
   };
 
   const orderBy = ORDER_BY[state.sort ?? "popular"] ?? ORDER_BY.popular;
@@ -130,10 +130,10 @@ export default async function KrasiaPage({
     href: hrefFor({ ...state, minRating: state.minRating === min ? undefined : min }),
   }));
 
-  const priceOptions = (["budget", "mid", "premium"] as const).map((p) => ({
-    label: PRICE_LABELS[p],
-    active: state.price === p,
-    href: hrefFor({ ...state, price: state.price === p ? undefined : p }),
+  const styleOptions = (["dry", "off_dry", "semi_sweet", "sweet"] as const).map((s) => ({
+    label: STYLE_LABELS[s],
+    active: state.style === s,
+    href: hrefFor({ ...state, style: state.style === s ? undefined : s }),
   }));
 
   const hasActiveFilters =
@@ -141,7 +141,7 @@ export default async function KrasiaPage({
     state.region.length > 0 ||
     state.variety.length > 0 ||
     !!state.minRating ||
-    !!state.price;
+    !!state.style;
 
   const clearHref = state.sort ? `/krasia?sort=${state.sort}` : "/krasia";
 
@@ -161,8 +161,8 @@ export default async function KrasiaPage({
     ...(state.minRating
       ? [{ label: `${state.minRating},0+ βαθμολογία`, href: hrefFor({ ...state, minRating: undefined }) }]
       : []),
-    ...(state.price
-      ? [{ label: PRICE_LABELS[state.price] ?? state.price, href: hrefFor({ ...state, price: undefined }) }]
+    ...(state.style
+      ? [{ label: STYLE_LABELS[state.style] ?? state.style, href: hrefFor({ ...state, style: undefined }) }]
       : []),
   ];
 
@@ -180,7 +180,7 @@ export default async function KrasiaPage({
           regionOptions={regionOptions}
           varietyOptions={varietyOptions}
           ratingOptions={ratingOptions}
-          priceOptions={priceOptions}
+          styleOptions={styleOptions}
           clearHref={clearHref}
           hasActiveFilters={hasActiveFilters}
         />

@@ -300,6 +300,14 @@ section{ padding:60px 0; }
 }
 .filter-option .count{ color:var(--muted); font-size:13px; margin-left:auto; }
 
+.filter-search{
+  width:100%; font-size:13.5px; padding:8px 10px; margin-bottom:12px;
+  border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--paper); font-family:var(--font-body); color:var(--ink);
+}
+.filter-option-list{ max-height:220px; overflow-y:auto; padding-right:4px; }
+.filter-no-match{ font-size:13px; color:var(--muted); }
+
 .rating-filter{ display:flex; flex-direction:column; gap:8px; }
 .rating-filter a{
   display:block; border:1px solid transparent; border-radius:var(--radius);
@@ -308,12 +316,12 @@ section{ padding:60px 0; }
 .rating-filter a:hover{ background:var(--paper-alt); }
 .rating-filter a.is-active{ border-color:var(--wine); background:var(--paper-alt); color:var(--wine); }
 
-.price-row{ display:flex; gap:8px; }
-.price-chip{
-  flex:1; text-align:center; padding:9px 0; border:1px solid var(--line);
-  border-radius:var(--radius); font-size:14px; display:block;
+.style-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.style-chip{
+  flex:1 1 calc(50% - 4px); text-align:center; padding:9px 4px; border:1px solid var(--line);
+  border-radius:var(--radius); font-size:13.5px; display:block;
 }
-.price-chip.is-active{ background:var(--wine); color:var(--paper); border-color:var(--wine); }
+.style-chip.is-active{ background:var(--wine); color:var(--paper); border-color:var(--wine); }
 
 .clear-filters{
   display:inline-block; font-size:13.5px; color:var(--muted);
