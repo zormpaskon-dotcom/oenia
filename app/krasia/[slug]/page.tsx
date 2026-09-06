@@ -101,6 +101,8 @@ export default async function WineDetailPage({
   const varietyLabel = wine.varieties.map((v) => v.variety.name).join(", ");
   const filledDots = Math.round(wine.avgRating);
 
+  const blend = [...wine.varieties].sort((a, b) => (b.percentage ?? -1) - (a.percentage ?? -1));
+
   return (
     <>
       <JsonLd
@@ -174,6 +176,17 @@ export default async function WineDetailPage({
 
           {wine.description && <p className="desc">{wine.description}</p>}
 
+          {blend.length > 1 && (
+            <div className="blend-row">
+              {blend.map((v) => (
+                <span className="blend-chip" key={v.variety.slug}>
+                  {v.percentage ? `${v.percentage}% ` : ""}
+                  {v.variety.name}
+                </span>
+              ))}
+            </div>
+          )}
+
           <div className="fact-grid">
             <div className="fact">
               <span className="label">Χρονιά</span>
@@ -194,10 +207,10 @@ export default async function WineDetailPage({
           {wine.tastingNotes && (
             <div className="tasting-notes">
               <h3>Σημειώσεις γεύσης</h3>
-              <p>
-                {wine.tastingNotes}
-                {wine.servingTemp ? ` Καλύτερα σερβιρισμένο στους ${wine.servingTemp}.` : ""}
-              </p>
+              <p>{wine.tastingNotes}</p>
+              {wine.servingTemp && (
+                <span className="serving-chip">Σερβίρισμα στους {wine.servingTemp}</span>
+              )}
             </div>
           )}
         </div>

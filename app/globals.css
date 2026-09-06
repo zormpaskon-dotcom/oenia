@@ -501,9 +501,20 @@ section{ padding:60px 0; }
 .close-btn:hover{ border-color:var(--wine); color:var(--wine); }
 
 .desc{ font-size:16px; color:var(--ink); max-width:60ch; margin-bottom:10px; }
-.tasting-notes{ background:var(--paper-alt); padding:24px; border-radius:var(--radius); margin-top:24px; }
-.tasting-notes h3{ font-size:16px; margin-bottom:10px; }
-.tasting-notes p{ font-size:14.5px; color:var(--muted); margin:0; max-width:56ch; }
+
+.blend-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+.blend-chip{
+  border:1px solid var(--gold); color:var(--wine-deep); background:var(--paper-alt);
+  border-radius:20px; padding:6px 14px; font-size:13px; font-family:var(--font-display);
+}
+
+.tasting-notes{ background:var(--paper-alt); padding:28px; border-radius:var(--radius); margin-top:24px; }
+.tasting-notes h3{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; font-family:var(--font-body); font-weight:600; }
+.tasting-notes p{ font-size:16px; color:var(--ink); margin:0; max-width:60ch; line-height:1.7; }
+.tasting-notes .serving-chip{
+  display:inline-flex; align-items:center; gap:6px; margin-top:16px;
+  border:1px solid var(--line); border-radius:20px; padding:7px 14px; font-size:13px; color:var(--muted);
+}
 
 .pairing-row{ display:flex; gap:12px; flex-wrap:wrap; }
 .pairing-chip{ border:1px solid var(--line); border-radius:20px; padding:9px 18px; font-size:14px; color:var(--ink); }

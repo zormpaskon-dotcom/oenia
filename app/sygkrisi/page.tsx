@@ -52,7 +52,14 @@ export default async function ComparePage({
   const rows: { label: string; render: (w: (typeof wines)[number]) => ReactNode }[] = [
     { label: "Οινοποιείο", render: (w) => w.winery.name },
     { label: "Περιοχή", render: (w) => w.region.name },
-    { label: "Ποικιλία", render: (w) => w.varieties.map((v) => v.variety.name).join(", ") || "—" },
+    {
+      label: "Ποικιλία",
+      render: (w) =>
+        [...w.varieties]
+          .sort((a, b) => (b.percentage ?? -1) - (a.percentage ?? -1))
+          .map((v) => (v.percentage ? `${v.percentage}% ${v.variety.name}` : v.variety.name))
+          .join(", ") || "—",
+    },
     { label: "Χρώμα", render: (w) => COLOR_NAME[w.color] },
     { label: "Στιλ", render: (w) => STYLE_NAME[w.style] ?? "—" },
     { label: "Χρονιά", render: (w) => (w.vintage ? String(w.vintage) : "—") },
