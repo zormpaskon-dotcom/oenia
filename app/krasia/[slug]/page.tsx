@@ -216,6 +216,28 @@ export default async function WineDetailPage({
         </div>
       </div>
 
+      {(wine.vineyardNotes || wine.winemakingNotes) && (
+        <section>
+          <div className="wrap">
+            <h2 className="section-title">Αμπελώνας &amp; Οινοποίηση</h2>
+            <div className="vineyard-grid">
+              {wine.vineyardNotes && (
+                <div className="vineyard-block">
+                  <h3>Ο αμπελώνας</h3>
+                  <p>{wine.vineyardNotes}</p>
+                </div>
+              )}
+              {wine.winemakingNotes && (
+                <div className="vineyard-block">
+                  <h3>Η οινοποίηση</h3>
+                  <p>{wine.winemakingNotes}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {wine.foodPairings.length > 0 && (
         <section>
           <div className="wrap">

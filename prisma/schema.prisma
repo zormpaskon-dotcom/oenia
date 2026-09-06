@@ -195,6 +195,9 @@ model Wine {
   servingTemp  String?                       // "8–10°C"
   foodPairings String[]                      // ["Θαλασσινά", "Φάβα"]
 
+  vineyardNotes   String? @db.Text           // υψόμετρο, ηλικία κλήματος, έδαφος
+  winemakingNotes String? @db.Text           // τρύγος, ζύμωση, παλαίωση
+
   // Denormalized για γρήγορα sorts/φίλτρα
   avgRating    Float @default(0)
   reviewCount  Int   @default(0)
