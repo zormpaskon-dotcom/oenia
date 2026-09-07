@@ -4,8 +4,8 @@
 // ίδια τη φωτογραφημένη ετικέτα. Το site δεν αναφέρει % αλκοόλ, ζεύγη
 // φαγητού, ούτε θερμοκρασία σερβιρίσματος σε καμία σελίδα κρασιού — αυτά
 // μένουν κενά αντί να εικαστούν. Το "Thema Ερυθρό" (Agiorgitiko-Syrah)
-// υπάρχει στο site αλλά δεν στάλθηκε φωτογραφία γι' αυτό, οπότε
-// παραλείπεται.
+// δεν είχε φωτογραφία τη στιγμή αυτού του script — προστέθηκε ξεχωριστά
+// σε seed-pavlidis-thema-erythro.ts.
 
 import { Appellation, ContentStatus, WineColor, WineStyle } from "@prisma/client";
 import { prisma } from "../lib/prisma";
