@@ -5,6 +5,7 @@ import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
+import { COLOR_NAME } from "@/lib/labels";
 
 async function getWinery(slug: string) {
   return prisma.winery.findUnique({
@@ -160,7 +161,7 @@ export default async function WineryDetailPage({
                 <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="label-photo" sizes="(max-width: 820px) 100vw, 33vw" />
                 <h3>{wine.name}</h3>
                 <p className="meta">
-                  {wine.color === "WHITE" ? "Λευκό" : wine.color === "RED" ? "Κόκκινο" : "Ροζέ"}
+                  {COLOR_NAME[wine.color]}
                   {wine.vintage ? ` · ${wine.vintage}` : ""}
                 </p>
               </Link>
