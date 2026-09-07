@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { WineColor } from "@prisma/client";
-import { COLOR_NAME, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import { COLOR_NAME, reviewCountLabel } from "@/lib/labels";
 import WinePhoto from "@/components/WinePhoto";
 
 export type WineCardData = {
@@ -37,7 +37,7 @@ export default function WineCard({ wine }: { wine: WineCardData }) {
           <span className="rating-number">{wine.avgRating.toFixed(1).replace(".", ",")}</span>
           <span className="rating-meta">
             <strong>{reviewCountLabel(wine.reviewCount)}</strong>
-            {COLOR_NAME[wine.color]} {STYLE_NAME[wine.style] ?? ""}
+            {COLOR_NAME[wine.color]}
           </span>
         </div>
       </Link>

@@ -11,7 +11,7 @@ import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
 import WineCard from "@/components/WineCard";
 import { reportReviewAction } from "@/lib/actions/reviews";
-import { APPELLATION_LABEL, COLOR_NAME, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import { APPELLATION_LABEL, COLOR_NAME, reviewCountLabel } from "@/lib/labels";
 
 async function getWine(slug: string) {
   return prisma.wine.findUnique({
@@ -198,9 +198,7 @@ export default async function WineDetailPage({
             </div>
             <div className="fact">
               <span className="label">Χρώμα</span>
-              <span className="value">
-                {COLOR_NAME[wine.color]} {STYLE_NAME[wine.style] ?? ""}
-              </span>
+              <span className="value">{COLOR_NAME[wine.color]}</span>
             </div>
           </div>
 
