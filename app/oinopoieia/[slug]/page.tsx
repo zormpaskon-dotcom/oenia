@@ -89,7 +89,11 @@ export default async function WineryDetailPage({
           </span>
           <h1>{winery.name}</h1>
           <span className="winery-sub">
-            {winery.foundedYear ? `Οικογενειακό κτήμα από το ${winery.foundedYear}` : "Οινοποιείο"}
+            {winery.foundedYear
+              ? winery.slug === "mikra-thira"
+                ? `Οινοποιείο από το ${winery.foundedYear}`
+                : `Οικογενειακό κτήμα από το ${winery.foundedYear}`
+              : "Οινοποιείο"}
             {winery.generation ? ` · ${winery.generation}η γενιά` : ""}
           </span>
         </div>
