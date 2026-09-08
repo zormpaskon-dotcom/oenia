@@ -1185,21 +1185,8 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 @media (max-width:520px){ .explore-grid{ grid-template-columns:1fr; max-width:340px; margin:0 auto; } }
 
 /* 4 — Προτεινόμενο κρασί */
-.featured-wine{ position:relative; overflow:hidden; background:var(--paper-alt); padding:72px 0; }
-/* Μεγάλη σκιά από κλαδί με φύλλα πίσω από το μπουκάλι, σαν να πέφτει πάνω σε
-   τοίχο πίσω από όλη τη σύνθεση — όχι περιορισμένη μέσα στο μικρό πλαίσιο της
-   φωτογραφίας, στο ίδιο πνεύμα με τη σκιά κλαδιού ελιάς στο hero. */
-.featured-wine::before{
-  content:"";
-  position:absolute;
-  top:-10%; bottom:-6%; left:34%; width:50%;
-  background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20400%20560'%3E%3Cdefs%3E%3Cfilter%20id='sw'%20x='-60%25'%20y='-60%25'%20width='220%25'%20height='220%25'%3E%3CfeGaussianBlur%20stdDeviation='3.5'/%3E%3C/filter%3E%3C/defs%3E%3Cg%20filter='url(%23sw)'%20fill='%233A322C'%20fill-opacity='0.24'%3E%3Cpath%20d='M200,90%20C216,106%20216,128%20200,166%20C184,128%20184,106%20200,90%20Z'%20transform='rotate(22%20200%20128)'/%3E%3Cpath%20d='M240,50%20C256,66%20256,88%20240,126%20C224,88%20224,66%20240,50%20Z'%20transform='rotate(-16%20240%2088)'/%3E%3Cpath%20d='M150,140%20C166,156%20166,178%20150,216%20C134,178%20134,156%20150,140%20Z'%20transform='rotate(52%20150%20178)%20scale(1.15)'/%3E%3Cpath%20d='M230,180%20C246,196%20246,218%20230,256%20C214,218%20214,196%20230,180%20Z'%20transform='rotate(-40%20230%20218)'/%3E%3Cpath%20d='M270,120%20C284,134%20284,154%20270,188%20C256,154%20256,134%20270,120%20Z'%20transform='rotate(8%20270%20154)%20scale(0.9)'/%3E%3Cpath%20d='M190,240%20C206,256%20206,278%20190,316%20C174,278%20174,256%20190,240%20Z'%20transform='rotate(66%20190%20278)%20scale(1.2)'/%3E%3Cpath%20d='M120,80%20C134,94%20134,114%20120,148%20C106,114%20106,94%20120,80%20Z'%20transform='rotate(-28%20120%20114)%20scale(0.8)'/%3E%3Cpath%20d='M255,250%20C270,265%20270,286%20255,320%20C240,286%20240,265%20255,250%20Z'%20transform='rotate(-12%20255%20285)'/%3E%3C/g%3E%3Cpath%20d='M140,40%20C190,110%20230,150%20260,230'%20stroke='%233A322C'%20stroke-opacity='0.2'%20stroke-width='5'%20fill='none'%20filter='url(%23sw)'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:center top;
-  background-size:contain;
-  pointer-events:none;
-}
-.featured-wine-layout{ position:relative; display:grid; grid-template-columns:0.85fr 1fr 0.85fr; gap:24px; align-items:center; }
+.featured-wine{ background:var(--paper-alt); padding:72px 0; }
+.featured-wine-layout{ display:grid; grid-template-columns:0.85fr 1fr 0.85fr; gap:24px; align-items:center; }
 .featured-wine-name{
   font-size:clamp(34px,4.4vw,50px); color:var(--wine); margin:14px 0 6px; line-height:1.05;
 }
@@ -1219,7 +1206,6 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
   .featured-wine-layout{ grid-template-columns:1fr; text-align:center; gap:36px; }
   .featured-wine-quote,.featured-wine-quote-cite{ text-align:center; }
   .featured-wine-quote-rule{ margin:0 auto 16px; }
-  .featured-wine::before{ left:50%; width:78%; transform:translateX(-50%); }
 }
 
 /* 5 — Η Ελλάδα σε ένα κρασί: ίδια δομή με το hero — κείμενο αριστερά που
