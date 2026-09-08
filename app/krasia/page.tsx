@@ -38,6 +38,10 @@ export default async function KrasiaPage({
 }) {
   const sp = await searchParams;
 
+  // Deep-link από τη σελίδα οινοποιείου ("Δες όλα τα κρασιά →") — δεν είναι
+  // μέρος του toggle-based FilterState, απλώς ένα ενεργό φίλτρο winery.
+  const wineryFilter = typeof sp.winery === "string" ? sp.winery : undefined;
+
   const state: FilterState = {
     color: toList(sp.color),
     region: toList(sp.region),
@@ -58,11 +62,12 @@ export default async function KrasiaPage({
       : {}),
     ...(state.minRating ? { avgRating: { gte: state.minRating } } : {}),
     ...(state.style && STYLE_ENUM[state.style] ? { style: STYLE_ENUM[state.style] } : {}),
+    ...(wineryFilter ? { winery: { slug: wineryFilter } } : {}),
   };
 
   const orderBy = ORDER_BY[state.sort ?? "popular"] ?? ORDER_BY.popular;
 
-  const [colorGroups, regions, varieties, wines] = await Promise.all([
+  const [colorGroups, regions, varieties, wines, wineryLabel] = await Promise.all([
     prisma.wine.groupBy({
       by: ["color"],
       where: { status: ContentStatus.PUBLISHED },
@@ -95,6 +100,9 @@ export default async function KrasiaPage({
         varieties: { include: { variety: { select: { name: true } } } },
       },
     }),
+    wineryFilter
+      ? prisma.winery.findUnique({ where: { slug: wineryFilter }, select: { name: true } })
+      : Promise.resolve(null),
   ]);
 
   const colorOptions = colorGroups.map((g) => {
@@ -141,7 +149,8 @@ export default async function KrasiaPage({
     state.region.length > 0 ||
     state.variety.length > 0 ||
     !!state.minRating ||
-    !!state.style;
+    !!state.style ||
+    !!wineryFilter;
 
   const clearHref = state.sort ? `/krasia?sort=${state.sort}` : "/krasia";
 
@@ -164,13 +173,14 @@ export default async function KrasiaPage({
     ...(state.style
       ? [{ label: STYLE_LABELS[state.style] ?? state.style, href: hrefFor({ ...state, style: undefined }) }]
       : []),
+    ...(wineryFilter && wineryLabel ? [{ label: wineryLabel.name, href: hrefFor(state) }] : []),
   ];
 
   return (
     <>
       <div className="wrap page-head">
         <p className="kicker">Εξερεύνηση</p>
-        <h1>Όλες οι ετικέτες</h1>
+        <h1>{wineryLabel ? wineryLabel.name : "Όλες οι ετικέτες"}</h1>
         <p className="result-count">{wines.length} ετικέτες</p>
       </div>
 

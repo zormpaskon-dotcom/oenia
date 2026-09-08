@@ -7,15 +7,29 @@ import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
 import { COLOR_NAME } from "@/lib/labels";
 
+// Γενική, μη-συγκεκριμένη φωτογραφία οινοποιείου/αμπελώνα — χρησιμοποιείται
+// μόνο όταν το οινοποιείο δεν έχει ακόμα δικό του coverImage στη βάση, ώστε
+// το hero να μην μένει ποτέ άδειο. Δεν εμφανίζεται ποτέ ως «η φωτογραφία
+// του συγκεκριμένου κτήματος» — απλώς σαν ατμοσφαιρικό, γενικό φόντο.
+const FALLBACK_WINERY_PHOTO = "/home/explore-wineries.jpg";
+
+function ArrowIcon({ size = 13 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 8h21M15 1l7 7-7 7" />
+    </svg>
+  );
+}
+
 async function getWinery(slug: string) {
   return prisma.winery.findUnique({
     where: { slug },
     include: {
-      region: { select: { name: true, slug: true } },
+      region: true,
       wines: {
         where: { status: ContentStatus.PUBLISHED },
         orderBy: { name: "asc" },
-        include: { varieties: { include: { variety: { select: { name: true } } } } },
+        include: { varieties: { include: { variety: { select: { name: true, slug: true } } } } },
       },
     },
   });
@@ -44,16 +58,37 @@ export default async function WineryDetailPage({
   const winery = await getWinery(slug);
   if (!winery) notFound();
 
-  const mainVarieties = Array.from(
-    new Set(winery.wines.flatMap((w) => w.varieties.map((v) => v.variety.name)))
-  );
+  const grapes = Array.from(
+    new Map(winery.wines.flatMap((w) => w.varieties.map((v) => [v.variety.slug, v.variety] as const))).values()
+  ).sort((a, b) => a.name.localeCompare(b.name, "el"));
 
-  const storyParagraphs = [winery.description, winery.story, winery.philosophy].filter(
-    (p): p is string => !!p
-  );
+  const storyParagraphs = (winery.story ?? winery.description ?? "")
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  // Η πρώτη πρόταση της φιλοσοφίας μεγαλώνει σε editorial statement — δεν
+  // είναι φανταστικό απόσπασμα, είναι κυριολεκτικά το ξεκίνημα του
+  // υπαρκτού κειμένου philosophy από τη βάση.
+  const philosophySentences = winery.philosophy?.split(/(?<=[.!;])\s+/).filter(Boolean) ?? [];
+  const philosophyQuote = philosophySentences[0];
+  const philosophyRest = philosophySentences.slice(1).join(" ");
+
+  const featuredWines = winery.wines.filter((w) => w.labelImage).slice(0, 3);
+
+  const hasVisitInfo = winery.acceptsVisitors || !!winery.visitingHours || !!winery.visitingNotes;
+
+  const techRows: { label: string; value: string }[] = [
+    ...(winery.foundedYear ? [{ label: "Ίδρυση", value: String(winery.foundedYear) }] : []),
+    { label: "Περιοχή", value: winery.region.name + (winery.subRegion ? `, ${winery.subRegion}` : "") },
+    ...(winery.vineyardHectares ? [{ label: "Έκταση αμπελώνα", value: `${winery.vineyardHectares} εκτάρια` }] : []),
+    ...(winery.isOrganic ? [{ label: "Βιολογική καλλιέργεια", value: "Ναι" }] : []),
+    ...(winery.isBiodynamic ? [{ label: "Βιοδυναμική καλλιέργεια", value: "Ναι" }] : []),
+    ...(grapes.length > 0 ? [{ label: "Ποικιλίες", value: String(grapes.length) }] : []),
+  ];
 
   return (
-    <div className="wrap">
+    <>
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -69,110 +104,235 @@ export default async function WineryDetailPage({
               : undefined,
         }}
       />
-      <p className="breadcrumb">
-        <Link href="/">Αρχική</Link> / <Link href="/oinopoieia">Οινοποιεία</Link> / {winery.name}
-      </p>
-      <div
-        className="cover"
-        style={
-          winery.coverImage
-            ? { backgroundImage: `url(${winery.coverImage})`, backgroundSize: "cover", backgroundPosition: "center" }
-            : undefined
-        }
-      />
 
-      <div className="winery-head">
+      <div className="wrap">
+        <p className="breadcrumb">
+          <Link href="/">Αρχική</Link> / <Link href="/oinopoieia">Οινοποιεία</Link> / {winery.name}
+        </p>
+      </div>
+
+      {/* 2 — Hero */}
+      <div className="wrap winery-hero">
         <div>
-          <span className="region-tag">
+          <p className="wine-hero-eyebrow">
+            Οινοποιείο · {winery.region.name}
+          </p>
+          <h1 className="wine-hero-name">{winery.name}</h1>
+          <p className="wine-hero-place">
             {winery.region.name}
-            {winery.subRegion ? ` · ${winery.subRegion}` : ""}
-          </span>
-          <h1>{winery.name}</h1>
-          <span className="winery-sub">
-            {winery.foundedYear
-              ? winery.slug === "mikra-thira"
-                ? `Οινοποιείο από το ${winery.foundedYear}`
-                : `Οικογενειακό κτήμα από το ${winery.foundedYear}`
-              : "Οινοποιείο"}
-            {winery.generation ? ` · ${winery.generation}η γενιά` : ""}
-          </span>
-        </div>
-        <div className="winery-badges">
-          {winery.isVerified && <span className="visit-badge">Επαληθευμένο προφίλ</span>}
-          {winery.isOrganic && <span className="visit-badge">Βιολογική καλλιέργεια</span>}
-          {winery.acceptsVisitors && <span className="visit-badge">Δέχεται επισκέπτες</span>}
-        </div>
-      </div>
+            {winery.subRegion ? `, ${winery.subRegion}` : ""} · Ελλάδα
+            {winery.foundedYear ? ` · Από το ${winery.foundedYear}` : ""}
+          </p>
 
-      <div className="story-grid">
-        <div className="story">
-          {storyParagraphs.length > 0 ? (
-            storyParagraphs.map((p, i) => <p key={i}>{p}</p>)
-          ) : (
-            <p style={{ color: "var(--muted)" }}>Δεν υπάρχει ακόμα περιγραφή για αυτό το οινοποιείο.</p>
-          )}
-        </div>
-        <div className="facts-side">
-          {winery.websiteUrl && (
-            <div className="fact">
-              <span className="label">Επίσημο site</span>
-              <span className="value">
-                <a
-                  href={winery.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-underline"
-                  style={{ color: "var(--wine)" }}
-                >
-                  Δες τιμές &amp; προϊόντα
-                </a>
-              </span>
-            </div>
-          )}
-          {winery.foundedYear && (
-            <div className="fact">
-              <span className="label">Ίδρυση</span>
-              <span className="value">{winery.foundedYear}</span>
-            </div>
-          )}
-          {winery.vineyardHectares && (
-            <div className="fact">
-              <span className="label">Έκταση αμπελώνα</span>
-              <span className="value">{winery.vineyardHectares} εκτάρια</span>
-            </div>
-          )}
-          {mainVarieties.length > 0 && (
-            <div className="fact">
-              <span className="label">Κύριες ποικιλίες</span>
-              <span className="value">{mainVarieties.join(", ")}</span>
-            </div>
-          )}
-          {winery.visitingHours && (
-            <div className="fact">
-              <span className="label">Επισκέψεις</span>
-              <span className="value">{winery.visitingHours}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {winery.wines.length > 0 && (
-        <>
-          <h2 className="section-title">Ετικέτες του οινοποιείου</h2>
-          <div className="label-grid">
-            {winery.wines.map((wine) => (
-              <Link key={wine.id} href={`/krasia/${wine.slug}`} className="label-card reveal">
-                <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="label-photo" sizes="(max-width: 820px) 100vw, 33vw" />
-                <h3>{wine.name}</h3>
-                <p className="meta">
-                  {COLOR_NAME[wine.color]}
-                  {wine.vintage ? ` · ${wine.vintage}` : ""}
-                </p>
-              </Link>
-            ))}
+          <div className="winery-badges-row">
+            {winery.isVerified && <span className="winery-badge">Επαληθευμένο προφίλ</span>}
+            {winery.isOrganic && <span className="winery-badge">Βιολογική καλλιέργεια</span>}
+            {winery.isBiodynamic && <span className="winery-badge">Βιοδυναμική καλλιέργεια</span>}
+            {winery.acceptsVisitors && <span className="winery-badge">Δέχεται επισκέπτες</span>}
           </div>
-        </>
+        </div>
+
+        <div className="winery-hero-photo reveal img-reveal">
+          <img src={winery.coverImage ?? FALLBACK_WINERY_PHOTO} alt="" />
+        </div>
+      </div>
+
+      {/* 5 — Γρήγορα στοιχεία */}
+      <div className="wrap">
+        <div className="wine-quick-strip">
+          {winery.foundedYear && (
+            <div className="wine-quick-item">
+              <span className="l">Ίδρυση</span>
+              <span className="v">{winery.foundedYear}</span>
+            </div>
+          )}
+          <div className="wine-quick-item">
+            <span className="l">Περιοχή</span>
+            <span className="v">{winery.region.name}</span>
+          </div>
+          {grapes.length > 0 && (
+            <div className="wine-quick-item">
+              <span className="l">Ποικιλίες</span>
+              <span className="v">{grapes.length}</span>
+            </div>
+          )}
+          <div className="wine-quick-item">
+            <span className="l">Ετικέτες</span>
+            <span className="v">{winery.wines.length}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Sticky δευτερεύον μενού */}
+      <nav className="wine-subnav">
+        <div className="wrap wine-subnav-inner">
+          <span className="wine-subnav-name">{winery.name}</span>
+          {storyParagraphs.length > 0 && <a href="#story">Ιστορία</a>}
+          <a href="#place">Ο τόπος</a>
+          {philosophyQuote && <a href="#philosophy">Φιλοσοφία</a>}
+          {featuredWines.length > 0 && <a href="#wines">Κρασιά</a>}
+          {grapes.length > 0 && <a href="#grapes">Ποικιλίες</a>}
+          {hasVisitInfo && <a href="#visit">Επίσκεψη</a>}
+        </div>
+      </nav>
+
+      {/* 7 — Η ιστορία */}
+      {storyParagraphs.length > 0 && (
+        <section id="story">
+          <div className="wrap">
+            <h2 className="section-title">Η ιστορία</h2>
+            <div className="winery-story reveal home-reveal">
+              {storyParagraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          </div>
+        </section>
       )}
-    </div>
+
+      {/* 8 — Ο τόπος */}
+      <section id="place" style={{ background: "var(--paper-alt)" }}>
+        <div className="wrap">
+          <div className={`wine-split${winery.region.heroImage ? "" : " no-photo"}`}>
+            <div className="wine-split-copy reveal home-reveal">
+              <p className="wine-split-eyebrow">Ο τόπος</p>
+              <h2 className="wine-split-title">{winery.region.name}</h2>
+              {winery.region.description && <p>{winery.region.description}</p>}
+              <Link href={`/perioches/${winery.region.slug}`} className="link-arrow">
+                Εξερεύνησε την περιοχή
+                <ArrowIcon />
+              </Link>
+            </div>
+            {winery.region.heroImage && (
+              <div className="wine-split-photo">
+                <img className="reveal img-reveal" src={winery.region.heroImage} alt={winery.region.name} />
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 9 — Η φιλοσοφία */}
+      {philosophyQuote && (
+        <section id="philosophy">
+          <div className="wrap">
+            <h2 className="section-title">Η φιλοσοφία</h2>
+            <div className="winery-philosophy reveal home-reveal">
+              <p className="winery-philosophy-quote">{philosophyQuote}</p>
+              {philosophyRest && (
+                <div className="winery-philosophy-rest">
+                  <p>{philosophyRest}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 10 — Τα κρασιά */}
+      {featuredWines.length > 0 && (
+        <section id="wines" style={{ background: "var(--paper-alt)" }}>
+          <div className="wrap">
+            <h2 className="section-title">Τα κρασιά</h2>
+            <div className="wine-similar-grid">
+              {featuredWines.map((wine) => {
+                const variety = wine.varieties[0]?.variety.name;
+                return (
+                  <Link key={wine.id} href={`/krasia/${wine.slug}`} className="wine-similar-card reveal">
+                    <WinePhoto
+                      labelImage={wine.labelImage}
+                      color={wine.color}
+                      wineName={wine.name}
+                      className="wine-similar-photo"
+                      sizes="150px"
+                    />
+                    <h3>{wine.name}</h3>
+                    <span className="wine-similar-meta">
+                      {COLOR_NAME[wine.color]}
+                      {variety ? ` · ${variety}` : ""} · {winery.region.name}
+                    </span>
+                    <span className="wine-similar-link">
+                      Εξερεύνηση κρασιού
+                      <ArrowIcon />
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+            <p style={{ marginTop: 40 }}>
+              <Link href={`/krasia?winery=${winery.slug}`} className="link-arrow">
+                Δες όλα τα κρασιά ({winery.wines.length})
+                <ArrowIcon />
+              </Link>
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* 11 — Οι ποικιλίες */}
+      {grapes.length > 0 && (
+        <section id="grapes">
+          <div className="wrap">
+            <h2 className="section-title">Οι ποικιλίες</h2>
+            <div className="winery-grape-list">
+              {grapes.map((v) => (
+                <Link key={v.slug} href={`/poikilies/${v.slug}`} className="winery-grape-row">
+                  {v.name}
+                  <ArrowIcon size={16} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 12 — Επισκέψου το οινοποιείο */}
+      {hasVisitInfo && (
+        <section id="visit" style={{ background: "var(--paper-alt)" }}>
+          <div className="wrap">
+            <h2 className="section-title">Επισκέψου το οινοποιείο</h2>
+            {winery.visitingHours && (
+              <p style={{ fontSize: 15.5, color: "var(--ink)", marginBottom: 12 }}>
+                <strong>Ώρες επίσκεψης:</strong> {winery.visitingHours}
+              </p>
+            )}
+            {winery.visitingNotes && (
+              <p style={{ fontSize: 15.5, color: "var(--muted)", maxWidth: "60ch", lineHeight: 1.75 }}>
+                {winery.visitingNotes}
+              </p>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* 13 — Τεχνικά στοιχεία */}
+      {techRows.length > 0 && (
+        <section>
+          <div className="wrap">
+            <h2 className="section-title">Στοιχεία οινοποιείου</h2>
+            <dl className="wine-tech-table">
+              {techRows.map((row) => (
+                <div className="wine-tech-row" key={row.label}>
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
+
+      {/* 14 — Επίσημη ιστοσελίδα */}
+      {winery.websiteUrl && (
+        <div className="wrap">
+          <div className="winery-official">
+            <p>Θέλεις να μάθεις περισσότερα;</p>
+            <a href={winery.websiteUrl} target="_blank" rel="noopener noreferrer">
+              Επίσημη ιστοσελίδα →
+            </a>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
