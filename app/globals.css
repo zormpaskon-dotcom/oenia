@@ -366,35 +366,34 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
 .search-group a:hover{ background:var(--paper-alt); color:var(--wine); }
 .search-meta{ font-size:12.5px; color:var(--muted); white-space:nowrap; }
 
-/* ── Footer — λιτό, μία γραμμή συνδέσμων ───────────────────────────────── */
+/* ── Footer — μία γραμμή, όπως το reference ───────────────────────────────── */
 .site-footer{
   border-top: 1px solid var(--line);
-  padding: 48px 0 28px;
+  padding: 40px 0 28px;
 }
-.site-footer .wrap{
-  display:flex; justify-content:space-between; align-items:flex-start;
-  flex-wrap:wrap; gap:32px;
+.footer-main{
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:24px;
 }
-.footer-note{ font-size:13.5px; color:var(--muted); max-width:34ch; margin-top:8px; }
-.footer-links{ display:flex; gap:28px; flex-wrap:wrap; align-items:baseline; }
+.footer-note{ font-size:13px; color:var(--muted); margin:4px 0 0; }
+.footer-links{ display:flex; gap:26px; flex-wrap:wrap; align-items:baseline; }
 .footer-links a{ font-size:14px; color:var(--ink); opacity:.85; }
 .footer-links a:hover{ opacity:1; }
-.footer-side{ display:flex; flex-direction:column; align-items:flex-end; gap:14px; }
-.footer-social{ display:flex; gap:20px; }
-.footer-social a{ font-size:14px; color:var(--ink); opacity:.85; }
-.footer-social a:hover{ opacity:1; }
-.footer-bottom{
-  margin-top:40px; padding-top:18px; border-top:1px solid var(--line);
-  display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
-  font-size:12.5px; color:var(--muted);
+.footer-meta{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; font-size:13px; color:var(--muted); }
+.footer-meta a{ color:var(--ink); opacity:.85; }
+.footer-meta a:hover{ opacity:1; }
+.footer-meta-sep{ width:1px; height:14px; background:var(--line); }
+
+/* Δευτερεύοντες σύνδεσμοι (εργαλεία/νομικά) — λεπτή, σιωπηλή γραμμή */
+.footer-secondary{
+  display:flex; gap:20px; flex-wrap:wrap;
+  margin-top:22px; padding-top:18px; border-top:1px solid var(--line);
 }
-.footer-legal{ display:flex; gap:16px; flex-wrap:wrap; }
-.footer-legal a{ color:var(--muted); }
-.footer-legal a:hover{ color:var(--wine); }
+.footer-secondary a{ font-size:12px; color:var(--muted); }
+.footer-secondary a:hover{ color:var(--wine); }
+
 @media (max-width:700px){
-  .site-footer .wrap{ flex-direction:column; }
-  .footer-side{ align-items:flex-start; }
-  .footer-bottom{ flex-direction:column; align-items:flex-start; }
+  .footer-main{ flex-direction:column; align-items:flex-start; }
 }
 
 /* Accessibility floor — μην το αφαιρέσεις */
@@ -909,12 +908,12 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 
 /* 1 — Hero: κείμενο αριστερά, φωτογραφία πλήρους ύψους δεξιά ώς την άκρη */
 .hero-v2{
-  display:grid; grid-template-columns:minmax(300px,480px) 1fr;
-  min-height:min(640px,86vh);
+  display:grid; grid-template-columns:minmax(320px,0.82fr) 1fr;
+  min-height:min(600px,80vh);
 }
 .hero-v2-copy{
   display:flex; flex-direction:column; justify-content:center;
-  padding:56px clamp(28px,4vw,64px) 56px max(var(--wrap-pad), calc((100vw - var(--wrap-max)) / 2 + var(--wrap-pad)));
+  padding:56px clamp(28px,4vw,56px) 56px max(var(--wrap-pad), calc((100vw - var(--wrap-max)) / 2 + var(--wrap-pad)));
 }
 .hero-v2-eyebrow{
   font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
@@ -951,7 +950,7 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
   font-size:clamp(26px,3.4vw,36px); margin:0 auto 30px; max-width:20ch;
 }
 .search-trigger{
-  width:100%; max-width:620px; margin:0 auto; display:flex; align-items:center; gap:14px;
+  width:100%; max-width:560px; margin:0 auto; display:flex; align-items:center; gap:14px;
   padding:17px 22px; border:1px solid var(--line); border-radius:var(--radius);
   background:var(--paper); color:var(--muted); font-family:var(--font-body); font-size:15.5px;
   cursor:pointer; transition:border-color .15s ease;
@@ -964,13 +963,13 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 .explore-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:28px; padding-bottom:70px; }
 .explore-card{ display:block; color:inherit; }
 .explore-card-photo{
-  position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--paper-alt); margin-bottom:18px;
+  position:relative; aspect-ratio:3/2; overflow:hidden; background:var(--paper-alt); margin-bottom:18px;
 }
 .explore-card-photo img{
   width:100%; height:100%; object-fit:cover;
-  transition:transform .6s cubic-bezier(.2,.7,.3,1);
+  transition:transform .7s cubic-bezier(.2,.7,.3,1);
 }
-.explore-card:hover .explore-card-photo img{ transform:scale(1.05); }
+.explore-card:hover .explore-card-photo img{ transform:scale(1.035); }
 .explore-card h3{ font-size:24px; margin-bottom:6px; }
 .explore-card-meta{
   display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600;
@@ -1008,7 +1007,7 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 
 /* 5 — Η Ελλάδα σε ένα κρασί: πλήρους πλάτους φωτογραφία με κείμενο πάνω */
 .greece-band{
-  position:relative; min-height:min(600px,80vh); display:flex; align-items:center; overflow:hidden;
+  position:relative; min-height:min(500px,64vh); display:flex; align-items:center; overflow:hidden;
 }
 .greece-band img{
   position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;

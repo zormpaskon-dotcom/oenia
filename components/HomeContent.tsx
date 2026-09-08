@@ -13,11 +13,12 @@ type FeaturedWine = {
   color: WineColor;
   winery: { name: string; slug: string };
   region: { name: string };
+  varieties: { variety: { name: string } }[];
 } | null;
 
 const FEATURED_QUOTE = {
-  el: "Η αλμύρα του νησιού, σε ένα ποτήρι.",
-  en: "The island's salinity, in a glass.",
+  el: "Μεταλλικότητα σε ένα ποτήρι.",
+  en: "Minerality in a glass.",
 };
 
 function ArrowIcon({ size = 15 }: { size?: number }) {
@@ -49,14 +50,14 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
           </Link>
         </div>
         <div className="hero-v2-photo">
-          <img src="/hero/02_wine_glass_sunset.jpg" alt="" />
+          <img src="/home/hero.jpg" alt="" />
           <p className="hero-v2-tag">{t("home_hero_tag")}</p>
         </div>
       </section>
 
       {/* 2 — Αναζήτηση */}
       <section className="search-section">
-        <div className="wrap">
+        <div className="wrap reveal">
           <p className="hero-v2-eyebrow">{t("home_search_eyebrow")}</p>
           <h2>{t("home_search_title")}</h2>
           <HomeSearchTrigger placeholder={t("home_search_placeholder")} />
@@ -68,7 +69,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
         <div className="wrap explore-grid">
           <Link href="/krasia" className="explore-card reveal">
             <div className="explore-card-photo">
-              <img src="/hero/06_red_wine_pour.jpg" alt="" />
+              <img src="/home/explore-wines.jpg" alt="" />
             </div>
             <h3>{t("nav_wines")}</h3>
             <span className="explore-card-meta">
@@ -79,7 +80,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
           <Link href="/oinopoieia" className="explore-card reveal">
             <div className="explore-card-photo">
-              <img src="/hero/01_vineyard_estate.jpg" alt="" />
+              <img src="/home/explore-wineries.jpg" alt="" />
             </div>
             <h3>{t("nav_wineries")}</h3>
             <span className="explore-card-meta">
@@ -90,7 +91,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
           <Link href="/perioches" className="explore-card reveal">
             <div className="explore-card-photo">
-              <img src="/hero/08_stone_estate_terracotta.jpg" alt="" />
+              <img src="/home/explore-regions.jpg" alt="" />
             </div>
             <h3>{t("nav_regions")}</h3>
             <span className="explore-card-meta">
@@ -101,7 +102,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
           <Link href="/poikilies" className="explore-card reveal">
             <div className="explore-card-photo">
-              <img src="/hero/03_grapes_sunlight.jpg" alt="" />
+              <img src="/home/explore-grapes.jpg" alt="" />
             </div>
             <h3>{t("nav_varieties")}</h3>
             <span className="explore-card-meta">
@@ -116,11 +117,14 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
       {featuredWine && (
         <section className="featured-wine">
           <div className="wrap featured-wine-layout">
-            <div>
+            <div className="reveal">
               <p className="hero-v2-eyebrow">{t("home_featured_eyebrow")}</p>
               <h3 className="featured-wine-name">{featuredWine.name}</h3>
               <p className="featured-wine-winery">{featuredWine.winery.name}</p>
-              <p className="featured-wine-meta">{featuredWine.region.name}</p>
+              <p className="featured-wine-meta">
+                {featuredWine.region.name}
+                {featuredWine.varieties[0] ? ` · ${featuredWine.varieties[0].variety.name}` : ""}
+              </p>
               <Link href={`/krasia/${featuredWine.slug}`} className="link-arrow">
                 {t("home_featured_cta")}
                 <ArrowIcon size={13} />
@@ -131,11 +135,11 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
               labelImage={featuredWine.labelImage}
               color={featuredWine.color}
               wineName={featuredWine.name}
-              className="featured-wine-photo"
+              className="featured-wine-photo reveal"
               sizes="260px"
             />
 
-            <div>
+            <div className="reveal">
               <p className="featured-wine-quote">&ldquo;{FEATURED_QUOTE[locale]}&rdquo;</p>
               <div className="featured-wine-quote-rule" />
               <p className="featured-wine-quote-cite">{featuredWine.region.name}</p>
@@ -146,8 +150,8 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
       {/* 5 — Η Ελλάδα σε ένα κρασί */}
       <section className="greece-band">
-        <img src="/hero/07_vineyard_path_sunset.jpg" alt="" />
-        <div className="greece-band-copy">
+        <img src="/home/greece-band.jpg" alt="" />
+        <div className="greece-band-copy reveal">
           <p className="hero-v2-eyebrow">{t("home_greece_eyebrow")}</p>
           <h2>
             {t("home_greece_title_l1")}
