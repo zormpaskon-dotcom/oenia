@@ -17,7 +17,7 @@ async function getWine(slug: string) {
   return prisma.wine.findUnique({
     where: { slug },
     include: {
-      winery: { select: { name: true, slug: true, subRegion: true, foundedYear: true } },
+      winery: { select: { name: true, slug: true, subRegion: true, foundedYear: true, region: { select: { name: true } } } },
       region: { select: { name: true, slug: true } },
       varieties: { include: { variety: { select: { name: true, slug: true } } } },
     },
@@ -264,7 +264,7 @@ export default async function WineDetailPage({
             <div>
               <h3>{wine.winery.name}</h3>
               <p>
-                {wine.region.name}
+                {wine.winery.region.name}
                 {wine.winery.subRegion ? `, ${wine.winery.subRegion}` : ""}
                 {wine.winery.foundedYear ? ` · Από το ${wine.winery.foundedYear}` : ""}
               </p>
