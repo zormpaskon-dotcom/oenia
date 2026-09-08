@@ -21,7 +21,7 @@ export default async function Header() {
   const initials = session?.user ? initialsOf(session.user.name ?? session.user.email ?? "?") : null;
 
   return (
-    <header className="site-header">
+    <header className="site-header glass">
       <div className="wrap">
         <div className="header-brand">
           <Link href="/" className="logo">

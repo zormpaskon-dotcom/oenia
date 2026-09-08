@@ -194,7 +194,6 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
 .site-header{
   padding: 20px 0;
   border-bottom: 1px solid var(--line);
-  background: var(--paper);
   position: sticky;
   top: 0;
   z-index: 100;
