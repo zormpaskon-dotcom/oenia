@@ -21,6 +21,14 @@ const FEATURED_QUOTE = {
   en: "Minerality in a glass.",
 };
 
+// Cache-buster για τις στατικές φωτογραφίες της αρχικής (public/home/*.jpg).
+// Το /public σερβίρεται με cache-control: max-age=0, must-revalidate — αρκεί
+// θεωρητικά για σωστή επαλήθευση, αλλά ορισμένοι browsers (π.χ. Safari) δεν
+// ξαναφέρνουν πάντα μια εικόνα με το ΙΔΙΟ URL μετά από αλλαγή του αρχείου.
+// Αύξησε αυτόν τον αριθμό κάθε φορά που αντικαθιστάς κάποια από αυτές τις
+// εικόνες, ώστε να «σπάει» σίγουρα κάθε cache (browser + CDN).
+const IMG_V = 2;
+
 function ArrowIcon({ size = 15 }: { size?: number }) {
   return (
     <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -50,7 +58,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
           </Link>
         </div>
         <div className="hero-v2-photo">
-          <img className="reveal img-reveal" src="/home/hero.jpg" alt="" />
+          <img className="reveal img-reveal" src={`/home/hero.jpg?v=${IMG_V}`} alt="" />
           <p className="hero-v2-tag">{t("home_hero_tag")}</p>
         </div>
       </section>
@@ -69,7 +77,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
         <div className="wrap explore-grid">
           <Link href="/krasia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src="/home/explore-wines.jpg" alt="" />
+              <img src={`/home/explore-wines.jpg?v=${IMG_V}`} alt="" />
             </div>
             <h3>{t("nav_wines")}</h3>
             <span className="explore-card-meta">
@@ -80,7 +88,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
           <Link href="/oinopoieia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src="/home/explore-wineries.jpg" alt="" />
+              <img src={`/home/explore-wineries.jpg?v=${IMG_V}`} alt="" />
             </div>
             <h3>{t("nav_wineries")}</h3>
             <span className="explore-card-meta">
@@ -91,7 +99,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
           <Link href="/perioches" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src="/home/explore-regions.jpg" alt="" />
+              <img src={`/home/explore-regions.jpg?v=${IMG_V}`} alt="" />
             </div>
             <h3>{t("nav_regions")}</h3>
             <span className="explore-card-meta">
@@ -102,7 +110,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
           <Link href="/poikilies" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src="/home/explore-grapes.jpg" alt="" />
+              <img src={`/home/explore-grapes.jpg?v=${IMG_V}`} alt="" />
             </div>
             <h3>{t("nav_varieties")}</h3>
             <span className="explore-card-meta">
@@ -168,7 +176,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
           </Link>
         </div>
         <div className="greece-band-photo">
-          <img className="reveal img-reveal" src="/home/greece-band.jpg" alt="" />
+          <img className="reveal img-reveal" src={`/home/greece-band.jpg?v=${IMG_V}`} alt="" />
         </div>
       </section>
     </>
