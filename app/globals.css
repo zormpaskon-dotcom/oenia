@@ -540,7 +540,6 @@ section{ padding:60px 0; }
   align-items:center; gap:clamp(32px,5vw,72px);
   padding:8px 0 40px;
 }
-.wine-hero-copy{ padding-left:max(0px, calc(var(--wrap-pad) - var(--wrap-pad))); }
 .wine-hero-eyebrow{
   font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
   color:var(--muted); margin:0 0 18px;
@@ -573,13 +572,16 @@ section{ padding:60px 0; }
   .wine-hero-photo{ order:-1; max-width:240px; }
 }
 
-/* 2 — Λωρίδα γρήγορων στοιχείων */
+/* 2 — Λωρίδα γρήγορων στοιχείων — grid με σταθερές στήλες ανά breakpoint,
+   ώστε το τελευταίο στοιχείο να μην απλώνεται ποτέ σε ολόκληρη τη σειρά
+   (το πρόβλημα του flex-wrap όταν 5 στοιχεία δεν χωράνε ακριβώς). */
 .wine-quick-strip{
-  display:flex; flex-wrap:wrap; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  display:grid; grid-template-columns:repeat(5,1fr);
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
   margin:8px 0 0;
 }
 .wine-quick-item{
-  flex:1 1 140px; padding:20px clamp(16px,2.4vw,28px);
+  padding:20px clamp(14px,2vw,28px);
   border-left:1px solid var(--line);
 }
 .wine-quick-item:first-child{ border-left:none; padding-left:0; }
@@ -588,11 +590,18 @@ section{ padding:60px 0; }
   color:var(--muted); margin-bottom:6px;
 }
 .wine-quick-item .v{ font-family:var(--font-display); font-size:18px; color:var(--ink); }
+
+@media (max-width:900px){
+  .wine-quick-strip{ grid-template-columns:repeat(3,1fr); }
+  .wine-quick-item:nth-child(3n+1){ border-left:none; padding-left:0; }
+  .wine-quick-item:not(:nth-child(3n+1)){ padding-left:clamp(14px,2vw,28px); }
+  .wine-quick-item:nth-child(n+4){ border-top:1px solid var(--line); padding-top:18px; margin-top:2px; }
+}
 @media (max-width:700px){
-  .wine-quick-item{ flex:1 1 45%; border-left:none; border-top:1px solid var(--line); padding:16px 0; }
-  .wine-quick-item:nth-child(odd){ padding-right:16px; }
-  .wine-quick-item:nth-child(even){ padding-left:16px; border-left:1px solid var(--line); }
-  .wine-quick-item:first-child, .wine-quick-item:nth-child(2){ border-top:none; }
+  .wine-quick-strip{ grid-template-columns:repeat(2,1fr); }
+  .wine-quick-item:nth-child(3n+1){ border-left:1px solid var(--line); padding-left:clamp(14px,2vw,28px); }
+  .wine-quick-item:nth-child(odd){ border-left:none; padding-left:0; }
+  .wine-quick-item:nth-child(n+3){ border-top:1px solid var(--line); padding-top:16px; margin-top:2px; }
 }
 
 /* Sticky δευτερεύον μενού πλοήγησης εντός σελίδας */
