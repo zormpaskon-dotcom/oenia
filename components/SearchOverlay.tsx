@@ -33,8 +33,18 @@ export default function SearchOverlay() {
         setOpen((v) => !v);
       }
     }
+    // Επιτρέπει σε άλλα σημεία του site (π.χ. το μεγάλο search field της
+    // αρχικής) να ανοίγουν το ίδιο, πραγματικό search overlay αντί να
+    // υλοποιούν δικιά τους αναζήτηση.
+    function onOpenRequest() {
+      setOpen(true);
+    }
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    window.addEventListener("oenia:open-search", onOpenRequest);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("oenia:open-search", onOpenRequest);
+    };
   }, []);
 
   useEffect(() => {

@@ -5,6 +5,8 @@ import AuthNavLink from "@/components/AuthNavLink";
 import SearchOverlay from "@/components/SearchOverlay";
 import LanguageToggle from "@/components/LanguageToggle";
 import ThemeToggle from "@/components/ThemeToggle";
+import MobileMenu from "@/components/MobileMenu";
+import HeaderTagline from "@/components/HeaderTagline";
 
 function initialsOf(name: string) {
   return name
@@ -20,17 +22,26 @@ export default async function Header() {
   const initials = session?.user ? initialsOf(session.user.name ?? session.user.email ?? "?") : null;
 
   return (
-    <header className="site-header glass">
+    <header className="site-header">
       <div className="wrap">
-        <Link href="/" className="logo">
-          oenia
-        </Link>
+        <div className="header-brand">
+          <Link href="/" className="logo">
+            oenia
+          </Link>
+          <HeaderTagline />
+        </div>
         <nav>
           <NavLinks />
-          <AuthNavLink initials={initials} />
-          <LanguageToggle />
-          <ThemeToggle />
+          <span className="header-auth">
+            <AuthNavLink initials={initials} />
+          </span>
+          <span className="header-divider" aria-hidden="true" />
+          <div className="header-icons">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
           <SearchOverlay />
+          <MobileMenu initials={initials} />
         </nav>
       </div>
     </header>
