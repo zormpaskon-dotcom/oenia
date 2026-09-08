@@ -79,7 +79,19 @@ async function getRelatedWines(wine: NonNullable<Awaited<ReturnType<typeof getWi
   const seen = new Set([wine.id]);
   const related = [...sameWinery, ...sameVariety].filter((w) => (seen.has(w.id) ? false : (seen.add(w.id), true)));
 
-  return { related: related.slice(0, 3), sameWinery };
+  return { related: related.slice(0, 3) };
+}
+
+/** Όλες οι ξεχωριστές ποικιλίες στον κατάλογο ενός οινοποιείου — ανεξάρτητο,
+ * πλήρες ερώτημα (όχι απόσπασμα από τα "παρόμοια κρασιά", που περιορίζονται
+ * σε λίγα αποτελέσματα και θα άφηναν έξω ποικιλίες από τα υπόλοιπα κρασιά). */
+async function getWineryVarieties(wineryId: string) {
+  const rows = await prisma.variety.findMany({
+    where: { wines: { some: { wine: { wineryId, status: ContentStatus.PUBLISHED } } } },
+    select: { name: true },
+    orderBy: { name: "asc" },
+  });
+  return rows.map((r) => r.name);
 }
 
 export async function generateMetadata({
@@ -107,7 +119,7 @@ export default async function WineDetailPage({
 
   const session = await auth();
 
-  const [cellarEntry, reviews, { related: relatedWines, sameWinery }] = await Promise.all([
+  const [cellarEntry, reviews, { related: relatedWines }, wineryGrapes] = await Promise.all([
     session?.user
       ? prisma.cellarEntry.findUnique({
           where: { userId_wineId: { userId: session.user.id, wineId: wine.id } },
@@ -119,6 +131,7 @@ export default async function WineDetailPage({
       orderBy: { createdAt: "desc" },
     }),
     getRelatedWines(wine),
+    getWineryVarieties(wine.wineryId),
   ]);
 
   const myReview = session?.user ? reviews.find((r) => r.userId === session.user.id) : undefined;
@@ -144,14 +157,6 @@ export default async function WineDetailPage({
         .filter((s) => s.length > 2)
         .slice(0, 9)
     : [];
-
-  const wineryGrapes = Array.from(
-    new Map(
-      [...wine.varieties, ...sameWinery.filter((w) => w.winery.slug === wine.winery.slug).flatMap((w) => w.varieties)].map(
-        (v) => [v.variety.name, v.variety.name]
-      )
-    ).values()
-  );
 
   const techRows: { label: string; value: string }[] = [
     { label: "Χρονιά", value: wine.vintage ? String(wine.vintage) : "—" },
@@ -190,9 +195,12 @@ export default async function WineDetailPage({
         </p>
       </div>
 
-      {/* 1 — Hero */}
+      {/* 1 — Hero: στα κινητά ο τίτλος προηγείται του μπουκαλιού (σειρά:
+          τίτλος → φωτογραφία → δευτερεύοντα στοιχεία), γι' αυτό είναι
+          χωρισμένο σε δύο blocks που στο desktop ξαναενώνονται οπτικά
+          σε μία στήλη δίπλα στη φωτογραφία μέσω CSS grid. */}
       <div className="wrap wine-hero">
-        <div className="wine-hero-copy">
+        <div className="wine-hero-title">
           <p className="wine-hero-eyebrow">
             {COLOR_NAME[wine.color]} κρασί{wine.vintage ? ` · ${wine.vintage}` : ""}
           </p>
@@ -203,7 +211,17 @@ export default async function WineDetailPage({
           <p className="wine-hero-place">
             <Link href={`/perioches/${wine.region.slug}`}>{wine.region.name}</Link> · Ελλάδα
           </p>
+        </div>
 
+        <WinePhoto
+          labelImage={wine.labelImage}
+          color={wine.color}
+          wineName={wine.name}
+          className="wine-hero-photo reveal img-reveal"
+          sizes="340px"
+        />
+
+        <div className="wine-hero-secondary">
           <div className="wine-save-row">
             <div className="dots-lg" aria-hidden="true">
               {[0, 1, 2, 3, 4].map((i) => (
@@ -247,14 +265,6 @@ export default async function WineDetailPage({
             </svg>
           </a>
         </div>
-
-        <WinePhoto
-          labelImage={wine.labelImage}
-          color={wine.color}
-          wineName={wine.name}
-          className="wine-hero-photo reveal img-reveal"
-          sizes="340px"
-        />
       </div>
 
       {/* 2 — Γρήγορα στοιχεία */}
