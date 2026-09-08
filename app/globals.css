@@ -545,7 +545,7 @@ section{ padding:60px 0; }
 .visit-badge{ font-size:13.5px; color:var(--olive); border:1px solid var(--line); padding:9px 16px; border-radius:20px; white-space:nowrap; }
 
 .story-grid{ display:grid; grid-template-columns:1fr 280px; gap:56px; padding-bottom:60px; border-bottom:1px solid var(--line); margin-bottom:56px; }
-.story p{ font-size:16px; color:var(--ink); max-width:66ch; margin:0 0 18px; }
+.story p{ font-size:16px; color:var(--ink); max-width:66ch; margin:0 0 18px; white-space:pre-line; }
 .facts-side .fact{ padding:16px 0; border-bottom:1px solid var(--line); }
 .facts-side .fact:last-child{ border-bottom:none; }
 .facts-side .label{ font-size:12px; color:var(--muted); display:block; margin-bottom:4px; }
