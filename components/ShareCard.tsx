@@ -50,30 +50,30 @@ function drawCard(canvas: HTMLCanvasElement, card: ShareCardData) {
   const h = canvas.height;
 
   const grad = ctx.createLinearGradient(0, 0, w, h);
-  grad.addColorStop(0, "#4A2117");
-  grad.addColorStop(1, "#2A1109");
+  grad.addColorStop(0, "#641522");
+  grad.addColorStop(1, "#2E0910");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = "rgba(250,246,239,0.25)";
+  ctx.strokeStyle = "rgba(247,244,239,0.25)";
   ctx.lineWidth = 1;
   ctx.strokeRect(24, 24, w - 48, h - 48);
 
   ctx.textAlign = "center";
 
-  ctx.fillStyle = "#FDFBF7";
+  ctx.fillStyle = "#F7F4EF";
   ctx.font = `54px ${alexBrush}`;
   ctx.fillText("oenia", w / 2, 130);
 
-  ctx.fillStyle = "#C99A4F";
+  ctx.fillStyle = "#C9BCAE";
   ctx.font = `600 20px ${inter}`;
   ctx.fillText(`${card.region} · ${card.variety}`.toUpperCase(), w / 2, 210);
 
-  ctx.fillStyle = "#FDFBF7";
+  ctx.fillStyle = "#F7F4EF";
   ctx.font = `500 46px ${fraunces}`;
   wrapText(ctx, card.name, w / 2, 300, w - 140, 54);
 
-  ctx.fillStyle = "rgba(250,246,239,0.7)";
+  ctx.fillStyle = "rgba(247,244,239,0.7)";
   ctx.font = `22px ${inter}`;
   ctx.fillText(card.winery, w / 2, 420);
 
@@ -82,20 +82,20 @@ function drawCard(canvas: HTMLCanvasElement, card: ShareCardData) {
   const r = 70;
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(250,246,239,0.08)";
+  ctx.fillStyle = "rgba(247,244,239,0.08)";
   ctx.fill();
-  ctx.strokeStyle = "rgba(250,246,239,0.4)";
+  ctx.strokeStyle = "rgba(247,244,239,0.4)";
   ctx.lineWidth = 1.5;
   ctx.stroke();
-  ctx.fillStyle = "#FDFBF7";
+  ctx.fillStyle = "#F7F4EF";
   ctx.font = `600 42px ${fraunces}`;
   ctx.fillText(card.rating, cx, cy + 15);
 
-  ctx.fillStyle = "rgba(250,246,239,0.6)";
+  ctx.fillStyle = "rgba(247,244,239,0.6)";
   ctx.font = `16px ${inter}`;
   ctx.fillText("βαθμολογία χρηστών", cx, cy + 100);
 
-  ctx.fillStyle = "rgba(250,246,239,0.55)";
+  ctx.fillStyle = "rgba(247,244,239,0.55)";
   ctx.font = `16px ${inter}`;
   ctx.fillText("oenia.gr — ελληνικό κρασί, χωρίς πωλήσεις", w / 2, h - 60);
 }

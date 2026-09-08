@@ -9,17 +9,42 @@ import CellarButtons from "@/components/CellarButtons";
 import ReviewForm from "@/components/ReviewForm";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
-import WineCard from "@/components/WineCard";
 import { reportReviewAction } from "@/lib/actions/reviews";
-import { APPELLATION_LABEL, COLOR_NAME, reviewCountLabel } from "@/lib/labels";
+import { APPELLATION_LABEL, COLOR_NAME, STYLE_NAME, reviewCountLabel } from "@/lib/labels";
+
+function ArrowIcon({ size = 13 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 8h21M15 1l7 7-7 7" />
+    </svg>
+  );
+}
+
+const TASTE_DIMENSIONS = [
+  { key: "acidity", label: "Οξύτητα" },
+  { key: "body", label: "Σώμα" },
+  { key: "tannins", label: "Τανίνες" },
+  { key: "aromaIntensity", label: "Ένταση αρωμάτων" },
+  { key: "ageingPotential", label: "Δυναμικό παλαίωσης" },
+] as const;
 
 async function getWine(slug: string) {
   return prisma.wine.findUnique({
     where: { slug },
     include: {
-      winery: { select: { name: true, slug: true, subRegion: true, foundedYear: true, region: { select: { name: true } } } },
-      region: { select: { name: true, slug: true } },
-      varieties: { include: { variety: { select: { name: true, slug: true } } } },
+      winery: {
+        select: {
+          name: true,
+          slug: true,
+          subRegion: true,
+          foundedYear: true,
+          description: true,
+          coverImage: true,
+          region: { select: { name: true, slug: true } },
+        },
+      },
+      region: { select: { name: true, slug: true, description: true, heroImage: true } },
+      varieties: { include: { variety: true } },
     },
   });
 }
@@ -52,9 +77,9 @@ async function getRelatedWines(wine: NonNullable<Awaited<ReturnType<typeof getWi
   ]);
 
   const seen = new Set([wine.id]);
-  return [...sameWinery, ...sameVariety]
-    .filter((w) => (seen.has(w.id) ? false : (seen.add(w.id), true)))
-    .slice(0, 4);
+  const related = [...sameWinery, ...sameVariety].filter((w) => (seen.has(w.id) ? false : (seen.add(w.id), true)));
+
+  return { related: related.slice(0, 3), sameWinery };
 }
 
 export async function generateMetadata({
@@ -82,7 +107,7 @@ export default async function WineDetailPage({
 
   const session = await auth();
 
-  const [cellarEntry, reviews, relatedWines] = await Promise.all([
+  const [cellarEntry, reviews, { related: relatedWines, sameWinery }] = await Promise.all([
     session?.user
       ? prisma.cellarEntry.findUnique({
           where: { userId_wineId: { userId: session.user.id, wineId: wine.id } },
@@ -100,8 +125,39 @@ export default async function WineDetailPage({
 
   const varietyLabel = wine.varieties.map((v) => v.variety.name).join(", ");
   const filledDots = Math.round(wine.avgRating);
-
   const blend = [...wine.varieties].sort((a, b) => (b.percentage ?? -1) - (a.percentage ?? -1));
+  const mainVariety = blend[0]?.variety;
+
+  const tasteBars = mainVariety
+    ? TASTE_DIMENSIONS.map((d) => ({ ...d, value: mainVariety[d.key] })).filter(
+        (d): d is (typeof TASTE_DIMENSIONS)[number] & { value: number } => d.value != null
+      )
+    : [];
+
+  const expectTags = wine.tastingNotes
+    ? wine.tastingNotes
+        .split(/[.,]\s*/)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 2)
+        .slice(0, 9)
+    : [];
+
+  const wineryGrapes = Array.from(
+    new Map(
+      [...wine.varieties, ...sameWinery.filter((w) => w.winery.slug === wine.winery.slug).flatMap((w) => w.varieties)].map(
+        (v) => [v.variety.name, v.variety.name]
+      )
+    ).values()
+  );
+
+  const techRows: { label: string; value: string }[] = [
+    { label: "Χρονιά", value: wine.vintage ? String(wine.vintage) : "—" },
+    { label: "Ποικιλία", value: varietyLabel || "—" },
+    { label: "Περιοχή", value: wine.region.name },
+    { label: "Ονομασία", value: wine.appellation ? APPELLATION_LABEL[wine.appellation] : "—" },
+    { label: "Αλκοόλ", value: wine.abv ? `${wine.abv}%` : "—" },
+    { label: "Θερμοκρασία σερβιρίσματος", value: wine.servingTemp ?? "—" },
+  ];
 
   return (
     <>
@@ -123,6 +179,7 @@ export default async function WineDetailPage({
             : {}),
         }}
       />
+
       <div className="wrap">
         <p className="breadcrumb">
           <Link href="/">Αρχική</Link> / <Link href="/krasia">Ετικέτες</Link> /{" "}
@@ -130,21 +187,22 @@ export default async function WineDetailPage({
         </p>
       </div>
 
-      <div className="wrap wine-header">
-        <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="wine-photo" sizes="320px" />
-        <div>
-          <span className="region-tag">
-            {wine.region.name}
-            {varietyLabel ? ` · ${varietyLabel}` : ""}
-            {wine.appellation ? ` · ${APPELLATION_LABEL[wine.appellation]}` : ""}
-          </span>
-          <h1>{wine.name}</h1>
-          <Link href={`/oinopoieia/${wine.winery.slug}`} className="winery-link">
+      {/* 1 — Hero */}
+      <div className="wrap wine-hero">
+        <div className="wine-hero-copy">
+          <p className="wine-hero-eyebrow">
+            {COLOR_NAME[wine.color]} κρασί{wine.vintage ? ` · ${wine.vintage}` : ""}
+          </p>
+          <h1 className="wine-hero-name">{wine.name}</h1>
+          <Link href={`/oinopoieia/${wine.winery.slug}`} className="wine-hero-winery">
             {wine.winery.name}
           </Link>
+          <p className="wine-hero-place">
+            <Link href={`/perioches/${wine.region.slug}`}>{wine.region.name}</Link> · Ελλάδα
+          </p>
 
-          <div className="rating-block">
-            <div className="dots-lg">
+          <div className="wine-save-row">
+            <div className="dots-lg" aria-hidden="true">
               {[0, 1, 2, 3, 4].map((i) => (
                 <span key={i} className={`dot-lg${i < filledDots ? " filled" : ""}`} />
               ))}
@@ -152,6 +210,22 @@ export default async function WineDetailPage({
             <span className="rating-count">
               {wine.avgRating.toFixed(1).replace(".", ",")} · {reviewCountLabel(wine.reviewCount)}
             </span>
+          </div>
+
+          {session?.user ? (
+            <div className="wine-save-row">
+              <CellarButtons wineId={wine.id} wineSlug={wine.slug} currentStatus={cellarEntry?.status ?? null} />
+            </div>
+          ) : (
+            <p style={{ fontSize: 13.5, color: "var(--muted)", margin: "4px 0 26px" }}>
+              <Link href="/login" className="link-underline" style={{ color: "var(--wine)" }}>
+                Συνδέσου
+              </Link>{" "}
+              για να το προσθέσεις στο κελάρι σου.
+            </p>
+          )}
+
+          <div className="wine-save-row">
             <ShareCard
               data={{
                 name: wine.name,
@@ -163,86 +237,139 @@ export default async function WineDetailPage({
             />
           </div>
 
-          {session?.user ? (
-            <CellarButtons wineId={wine.id} wineSlug={wine.slug} currentStatus={cellarEntry?.status ?? null} />
-          ) : (
-            <p style={{ fontSize: 13.5, color: "var(--muted)", margin: "4px 0 26px" }}>
-              <Link href="/login" className="link-underline" style={{ color: "var(--wine)" }}>
-                Συνδέσου
-              </Link>{" "}
-              για να το προσθέσεις στο κελάρι σου.
-            </p>
-          )}
+          <a href="#overview" className="wine-hero-scroll">
+            Εξερεύνησε το κρασί
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 4v16M5 13l7 7 7-7" />
+            </svg>
+          </a>
+        </div>
 
-          {wine.description && <p className="desc">{wine.description}</p>}
+        <WinePhoto
+          labelImage={wine.labelImage}
+          color={wine.color}
+          wineName={wine.name}
+          className="wine-hero-photo reveal img-reveal"
+          sizes="340px"
+        />
+      </div>
 
-          {blend.length > 1 && (
-            <div className="blend-row">
-              {blend.map((v) => (
-                <span className="blend-chip" key={v.variety.slug}>
-                  {v.percentage ? `${v.percentage}% ` : ""}
-                  {v.variety.name}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="fact-grid">
-            <div className="fact">
-              <span className="label">Χρονιά</span>
-              <span className="value">{wine.vintage ?? "—"}</span>
-            </div>
-            <div className="fact">
-              <span className="label">Αλκοόλ</span>
-              <span className="value">{wine.abv ? `${wine.abv}%` : "—"}</span>
-            </div>
-            <div className="fact">
-              <span className="label">Χρώμα</span>
-              <span className="value">{COLOR_NAME[wine.color]}</span>
-            </div>
+      {/* 2 — Γρήγορα στοιχεία */}
+      <div className="wrap">
+        <div className="wine-quick-strip">
+          <div className="wine-quick-item">
+            <span className="l">Ποικιλία</span>
+            <span className="v">{varietyLabel || "—"}</span>
           </div>
-
-          {wine.tastingNotes && (
-            <div className="tasting-notes">
-              <h3>Σημειώσεις γεύσης</h3>
-              <p>{wine.tastingNotes}</p>
-              {wine.servingTemp && (
-                <span className="serving-chip">Σερβίρισμα στους {wine.servingTemp}</span>
-              )}
-            </div>
-          )}
+          <div className="wine-quick-item">
+            <span className="l">Περιοχή</span>
+            <span className="v">{wine.region.name}</span>
+          </div>
+          <div className="wine-quick-item">
+            <span className="l">Χρώμα</span>
+            <span className="v">{COLOR_NAME[wine.color]}</span>
+          </div>
+          <div className="wine-quick-item">
+            <span className="l">Στυλ</span>
+            <span className="v">{STYLE_NAME[wine.style]}</span>
+          </div>
+          <div className="wine-quick-item">
+            <span className="l">Αλκοόλ</span>
+            <span className="v">{wine.abv ? `${wine.abv}%` : "—"}</span>
+          </div>
         </div>
       </div>
 
-      {(wine.vineyardNotes || wine.winemakingNotes) && (
-        <section>
+      {/* Sticky δευτερεύον μενού */}
+      <nav className="wine-subnav">
+        <div className="wrap wine-subnav-inner">
+          <span className="wine-subnav-name">{wine.name}</span>
+          <a href="#overview">Το κρασί</a>
+          <a href="#taste">Γεύση</a>
+          <a href="#place">Ο τόπος</a>
+          <a href="#winery">Το οινοποιείο</a>
+        </div>
+      </nav>
+
+      {/* 4 — Το κρασί */}
+      <section id="overview">
+        <div className="wrap wine-overview">
+          <div className="wine-overview-copy reveal home-reveal">
+            <h2 className="section-title">Το κρασί</h2>
+            {wine.description && <p>{wine.description}</p>}
+
+            {blend.length > 1 && (
+              <div className="wine-blend-row">
+                {blend.map((v) => (
+                  <span className="wine-blend-chip" key={v.variety.slug}>
+                    {v.percentage ? `${v.percentage}% ` : ""}
+                    {v.variety.name}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {wine.vineyardNotes && (
+              <div className="wine-note-block">
+                <h4>Ο αμπελώνας</h4>
+                <p>{wine.vineyardNotes}</p>
+              </div>
+            )}
+            {wine.winemakingNotes && (
+              <div className="wine-note-block">
+                <h4>Η οινοποίηση</h4>
+                <p>{wine.winemakingNotes}</p>
+              </div>
+            )}
+          </div>
+
+          {tasteBars.length > 0 && (
+            <div className="reveal home-reveal">
+              <p className="wine-taste-head">Προφίλ γεύσης{mainVariety ? ` — ${mainVariety.name}` : ""}</p>
+              {tasteBars.map((bar) => (
+                <div className="wine-taste-bar reveal" key={bar.key} style={{ "--pct": `${bar.value}%` } as React.CSSProperties}>
+                  <div className="wine-taste-bar-label">
+                    <span>{bar.label}</span>
+                    <span>{bar.value}</span>
+                  </div>
+                  <div className="wine-taste-bar-track">
+                    <div className="wine-taste-bar-fill" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 5 — Τι να περιμένεις */}
+      {expectTags.length > 0 && (
+        <section id="taste">
           <div className="wrap">
-            <h2 className="section-title">Αμπελώνας &amp; Οινοποίηση</h2>
-            <div className="vineyard-grid">
-              {wine.vineyardNotes && (
-                <div className="vineyard-block">
-                  <h3>Ο αμπελώνας</h3>
-                  <p>{wine.vineyardNotes}</p>
-                </div>
-              )}
-              {wine.winemakingNotes && (
-                <div className="vineyard-block">
-                  <h3>Η οινοποίηση</h3>
-                  <p>{wine.winemakingNotes}</p>
-                </div>
-              )}
+            <h2 className="section-title">Τι να περιμένεις</h2>
+            <div className="wine-expect">
+              {expectTags.map((tag, i) => (
+                <span
+                  key={`${tag}-${i}`}
+                  className="wine-expect-tag reveal home-reveal"
+                  style={{ transitionDelay: `${Math.min(i * 70, 420)}ms` }}
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
           </div>
         </section>
       )}
 
+      {/* 8 — Ταιριάζει με */}
       {wine.foodPairings.length > 0 && (
         <section>
           <div className="wrap">
             <h2 className="section-title">Ταιριάζει με</h2>
-            <div className="pairing-row">
+            <div className="wine-pairing-tags">
               {wine.foodPairings.map((food) => (
-                <span className="pairing-chip" key={food}>
+                <span className="wine-pairing-tag" key={food}>
                   {food}
                 </span>
               ))}
@@ -251,41 +378,113 @@ export default async function WineDetailPage({
         </section>
       )}
 
-      <div className="wave-divider" aria-hidden="true">
-        <svg viewBox="0 0 1440 64" preserveAspectRatio="none">
-          <path d="M0,32 C 240,64 480,0 720,28 C 960,56 1200,8 1440,32 L1440,64 L0,64 Z" fill="var(--paper-alt)" />
-        </svg>
-      </div>
-      <section style={{ background: "var(--paper-alt)" }}>
+      {/* 6 — Ο τόπος */}
+      <section id="place" style={{ background: "var(--paper-alt)" }}>
         <div className="wrap">
-          <h2 className="section-title">Το οινοποιείο</h2>
-          <Link href={`/oinopoieia/${wine.winery.slug}`} className="winery-card">
-            <div className="winery-thumb" />
-            <div>
-              <h3>{wine.winery.name}</h3>
-              <p>
-                {wine.winery.region.name}
-                {wine.winery.subRegion ? `, ${wine.winery.subRegion}` : ""}
-                {wine.winery.foundedYear ? ` · Από το ${wine.winery.foundedYear}` : ""}
-              </p>
+          <div className={`wine-split${wine.region.heroImage ? "" : " no-photo"}`}>
+            <div className="wine-split-copy reveal home-reveal">
+              <p className="wine-split-eyebrow">Ο τόπος</p>
+              <h2 className="wine-split-title">{wine.region.name}</h2>
+              {wine.region.description && <p>{wine.region.description}</p>}
+              <Link href={`/perioches/${wine.region.slug}`} className="link-arrow">
+                Εξερεύνησε την περιοχή
+                <ArrowIcon />
+              </Link>
             </div>
-          </Link>
+            {wine.region.heroImage && (
+              <div className="wine-split-photo">
+                <img className="reveal img-reveal" src={wine.region.heroImage} alt={wine.region.name} />
+              </div>
+            )}
+          </div>
         </div>
       </section>
-      <div className="wave-divider flip" aria-hidden="true">
-        <svg viewBox="0 0 1440 64" preserveAspectRatio="none">
-          <path d="M0,32 C 240,64 480,0 720,28 C 960,56 1200,8 1440,32 L1440,64 L0,64 Z" fill="var(--paper-alt)" />
-        </svg>
-      </div>
 
+      {/* 7 — Το οινοποιείο */}
+      <section id="winery">
+        <div className="wrap">
+          <div className={`wine-split${wine.winery.coverImage ? "" : " no-photo"}`}>
+            <div className="wine-split-copy reveal home-reveal">
+              <p className="wine-split-eyebrow">Το οινοποιείο</p>
+              <h2 className="wine-split-title">{wine.winery.name}</h2>
+              {wine.winery.description && <p>{wine.winery.description}</p>}
+              <div className="wine-tech-table" style={{ marginBottom: 28 }}>
+                <div className="wine-tech-row">
+                  <dt>Ίδρυση</dt>
+                  <dd>{wine.winery.foundedYear ?? "—"}</dd>
+                </div>
+                <div className="wine-tech-row">
+                  <dt>Περιοχή</dt>
+                  <dd>
+                    {wine.winery.region.name}
+                    {wine.winery.subRegion ? `, ${wine.winery.subRegion}` : ""}
+                  </dd>
+                </div>
+                {wineryGrapes.length > 0 && (
+                  <div className="wine-tech-row">
+                    <dt>Ποικιλίες</dt>
+                    <dd>{wineryGrapes.join(", ")}</dd>
+                  </div>
+                )}
+              </div>
+              <Link href={`/oinopoieia/${wine.winery.slug}`} className="link-arrow">
+                Εξερεύνησε το οινοποιείο
+                <ArrowIcon />
+              </Link>
+            </div>
+            {wine.winery.coverImage && (
+              <div className="wine-split-photo">
+                <img className="reveal img-reveal" src={wine.winery.coverImage} alt={wine.winery.name} />
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 9 — Τεχνικά στοιχεία */}
+      <section style={{ background: "var(--paper-alt)" }}>
+        <div className="wrap">
+          <h2 className="section-title">Τεχνικά στοιχεία</h2>
+          <dl className="wine-tech-table">
+            {techRows.map((row) => (
+              <div className="wine-tech-row" key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* 10 — Παρόμοια κρασιά */}
       {relatedWines.length > 0 && (
         <section>
           <div className="wrap">
             <h2 className="section-title">Δες επίσης</h2>
-            <div className="wine-grid">
-              {relatedWines.map((related) => (
-                <WineCard key={related.id} wine={related} />
-              ))}
+            <div className="wine-similar-grid">
+              {relatedWines.map((related) => {
+                const relatedVariety = related.varieties[0]?.variety.name;
+                return (
+                  <Link key={related.id} href={`/krasia/${related.slug}`} className="wine-similar-card reveal">
+                    <WinePhoto
+                      labelImage={related.labelImage}
+                      color={related.color}
+                      wineName={related.name}
+                      className="wine-similar-photo"
+                      sizes="150px"
+                    />
+                    <h3>{related.name}</h3>
+                    <span className="wine-similar-meta">
+                      {related.winery.name} · {related.region.name}
+                      {relatedVariety ? ` · ${relatedVariety}` : ""}
+                    </span>
+                    <span className="wine-similar-link">
+                      Εξερεύνηση κρασιού
+                      <ArrowIcon />
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
