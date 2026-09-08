@@ -50,14 +50,14 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
           </Link>
         </div>
         <div className="hero-v2-photo">
-          <img src="/home/hero.jpg" alt="" />
+          <img className="reveal img-reveal" src="/home/hero.jpg" alt="" />
           <p className="hero-v2-tag">{t("home_hero_tag")}</p>
         </div>
       </section>
 
       {/* 2 — Αναζήτηση */}
       <section className="search-section">
-        <div className="wrap reveal">
+        <div className="wrap reveal home-reveal">
           <p className="hero-v2-eyebrow">{t("home_search_eyebrow")}</p>
           <h2>{t("home_search_title")}</h2>
           <HomeSearchTrigger placeholder={t("home_search_placeholder")} />
@@ -67,7 +67,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
       {/* 3 — Εξερεύνηση */}
       <section>
         <div className="wrap explore-grid">
-          <Link href="/krasia" className="explore-card reveal">
+          <Link href="/krasia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
               <img src="/home/explore-wines.jpg" alt="" />
             </div>
@@ -78,7 +78,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
             </span>
           </Link>
 
-          <Link href="/oinopoieia" className="explore-card reveal">
+          <Link href="/oinopoieia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
               <img src="/home/explore-wineries.jpg" alt="" />
             </div>
@@ -89,7 +89,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
             </span>
           </Link>
 
-          <Link href="/perioches" className="explore-card reveal">
+          <Link href="/perioches" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
               <img src="/home/explore-regions.jpg" alt="" />
             </div>
@@ -100,7 +100,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
             </span>
           </Link>
 
-          <Link href="/poikilies" className="explore-card reveal">
+          <Link href="/poikilies" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
               <img src="/home/explore-grapes.jpg" alt="" />
             </div>
@@ -117,9 +117,9 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
       {featuredWine && (
         <section className="featured-wine">
           <div className="wrap featured-wine-layout">
-            <div className="reveal">
+            <div className="reveal home-reveal">
               <p className="hero-v2-eyebrow">{t("home_featured_eyebrow")}</p>
-              <h3 className="featured-wine-name">{featuredWine.name}</h3>
+              <h3 className="featured-wine-name">{featuredWine.varieties[0]?.variety.name ?? featuredWine.name}</h3>
               <p className="featured-wine-winery">{featuredWine.winery.name}</p>
               <p className="featured-wine-meta">
                 {featuredWine.region.name}
@@ -135,14 +135,18 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
               labelImage={featuredWine.labelImage}
               color={featuredWine.color}
               wineName={featuredWine.name}
-              className="featured-wine-photo reveal"
+              className="featured-wine-photo reveal img-reveal"
               sizes="260px"
             />
 
-            <div className="reveal">
+            <div className="reveal home-reveal">
               <p className="featured-wine-quote">&ldquo;{FEATURED_QUOTE[locale]}&rdquo;</p>
               <div className="featured-wine-quote-rule" />
-              <p className="featured-wine-quote-cite">{featuredWine.region.name}</p>
+              <p className="featured-wine-quote-cite">
+                {featuredWine.region.name}
+                <br />
+                {t("home_featured_cite_region_group")}
+              </p>
             </div>
           </div>
         </section>
@@ -150,8 +154,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
 
       {/* 5 — Η Ελλάδα σε ένα κρασί */}
       <section className="greece-band">
-        <img src="/home/greece-band.jpg" alt="" />
-        <div className="greece-band-copy reveal">
+        <div className="greece-band-copy reveal home-reveal">
           <p className="hero-v2-eyebrow">{t("home_greece_eyebrow")}</p>
           <h2>
             {t("home_greece_title_l1")}
@@ -163,6 +166,9 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
             {t("home_greece_cta")}
             <ArrowIcon />
           </Link>
+        </div>
+        <div className="greece-band-photo">
+          <img className="reveal img-reveal" src="/home/greece-band.jpg" alt="" />
         </div>
       </section>
     </>

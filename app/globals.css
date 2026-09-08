@@ -925,14 +925,14 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 }
 .hero-v2-lead{ font-size:16.5px; color:var(--muted); max-width:36ch; margin:0 0 34px; }
 .hero-v2-photo{ position:relative; overflow:hidden; background:var(--paper-alt); }
-.hero-v2-photo img{
-  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-  animation: photo-reveal 1.3s cubic-bezier(.2,.7,.3,1) both;
+.hero-v2-photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+/* Το φόντο "βγαίνει" μέσα από το κρεμ αντί για σκληρή κάθετη γραμμή */
+.hero-v2-photo::before{
+  content:''; position:absolute; inset:0 auto 0 0; z-index:1; pointer-events:none;
+  width:32%; background:linear-gradient(to right, var(--paper) 0%, rgba(247,244,239,0) 100%);
 }
-@keyframes photo-reveal{ from{ opacity:0; transform:scale(1.045); } to{ opacity:1; transform:scale(1); } }
-@media (prefers-reduced-motion: reduce){ .hero-v2-photo img, .greece-band img{ animation:none; } }
 .hero-v2-tag{
-  position:absolute; top:28px; right:28px; z-index:1;
+  position:absolute; top:28px; right:28px; z-index:2;
   font-size:10.5px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
   color:#fff; text-align:right; line-height:1.6; text-shadow:0 1px 6px rgba(0,0,0,.35);
 }
@@ -941,7 +941,17 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
   .hero-v2{ grid-template-columns:1fr; min-height:auto; }
   .hero-v2-copy{ padding:48px var(--wrap-pad) 36px; }
   .hero-v2-photo{ height:52vh; min-height:340px; }
+  .hero-v2-photo::before{ width:100%; height:22%; inset:0 0 auto 0; background:linear-gradient(to bottom, var(--paper) 0%, rgba(247,244,239,0) 100%); }
 }
+
+/* Εικόνες που «ξεθολώνουν» μπαίνοντας στο viewport — hero, Greece-by-wine */
+.img-reveal{ opacity:0; filter:blur(8px); transform:none; transition:opacity 1s ease-out, filter 1s ease-out; }
+.img-reveal.is-visible{ opacity:1; filter:blur(0); }
+@media (prefers-reduced-motion: reduce){ .img-reveal{ opacity:1; filter:none; transition:none; } }
+
+/* Πιο αργό, κινηματογραφικό reveal κειμένου για τις ενότητες της αρχικής */
+.home-reveal{ transition:opacity .9s cubic-bezier(.2,.6,.3,1), transform .9s cubic-bezier(.2,.6,.3,1); transform:translateY(20px); }
+.home-reveal.is-visible{ transform:translateY(0); }
 
 /* 2 — Αναζήτηση */
 .search-section{ text-align:center; padding:64px 0 60px; }
@@ -967,9 +977,9 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 }
 .explore-card-photo img{
   width:100%; height:100%; object-fit:cover;
-  transition:transform .7s cubic-bezier(.2,.7,.3,1);
+  transition:transform .6s cubic-bezier(.2,.7,.3,1);
 }
-.explore-card:hover .explore-card-photo img{ transform:scale(1.035); }
+.explore-card:hover .explore-card-photo img{ transform:scale(1.03); }
 .explore-card h3{ font-size:24px; margin-bottom:6px; }
 .explore-card-meta{
   display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600;
@@ -989,7 +999,7 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 }
 .featured-wine-winery{ font-family:var(--font-display); font-size:19px; margin:0 0 6px; }
 .featured-wine-meta{ font-size:14px; color:var(--muted); margin:0 0 26px; }
-.featured-wine-photo{ position:relative; aspect-ratio:3/4.6; max-width:260px; margin:0 auto; }
+.featured-wine-photo{ position:relative; width:100%; aspect-ratio:3/4.6; max-width:260px; margin:0 auto; }
 .featured-wine-quote{
   font-family:var(--font-display); font-style:italic; font-weight:500;
   font-size:clamp(22px,2.4vw,28px); color:var(--ink); line-height:1.3; margin:0 0 18px; text-align:right;
@@ -1005,27 +1015,32 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
   .featured-wine-quote-rule{ margin:0 auto 16px; }
 }
 
-/* 5 — Η Ελλάδα σε ένα κρασί: πλήρους πλάτους φωτογραφία με κείμενο πάνω */
+/* 5 — Η Ελλάδα σε ένα κρασί: ίδια δομή με το hero — κείμενο αριστερά που
+   σβήνει μέσα στη φωτογραφία δεξιά, όχι σκούρο overlay πάνω σε φωτογραφία */
 .greece-band{
-  position:relative; min-height:min(500px,64vh); display:flex; align-items:center; overflow:hidden;
+  display:grid; grid-template-columns:minmax(320px,0.82fr) 1fr;
+  min-height:min(500px,64vh);
 }
-.greece-band img{
-  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
-  animation: photo-reveal 1.4s cubic-bezier(.2,.7,.3,1) both;
+.greece-band-copy{
+  display:flex; flex-direction:column; justify-content:center;
+  padding:56px clamp(28px,4vw,56px) 56px max(var(--wrap-pad), calc((100vw - var(--wrap-max)) / 2 + var(--wrap-pad)));
 }
-.greece-band::after{
-  content:''; position:absolute; inset:0; z-index:0;
-  background:linear-gradient(100deg, rgba(23,21,21,.42) 0%, rgba(23,21,21,.18) 38%, rgba(23,21,21,0) 60%);
+.greece-band-photo{ position:relative; overflow:hidden; background:var(--paper-alt); }
+.greece-band-photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.greece-band-photo::before{
+  content:''; position:absolute; inset:0 auto 0 0; z-index:1; pointer-events:none;
+  width:32%; background:linear-gradient(to right, var(--paper) 0%, rgba(247,244,239,0) 100%);
 }
-.greece-band-copy{ position:relative; z-index:1; max-width:480px; padding:56px max(var(--wrap-pad), calc((100vw - var(--wrap-max)) / 2 + var(--wrap-pad))); }
-.greece-band-copy .hero-v2-eyebrow{ color:rgba(255,255,255,.8); }
 .greece-band-copy h2{
-  font-size:clamp(32px,4.2vw,48px); color:#fff; line-height:1.08; margin:0 0 20px; text-wrap:balance;
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(32px,3.6vw,44px); color:var(--ink); line-height:1.08; margin:0 0 20px; text-wrap:balance;
 }
-.greece-band-copy p{ font-size:15.5px; color:rgba(255,255,255,.85); max-width:38ch; margin:0 0 30px; }
-@media (max-width:700px){
-  .greece-band{ min-height:520px; }
-  .greece-band-copy{ padding:40px var(--wrap-pad); }
+.greece-band-copy p{ font-size:15.5px; color:var(--muted); max-width:36ch; margin:0 0 30px; }
+@media (max-width:900px){
+  .greece-band{ grid-template-columns:1fr; min-height:auto; }
+  .greece-band-copy{ padding:48px var(--wrap-pad) 36px; }
+  .greece-band-photo{ height:52vh; min-height:340px; }
+  .greece-band-photo::before{ width:100%; height:22%; inset:0 0 auto 0; background:linear-gradient(to bottom, var(--paper) 0%, rgba(247,244,239,0) 100%); }
 }
 
 /* ── Χάρτης (/chartis) ── */

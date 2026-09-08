@@ -57,6 +57,7 @@ const dictionary = {
 
   home_featured_eyebrow: { el: "Προτεινόμενο κρασί", en: "Featured wine" },
   home_featured_cta: { el: "Δες το κρασί", en: "Explore wine" },
+  home_featured_cite_region_group: { el: "Κυκλάδες", en: "Cyclades" },
 
   home_greece_eyebrow: { el: "Η Ελλάδα σε ένα κρασί", en: "Greece by wine" },
   home_greece_title_l1: { el: "Πολλά μέρη.", en: "Many places." },
