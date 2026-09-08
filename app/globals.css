@@ -1073,10 +1073,14 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 
 /* ── Αρχική σελίδα (/) ── */
 
-/* 1 — Hero: κείμενο αριστερά, φωτογραφία πλήρους ύψους δεξιά ώς την άκρη */
+/* 1 — Hero: κείμενο αριστερά, φωτογραφία πλήρους ύψους δεξιά ώς την άκρη.
+   padding:0 — το section{padding:60px 0} γενικό rule διπλασίαζε αδικαιολόγητα
+   με το εσωτερικό padding του .hero-v2-copy, μεγαλώνοντας το κενό κάτω από
+   το header χωρίς λόγο. Το κείμενο έχει ήδη δικό του padding. */
 .hero-v2{
   display:grid; grid-template-columns:minmax(320px,0.82fr) 1fr;
   min-height:min(600px,80vh);
+  padding:0;
 }
 .hero-v2-copy{
   display:flex; flex-direction:column; justify-content:center;
@@ -1125,7 +1129,7 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 .home-reveal.is-visible{ transform:translateY(0); }
 
 /* 2 — Αναζήτηση */
-.search-section{ text-align:center; padding:64px 0 60px; }
+.search-section{ text-align:center; padding:44px 0 40px; }
 .search-section .hero-v2-eyebrow{ }
 .search-section h2{
   font-size:clamp(26px,3.4vw,36px); margin:0 auto 30px; max-width:20ch;
@@ -1140,8 +1144,10 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 .search-trigger svg{ flex-shrink:0; color:var(--wine); }
 .search-trigger span{ text-align:left; }
 
-/* 3 — Εξερεύνηση: 4 κατηγορίες */
-.explore-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:28px; padding-bottom:70px; }
+/* 3 — Εξερεύνηση: 4 κατηγορίες. padding:0 στο section — το γενικό
+   section{padding:60px 0} διπλασίαζε με το .explore-grid padding-bottom. */
+.explore-section{ padding:0; }
+.explore-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:28px; padding-bottom:36px; }
 .explore-card{ display:block; color:inherit; }
 .explore-card-photo{
   position:relative; aspect-ratio:3/2; overflow:hidden; background:var(--paper-alt); margin-bottom:18px;
@@ -1163,7 +1169,7 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 @media (max-width:520px){ .explore-grid{ grid-template-columns:1fr; max-width:340px; margin:0 auto; } }
 
 /* 4 — Προτεινόμενο κρασί */
-.featured-wine{ background:var(--paper-alt); padding:72px 0; }
+.featured-wine{ background:var(--paper-alt); padding:52px 0; }
 .featured-wine-layout{ display:grid; grid-template-columns:0.85fr 1fr 0.85fr; gap:24px; align-items:center; }
 .featured-wine-name{
   font-size:clamp(34px,4.4vw,50px); color:var(--wine); margin:14px 0 6px; line-height:1.05;
@@ -1187,10 +1193,12 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 }
 
 /* 5 — Η Ελλάδα σε ένα κρασί: ίδια δομή με το hero — κείμενο αριστερά που
-   σβήνει μέσα στη φωτογραφία δεξιά, όχι σκούρο overlay πάνω σε φωτογραφία */
+   σβήνει μέσα στη φωτογραφία δεξιά, όχι σκούρο overlay πάνω σε φωτογραφία.
+   padding:0 — ίδια διόρθωση διπλασιασμού με το .hero-v2 παραπάνω. */
 .greece-band{
   display:grid; grid-template-columns:minmax(320px,0.82fr) 1fr;
   min-height:min(500px,64vh);
+  padding:0;
 }
 .greece-band-copy{
   display:flex; flex-direction:column; justify-content:center;

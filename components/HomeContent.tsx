@@ -73,7 +73,7 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
       </section>
 
       {/* 3 — Εξερεύνηση */}
-      <section>
+      <section className="explore-section">
         <div className="wrap explore-grid">
           <Link href="/krasia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
