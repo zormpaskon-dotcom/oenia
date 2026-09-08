@@ -30,6 +30,18 @@ const dictionary = {
   search_wineries: { el: "Οινοποιεία", en: "Wineries" },
   search_wines: { el: "Ετικέτες", en: "Wines" },
   search_varieties: { el: "Ποικιλίες", en: "Varieties" },
+  search_regions: { el: "Περιοχές", en: "Regions" },
+  search_eyebrow: { el: "Αναζήτηση Oenia", en: "Search Oenia" },
+  search_explore_heading: { el: "Εξερεύνησε το Oenia", en: "Explore Oenia" },
+  search_no_results_for: { el: "Καμία αντιστοιχία για", en: "No results for" },
+  search_no_results_hint: {
+    el: "Δοκίμασε να αναζητήσεις ένα κρασί, ποικιλία, οινοποιείο ή περιοχή.",
+    en: "Try searching for a wine, grape, winery or region.",
+  },
+  search_explore_wines: { el: "Εξερεύνησε τις ετικέτες", en: "Explore wines" },
+  search_explore_wineries: { el: "Εξερεύνησε τα οινοποιεία", en: "Explore wineries" },
+  search_explore_regions: { el: "Εξερεύνησε τις περιοχές", en: "Explore regions" },
+  search_explore_grapes: { el: "Εξερεύνησε τις ποικιλίες", en: "Explore grapes" },
 
   header_tagline: { el: "Ελληνικό κρασί. Αξίζει την ανακάλυψη.", en: "Greek wine. Worth discovering." },
 

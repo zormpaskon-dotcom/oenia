@@ -333,6 +333,31 @@ export default async function WineryDetailPage({
           </div>
         </div>
       )}
+
+      {/* Συνέχισε την εξερεύνηση */}
+      <section style={{ background: "var(--paper-alt)" }}>
+        <div className="wrap">
+          <h2 className="section-title">Συνέχισε την εξερεύνηση</h2>
+          <div className="winery-grape-list">
+            {winery.wines.length > 0 && (
+              <Link href={`/krasia?winery=${winery.slug}`} className="winery-grape-row">
+                Εξερεύνησε τα κρασιά του
+                <ArrowIcon size={16} />
+              </Link>
+            )}
+            <Link href={`/perioches/${winery.region.slug}`} className="winery-grape-row">
+              Εξερεύνησε την περιοχή {winery.region.name}
+              <ArrowIcon size={16} />
+            </Link>
+            {grapes[0] && (
+              <Link href={`/poikilies/${grapes[0].slug}`} className="winery-grape-row">
+                Εξερεύνησε το {grapes[0].name}
+                <ArrowIcon size={16} />
+              </Link>
+            )}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

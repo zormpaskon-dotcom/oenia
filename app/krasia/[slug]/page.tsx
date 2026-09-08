@@ -314,10 +314,10 @@ export default async function WineDetailPage({
             {blend.length > 1 && (
               <div className="wine-blend-row">
                 {blend.map((v) => (
-                  <span className="wine-blend-chip" key={v.variety.slug}>
+                  <Link href={`/poikilies/${v.variety.slug}`} className="wine-blend-chip" key={v.variety.slug}>
                     {v.percentage ? `${v.percentage}% ` : ""}
                     {v.variety.name}
-                  </span>
+                  </Link>
                 ))}
               </div>
             )}
@@ -512,6 +512,29 @@ export default async function WineDetailPage({
           </div>
         </section>
       )}
+
+      {/* Συνέχισε την εξερεύνηση */}
+      <section style={{ background: "var(--paper-alt)" }}>
+        <div className="wrap">
+          <h2 className="section-title">Συνέχισε την εξερεύνηση</h2>
+          <div className="winery-grape-list">
+            <Link href={`/krasia?winery=${wine.winery.slug}`} className="winery-grape-row">
+              Περισσότερα από {wine.winery.name}
+              <ArrowIcon size={16} />
+            </Link>
+            <Link href={`/krasia?region=${wine.region.slug}`} className="winery-grape-row">
+              Περισσότερα από {wine.region.name}
+              <ArrowIcon size={16} />
+            </Link>
+            {blend[0] && (
+              <Link href={`/poikilies/${blend[0].variety.slug}`} className="winery-grape-row">
+                Εξερεύνησε το {blend[0].variety.name}
+                <ArrowIcon size={16} />
+              </Link>
+            )}
+          </div>
+        </div>
+      </section>
 
       <section>
         <div className="wrap">

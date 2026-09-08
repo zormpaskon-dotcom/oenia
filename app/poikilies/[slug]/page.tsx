@@ -357,6 +357,35 @@ export default async function VarietyDetailPage({
         </section>
       )}
 
+      {/* Συνέχισε την εξερεύνηση */}
+      {(featuredWines.length > 0 || regions.length > 0 || wineries.length > 0) && (
+        <section>
+          <div className="wrap">
+            <h2 className="section-title">Συνέχισε την εξερεύνηση</h2>
+            <div className="winery-grape-list">
+              {publishedWines.length > 0 && (
+                <Link href={`/krasia?variety=${variety.slug}`} className="winery-grape-row">
+                  Εξερεύνησε τα κρασιά
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
+              {regions[0] && (
+                <Link href={`/perioches/${regions[0].slug}`} className="winery-grape-row">
+                  Εξερεύνησε την περιοχή {regions[0].name}
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
+              {wineries[0] && (
+                <Link href={`/oinopoieia/${wineries[0].slug}`} className="winery-grape-row">
+                  Γνώρισε το {wineries[0].name}
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Τελικό CTA */}
       {featuredWines.length > 0 && (
         <section className="greece-band">

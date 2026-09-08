@@ -272,6 +272,35 @@ export default async function RegionDetailPage({
         </section>
       )}
 
+      {/* Συνέχισε την εξερεύνηση */}
+      {(region.wines.length > 0 || grapes.length > 0 || region.wineries.length > 0) && (
+        <section>
+          <div className="wrap">
+            <h2 className="section-title">Συνέχισε την εξερεύνηση</h2>
+            <div className="winery-grape-list">
+              {region.wines.length > 0 && (
+                <Link href={`/krasia?region=${region.slug}`} className="winery-grape-row">
+                  Εξερεύνησε τα κρασιά
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
+              {grapes[0] && (
+                <Link href={`/poikilies/${grapes[0].slug}`} className="winery-grape-row">
+                  Εξερεύνησε το {grapes[0].name}
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
+              {region.wineries[0] && (
+                <Link href={`/oinopoieia/${region.wineries[0].slug}`} className="winery-grape-row">
+                  Γνώρισε το {region.wineries[0].name}
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Κλείσιμο — η ίδια ατμοσφαιρική εικόνα, σαν επιστροφή στην αρχική εικόνα του hero */}
       {region.wines.length > 0 && (
         <section className="greece-band">

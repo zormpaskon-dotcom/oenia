@@ -306,52 +306,94 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
 }
 .mobile-menu-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:32px; }
 
-/* ── Search overlay ───────────────────────────────── */
+/* ── Search overlay — editorial, χωρίς glassmorphism ────────────────── */
 .search-overlay{
   position:fixed; inset:0; z-index:200;
-  background:rgba(20,12,7,0.32);
+  background:rgba(20,12,7,0.4);
   display:flex; align-items:flex-start; justify-content:center;
-  padding:14vh 20px 20px;
+  padding:9vh 20px 20px;
 }
 .search-panel{
-  width:100%; max-width:560px;
-  border-radius:var(--radius);
+  width:100%; max-width:680px;
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
   overflow:hidden;
   display:flex; flex-direction:column;
-  max-height:70vh;
+  max-height:78vh;
+  box-shadow:0 24px 60px rgba(var(--shadow-color),0.16);
+  opacity:0; transform:translateY(-14px);
+  transition:opacity .3s cubic-bezier(.2,.6,.3,1), transform .3s cubic-bezier(.2,.6,.3,1);
 }
-.search-input-row{
-  display:flex; align-items:center; gap:12px;
-  padding:16px 20px;
-  border-bottom:1px solid var(--line);
-  color:var(--muted);
-  flex-shrink:0;
+.search-panel.is-visible{ opacity:1; transform:translateY(0); }
+@media (prefers-reduced-motion: reduce){ .search-panel{ transition:none; opacity:1; transform:none; } }
+
+.search-head{ padding:28px 28px 20px; border-bottom:1px solid var(--line); flex-shrink:0; }
+.search-eyebrow{
+  font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); margin:0 0 16px;
 }
+.search-input-row{ display:flex; align-items:center; gap:14px; color:var(--muted); }
 .search-input-row input{
   flex:1; border:none; background:none; outline:none;
-  font-family:var(--font-body); font-size:16px; color:var(--ink);
+  font-family:var(--font-display); font-size:24px; color:var(--ink);
 }
-.search-input-row input::placeholder{ color:var(--muted); }
+.search-input-row input::placeholder{ color:var(--muted); font-family:var(--font-display); }
 .search-close{
   border:1px solid var(--line); border-radius:6px; background:none;
   color:var(--muted); font-size:11px; letter-spacing:.04em;
-  padding:3px 8px; cursor:pointer; flex-shrink:0;
+  padding:4px 9px; cursor:pointer; flex-shrink:0; transition:border-color .15s ease, color .15s ease;
 }
-.search-results{ overflow-y:auto; padding:8px; }
-.search-status{ padding:16px 12px; font-size:14px; color:var(--muted); margin:0; }
-.search-group{ margin-bottom:6px; }
-.search-group:last-child{ margin-bottom:0; }
-.search-group h4{
-  font-size:11px; letter-spacing:.06em; text-transform:uppercase;
-  color:var(--gold); font-weight:600; margin:10px 12px 4px;
+.search-close:hover{ border-color:var(--wine); color:var(--wine); }
+
+.search-results{ overflow-y:auto; padding:8px 28px 24px; }
+.search-status{ padding:20px 0; font-size:14px; color:var(--muted); margin:0; }
+
+.search-group{ margin-top:22px; }
+.search-group:first-child{ margin-top:20px; }
+.search-group-label{
+  font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); margin:0 0 4px;
 }
-.search-group a{
-  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
-  padding:9px 12px; border-radius:8px; font-size:14.5px; color:var(--ink);
-  transition:background .15s ease, color .15s ease;
+.search-result-row{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:14px 0; border-bottom:1px solid var(--line); color:inherit;
 }
-.search-group a:hover{ background:var(--paper-alt); color:var(--wine); }
-.search-meta{ font-size:12.5px; color:var(--muted); white-space:nowrap; }
+.search-result-text{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.search-result-name{
+  font-family:var(--font-display); font-size:18px; color:var(--ink); transition:color .15s ease;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.search-result-meta{ font-size:12.5px; color:var(--muted); }
+.search-result-row svg{ opacity:0; transform:translateX(-6px); flex-shrink:0; color:var(--wine); transition:opacity .15s ease, transform .15s ease; }
+.search-result-row:hover .search-result-name,
+.search-result-row.is-highlighted .search-result-name{ color:var(--wine); }
+.search-result-row:hover svg,
+.search-result-row.is-highlighted svg{ opacity:1; transform:translateX(0); }
+.search-result-row.is-highlighted{ background:var(--paper-alt); }
+
+.search-empty{ padding:8px 0 4px; }
+.search-no-results{ font-size:15px; color:var(--ink); margin:0 0 6px; }
+.search-no-results-hint{ font-size:13.5px; color:var(--muted); margin:0 0 22px; }
+.search-explore-list{ display:flex; flex-direction:column; }
+.search-explore-row{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 0; border-bottom:1px solid var(--line);
+  font-family:var(--font-display); font-size:17px; color:var(--ink); transition:color .15s ease;
+}
+.search-explore-row svg{ opacity:0; transform:translateX(-6px); color:var(--wine); transition:opacity .15s ease, transform .15s ease; }
+.search-explore-row:hover{ color:var(--wine); }
+.search-explore-row:hover svg{ opacity:1; transform:translateX(0); }
+
+@media (max-width:640px){
+  /* height σε vh/dvh, όχι % — το .site-header έχει backdrop-filter (.glass),
+     που κατά το CSS spec δημιουργεί containing block για τα position:fixed
+     παιδιά του (το SearchOverlay ζει μέσα στο header). Ένα height:100% θα
+     έλυνε τη % ως προς το ύψος του header (~78px) αντί για όλη την οθόνη. */
+  .search-overlay{ padding:0; align-items:stretch; height:100vh; height:100dvh; }
+  .search-panel{ max-width:none; max-height:none; height:100vh; height:100dvh; border-radius:0; border:none; box-shadow:none; }
+  .search-head{ padding:20px var(--wrap-pad) 16px; }
+  .search-results{ padding:8px var(--wrap-pad) 24px; }
+  .search-input-row input{ font-size:20px; }
+}
 
 /* ── Footer — μία γραμμή, όπως το reference ───────────────────────────────── */
 .site-footer{
@@ -639,7 +681,9 @@ section{ padding:60px 0; }
 .wine-blend-chip{
   font-family:var(--font-display); font-size:13.5px; color:var(--wine);
   border:1px solid var(--line); border-radius:var(--radius-pill); padding:6px 15px;
+  transition:border-color .15s ease;
 }
+.wine-blend-chip:hover{ border-color:var(--wine); }
 .wine-notes-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,5vw,64px); margin-top:40px; padding-top:36px; border-top:1px solid var(--line); }
 .wine-note-block h4{
   font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 12px;
