@@ -134,9 +134,12 @@ export default async function WineDetailPage({
       )
     : [];
 
+  // Σύντομες, editorial φράσεις από τις πραγματικές σημειώσεις γεύσης —
+  // σπάει σε σημεία στίξης ή φυσικούς συνδέσμους ("με"/"και"), ποτέ μέσα σε
+  // λέξη, ώστε ένα κείμενο χωρίς κόμματα να μη βγαίνει ως 1-2 μακριές προτάσεις.
   const expectTags = wine.tastingNotes
     ? wine.tastingNotes
-        .split(/[.,]\s*/)
+        .split(/[.,]|\s+(?:με|και)\s+/)
         .map((s) => s.trim())
         .filter((s) => s.length > 2)
         .slice(0, 9)
@@ -293,7 +296,7 @@ export default async function WineDetailPage({
 
       {/* 4 — Το κρασί */}
       <section id="overview">
-        <div className="wrap wine-overview">
+        <div className="wrap">
           <div className="wine-overview-copy reveal home-reveal">
             <h2 className="section-title">Το κρασί</h2>
             {wine.description && <p>{wine.description}</p>}
@@ -308,24 +311,34 @@ export default async function WineDetailPage({
                 ))}
               </div>
             )}
-
-            {wine.vineyardNotes && (
-              <div className="wine-note-block">
-                <h4>Ο αμπελώνας</h4>
-                <p>{wine.vineyardNotes}</p>
-              </div>
-            )}
-            {wine.winemakingNotes && (
-              <div className="wine-note-block">
-                <h4>Η οινοποίηση</h4>
-                <p>{wine.winemakingNotes}</p>
-              </div>
-            )}
           </div>
 
-          {tasteBars.length > 0 && (
-            <div className="reveal home-reveal">
-              <p className="wine-taste-head">Προφίλ γεύσης{mainVariety ? ` — ${mainVariety.name}` : ""}</p>
+          {(wine.vineyardNotes || wine.winemakingNotes) && (
+            <div className="wine-notes-grid">
+              {wine.vineyardNotes && (
+                <div className="wine-note-block reveal home-reveal">
+                  <h4>Ο αμπελώνας</h4>
+                  <p>{wine.vineyardNotes}</p>
+                </div>
+              )}
+              {wine.winemakingNotes && (
+                <div className="wine-note-block reveal home-reveal">
+                  <h4>Η οινοποίηση</h4>
+                  <p>{wine.winemakingNotes}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 7 — Προφίλ γεύσης */}
+      {tasteBars.length > 0 && (
+        <section style={{ background: "var(--paper-alt)" }}>
+          <div className="wrap">
+            <h2 className="section-title">Προφίλ γεύσης</h2>
+            {mainVariety && <p className="wine-taste-head">{mainVariety.name}</p>}
+            <div className="wine-taste-bars reveal home-reveal">
               {tasteBars.map((bar) => (
                 <div className="wine-taste-bar reveal" key={bar.key} style={{ "--pct": `${bar.value}%` } as React.CSSProperties}>
                   <div className="wine-taste-bar-label">
@@ -338,9 +351,9 @@ export default async function WineDetailPage({
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* 5 — Τι να περιμένεις */}
       {expectTags.length > 0 && (
