@@ -677,6 +677,23 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 .index-card .badges{ display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
 .badge-pill{ font-size:11.5px; color:var(--olive); background:var(--paper-alt); border-radius:20px; padding:4px 10px; }
 
+/* Άμεσο φιλτράρισμα (client-side) στις λίστες οινοποιείων/περιοχών/ποικιλιών */
+.quick-filter-bar{
+  position:sticky; top:83px; z-index:10; background:var(--paper);
+  padding:18px 0 16px; margin-bottom:4px; border-bottom:1px solid var(--line);
+}
+.quick-search{
+  width:100%; max-width:420px; font-size:14.5px; padding:11px 16px;
+  border:1px solid var(--line); border-radius:var(--radius-pill);
+  background:var(--paper-alt); font-family:var(--font-body); color:var(--ink);
+  margin-bottom:14px;
+}
+.quick-search::placeholder{ color:var(--muted); }
+.quick-search:focus{ outline:none; border-color:var(--wine); background:var(--paper); }
+.quick-filter-bar .filter-row{ margin-bottom:0; }
+.quick-filter-bar .filter-row + .filter-row{ margin-top:10px; }
+.quick-empty{ color:var(--muted); font-size:14.5px; padding:32px 0 60px; }
+
 @media (max-width:980px){ .index-grid{ grid-template-columns:repeat(2,1fr); } }
 @media (max-width:560px){ .index-grid{ grid-template-columns:1fr; } }
 
