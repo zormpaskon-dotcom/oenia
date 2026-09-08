@@ -207,23 +207,11 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
 }
 .header-brand{ display:flex; align-items:baseline; gap:14px; }
 .logo{
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 22px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+  font-family: var(--font-brand);
+  font-size: 38px;
   color: var(--wine);
   line-height: 1;
 }
-.header-tagline{
-  font-family: var(--font-body);
-  font-size: 11px;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-@media (max-width:700px){ .header-tagline{ display:none; } }
 
 .site-header nav{ display:flex; gap:30px; align-items:center; }
 .site-header .nav-links{ display:flex; gap:32px; align-items:center; }

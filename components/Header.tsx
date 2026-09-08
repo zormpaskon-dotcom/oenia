@@ -6,7 +6,6 @@ import SearchOverlay from "@/components/SearchOverlay";
 import LanguageToggle from "@/components/LanguageToggle";
 import ThemeToggle from "@/components/ThemeToggle";
 import MobileMenu from "@/components/MobileMenu";
-import HeaderTagline from "@/components/HeaderTagline";
 
 function initialsOf(name: string) {
   return name
@@ -28,7 +27,6 @@ export default async function Header() {
           <Link href="/" className="logo">
             oenia
           </Link>
-          <HeaderTagline />
         </div>
         <nav>
           <NavLinks />
