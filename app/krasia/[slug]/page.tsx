@@ -483,7 +483,7 @@ export default async function WineDetailPage({
       {relatedWines.length > 0 && (
         <section>
           <div className="wrap">
-            <h2 className="section-title">Δες επίσης</h2>
+            <h2 className="section-title">Παρόμοιες ετικέτες</h2>
             <div className="wine-similar-grid">
               {relatedWines.map((related) => {
                 const relatedVariety = related.varieties[0]?.variety.name;

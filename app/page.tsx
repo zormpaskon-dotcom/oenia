@@ -7,24 +7,22 @@ import HomeContent from "@/components/HomeContent";
 const FEATURED_WINE_SLUG = "sigalas-santorini-assyrtiko";
 
 async function getFeaturedWine() {
+  const include = {
+    winery: { select: { name: true, slug: true } },
+    region: { select: { name: true } },
+    varieties: { include: { variety: { select: { name: true } } } },
+  } as const;
+
   const bySlug = await prisma.wine.findFirst({
     where: { slug: FEATURED_WINE_SLUG, status: ContentStatus.PUBLISHED, labelImage: { not: null } },
-    include: {
-      winery: { select: { name: true, slug: true } },
-      region: { select: { name: true } },
-      varieties: { include: { variety: { select: { name: true } } } },
-    },
+    include,
   });
   if (bySlug) return bySlug;
 
   return prisma.wine.findFirst({
     where: { status: ContentStatus.PUBLISHED, labelImage: { not: null } },
     orderBy: { avgRating: "desc" },
-    include: {
-      winery: { select: { name: true, slug: true } },
-      region: { select: { name: true } },
-      varieties: { include: { variety: { select: { name: true } } } },
-    },
+    include,
   });
 }
 

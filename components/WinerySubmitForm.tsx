@@ -12,10 +12,7 @@ export default function WinerySubmitForm({ regions }: { regions: { id: string; n
     return (
       <div className="tasting-notes" style={{ maxWidth: 520 }}>
         <h3>Λάβαμε την αίτησή σου</h3>
-        <p>
-          Θα ελέγξουμε τα στοιχεία και θα δημοσιεύσουμε το προφίλ σύντομα. Αν θες να προσθέσεις κι άλλο
-          οινοποιείο, μπορείς να στείλεις νέα αίτηση οποιαδήποτε στιγμή.
-        </p>
+        <p>Θα ελέγξουμε τα στοιχεία και θα δημοσιεύσουμε το προφίλ σύντομα.</p>
       </div>
     );
   }
@@ -80,7 +77,7 @@ export default function WinerySubmitForm({ regions }: { regions: { id: string; n
       </div>
 
       <div className="toggle-row" style={{ padding: "10px 0" }}>
-        <span className="label-text">Δέχεστε επισκέπτες;</span>
+        <span className="label-text">Δέχεσαι επισκέπτες;</span>
         <label className="switch">
           <input type="checkbox" name="acceptsVisitors" />
           <span className="slider" />

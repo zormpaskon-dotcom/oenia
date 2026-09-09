@@ -76,7 +76,7 @@ export default async function ArticlesPage({
               <div className="badges">
                 <span className="badge-pill">{CATEGORY_LABEL[a.category]}</span>
                 {a.readMinutes && <span className="badge-pill">{a.readMinutes} λεπτά</span>}
-                {a.isSponsored && <span className="badge-pill">Sponsored</span>}
+                {a.isSponsored && <span className="badge-pill">Χορηγία</span>}
               </div>
             </Link>
           ))}

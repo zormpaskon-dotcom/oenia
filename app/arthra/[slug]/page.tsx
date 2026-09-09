@@ -70,7 +70,7 @@ export default async function ArticleDetailPage({
         <h1>{article.title}</h1>
         {article.isSponsored && (
           <p style={{ fontSize: 12.5, color: "var(--gold)", marginTop: 10 }}>
-            Sponsored{article.sponsorName ? ` — σε συνεργασία με ${article.sponsorName}` : ""}
+            Χορηγία{article.sponsorName ? ` — σε συνεργασία με ${article.sponsorName}` : ""}
           </p>
         )}
         {article.author && (

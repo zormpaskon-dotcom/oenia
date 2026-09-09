@@ -326,7 +326,7 @@ export default async function WineryDetailPage({
       {winery.websiteUrl && (
         <div className="wrap">
           <div className="winery-official">
-            <p>Θέλεις να μάθεις περισσότερα;</p>
+            <p>Περισσότερα για το οινοποιείο</p>
             <a href={winery.websiteUrl} target="_blank" rel="noopener noreferrer">
               Επίσημη ιστοσελίδα →
             </a>

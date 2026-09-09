@@ -11,15 +11,11 @@ type FeaturedWine = {
   name: string;
   labelImage: string | null;
   color: WineColor;
+  featuredQuote: string | null;
   winery: { name: string; slug: string };
   region: { name: string };
   varieties: { variety: { name: string } }[];
 } | null;
-
-const FEATURED_QUOTE = {
-  el: "Μεταλλικότητα σε ένα ποτήρι.",
-  en: "Minerality in a glass.",
-};
 
 // Cache-buster για τις στατικές φωτογραφίες της αρχικής (public/home/*.jpg).
 // Το /public σερβίρεται με cache-control: max-age=0, must-revalidate — αρκεί
@@ -38,7 +34,7 @@ function ArrowIcon({ size = 15 }: { size?: number }) {
 }
 
 export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWine }) {
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <>
@@ -147,15 +143,17 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
               sizes="260px"
             />
 
-            <div className="reveal home-reveal">
-              <p className="featured-wine-quote">&ldquo;{FEATURED_QUOTE[locale]}&rdquo;</p>
-              <div className="featured-wine-quote-rule" />
-              <p className="featured-wine-quote-cite">
-                {featuredWine.region.name}
-                <br />
-                {t("home_featured_cite_region_group")}
-              </p>
-            </div>
+            {featuredWine.featuredQuote && (
+              <div className="reveal home-reveal">
+                <p className="featured-wine-quote">&ldquo;{featuredWine.featuredQuote}&rdquo;</p>
+                <div className="featured-wine-quote-rule" />
+                <p className="featured-wine-quote-cite">
+                  {featuredWine.region.name}
+                  <br />
+                  {t("home_featured_cite_region_group")}
+                </p>
+              </div>
+            )}
           </div>
         </section>
       )}

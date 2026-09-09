@@ -195,6 +195,12 @@ model Wine {
   servingTemp  String?                       // "8–10°C"
   foodPairings String[]                      // ["Θαλασσινά", "Φάβα"]
 
+  // Σύντομο, χειρόγραφο editorial statement — εμφανίζεται ΜΟΝΟ στο "Προτεινόμενο
+  // κρασί" της αρχικής, ΜΟΝΟ όταν υπάρχει τιμή (χωρίς generic fallback). Γράφεται
+  // αποκλειστικά με βάση τα ήδη υπαρκτά πεδία του ίδιου κρασιού (όχι επινόηση),
+  // μία φορά κάθε φορά που αλλάζει το προτεινόμενο κρασί — όχι για όλα τα κρασιά.
+  featuredQuote String? @db.Text
+
   vineyardNotes   String? @db.Text           // υψόμετρο, ηλικία κλήματος, έδαφος
   winemakingNotes String? @db.Text           // τρύγος, ζύμωση, παλαίωση
 
