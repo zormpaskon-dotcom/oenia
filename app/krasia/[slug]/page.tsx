@@ -140,12 +140,33 @@ export default async function WineDetailPage({
   const filledDots = Math.round(wine.avgRating);
   const blend = [...wine.varieties].sort((a, b) => (b.percentage ?? -1) - (a.percentage ?? -1));
   const mainVariety = blend[0]?.variety;
+  const isBlend = wine.varieties.length > 1;
 
-  const tasteBars = mainVariety
-    ? TASTE_DIMENSIONS.map((d) => ({ ...d, value: mainVariety[d.key] })).filter(
-        (d): d is (typeof TASTE_DIMENSIONS)[number] & { value: number } => d.value != null
-      )
+  // Blends: weighted average ανά διάσταση, μόνο από ποικιλίες με γνωστό
+  // percentage — ποτέ equal-weight fallback στις 45 blends χωρίς κανένα
+  // percentage (βλ. data-consistency-fix-plan.md). Το denominator είναι το
+  // άθροισμα των percentages ΜΟΝΟ των ποικιλιών που έχουν τιμή για τη
+  // συγκεκριμένη διάσταση — ποτέ missing στατιστικό δεν μετράει ως 0.
+  const knownPercentageVarieties = isBlend
+    ? wine.varieties.filter((v): v is typeof v & { percentage: number } => v.percentage != null)
     : [];
+  const blendProfileUnavailable = isBlend && knownPercentageVarieties.length === 0;
+
+  const tasteBars = !isBlend
+    ? mainVariety
+      ? TASTE_DIMENSIONS.map((d) => ({ ...d, value: mainVariety[d.key] })).filter(
+          (d): d is (typeof TASTE_DIMENSIONS)[number] & { value: number } => d.value != null
+        )
+      : []
+    : TASTE_DIMENSIONS.map((d) => {
+        const withStat = knownPercentageVarieties.filter((v) => v.variety[d.key] != null);
+        if (withStat.length === 0) return null;
+        const totalPct = withStat.reduce((sum, v) => sum + v.percentage, 0);
+        const weighted = withStat.reduce((sum, v) => sum + v.variety[d.key]! * v.percentage, 0);
+        return { ...d, value: Math.round(weighted / totalPct) };
+      }).filter((d): d is (typeof TASTE_DIMENSIONS)[number] & { value: number } => d !== null);
+
+  const showTasteSection = tasteBars.length > 0 || blendProfileUnavailable;
 
   // Σύντομες, editorial φράσεις από τις πραγματικές σημειώσεις γεύσης —
   // σπάει σε σημεία στίξης ή φυσικούς συνδέσμους ("με"/"και"), ποτέ μέσα σε
@@ -158,13 +179,18 @@ export default async function WineDetailPage({
         .slice(0, 9)
     : [];
 
+  // Optional τεχνικά πεδία: όταν η τιμή λείπει, η row παραλείπεται εντελώς
+  // αντί να δείχνει "—" — δεν αλλάζει τι σημαίνει το null, απλώς δεν το
+  // εμφανίζουμε όταν δεν έχουμε τιμή (βλ. audit για τη μικτή/ασαφή σημασία
+  // του null σε vintage/appellation· γι' αυτό καμία row δεν παίρνει ποτέ ένα
+  // "Χωρίς..." label, μόνο κρύβεται).
   const techRows: { label: string; value: string }[] = [
-    { label: "Χρονιά", value: wine.vintage ? String(wine.vintage) : "—" },
-    { label: "Ποικιλία", value: varietyLabel || "—" },
+    ...(wine.vintage != null ? [{ label: "Χρονιά", value: String(wine.vintage) }] : []),
+    ...(varietyLabel ? [{ label: "Ποικιλία", value: varietyLabel }] : []),
     { label: "Περιοχή", value: wine.region.name },
-    { label: "Ονομασία", value: wine.appellation ? APPELLATION_LABEL[wine.appellation] : "—" },
-    { label: "Αλκοόλ", value: wine.abv ? `${wine.abv}%` : "—" },
-    { label: "Θερμοκρασία σερβιρίσματος", value: wine.servingTemp ?? "—" },
+    ...(wine.appellation ? [{ label: "Ονομασία", value: APPELLATION_LABEL[wine.appellation] }] : []),
+    ...(wine.abv != null ? [{ label: "Αλκοόλ", value: `${wine.abv}%` }] : []),
+    ...(wine.servingTemp ? [{ label: "Θερμοκρασία σερβιρίσματος", value: wine.servingTemp }] : []),
   ];
 
   return (
@@ -270,10 +296,12 @@ export default async function WineDetailPage({
       {/* 2 — Γρήγορα στοιχεία */}
       <div className="wrap">
         <div className="wine-quick-strip">
-          <div className="wine-quick-item">
-            <span className="l">Ποικιλία</span>
-            <span className="v">{varietyLabel || "—"}</span>
-          </div>
+          {varietyLabel && (
+            <div className="wine-quick-item">
+              <span className="l">Ποικιλία</span>
+              <span className="v">{varietyLabel}</span>
+            </div>
+          )}
           <div className="wine-quick-item">
             <span className="l">Περιοχή</span>
             <span className="v">{wine.region.name}</span>
@@ -286,10 +314,12 @@ export default async function WineDetailPage({
             <span className="l">Στυλ</span>
             <span className="v">{STYLE_NAME[wine.style]}</span>
           </div>
-          <div className="wine-quick-item">
-            <span className="l">Αλκοόλ</span>
-            <span className="v">{wine.abv ? `${wine.abv}%` : "—"}</span>
-          </div>
+          {wine.abv != null && (
+            <div className="wine-quick-item">
+              <span className="l">Αλκοόλ</span>
+              <span className="v">{wine.abv}%</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -343,31 +373,37 @@ export default async function WineDetailPage({
       </section>
 
       {/* 7 — Προφίλ γεύσης */}
-      {tasteBars.length > 0 && (
-        <section style={{ background: "var(--paper-alt)" }}>
+      {showTasteSection && (
+        <section id="taste" style={{ background: "var(--paper-alt)" }}>
           <div className="wrap">
             <h2 className="section-title">Προφίλ γεύσης</h2>
-            {mainVariety && <p className="wine-taste-head">{mainVariety.name}</p>}
-            <div className="wine-taste-bars reveal home-reveal">
-              {tasteBars.map((bar) => (
-                <div className="wine-taste-bar reveal" key={bar.key} style={{ "--pct": `${bar.value}%` } as React.CSSProperties}>
-                  <div className="wine-taste-bar-label">
-                    <span>{bar.label}</span>
-                    <span>{bar.value}</span>
+            {blendProfileUnavailable ? (
+              <p className="wine-taste-head">Μεικτή σύνθεση — δεν υπολογίζεται χωρίς γνωστά ποσοστά ποικιλιών.</p>
+            ) : (
+              <p className="wine-taste-head">{isBlend ? "Βάσει σύνθεσης" : mainVariety?.name}</p>
+            )}
+            {tasteBars.length > 0 && (
+              <div className="wine-taste-bars reveal home-reveal">
+                {tasteBars.map((bar) => (
+                  <div className="wine-taste-bar reveal" key={bar.key} style={{ "--pct": `${bar.value}%` } as React.CSSProperties}>
+                    <div className="wine-taste-bar-label">
+                      <span>{bar.label}</span>
+                      <span>{bar.value}</span>
+                    </div>
+                    <div className="wine-taste-bar-track">
+                      <div className="wine-taste-bar-fill" />
+                    </div>
                   </div>
-                  <div className="wine-taste-bar-track">
-                    <div className="wine-taste-bar-fill" />
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       )}
 
       {/* 5 — Τι να περιμένεις */}
       {expectTags.length > 0 && (
-        <section id="taste">
+        <section>
           <div className="wrap">
             <h2 className="section-title">Τι να περιμένεις</h2>
             <div className="wine-expect">
@@ -465,19 +501,21 @@ export default async function WineDetailPage({
       </section>
 
       {/* 9 — Τεχνικά στοιχεία */}
-      <section style={{ background: "var(--paper-alt)" }}>
-        <div className="wrap">
-          <h2 className="section-title">Τεχνικά στοιχεία</h2>
-          <dl className="wine-tech-table">
-            {techRows.map((row) => (
-              <div className="wine-tech-row" key={row.label}>
-                <dt>{row.label}</dt>
-                <dd>{row.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+      {techRows.length > 0 && (
+        <section style={{ background: "var(--paper-alt)" }}>
+          <div className="wrap">
+            <h2 className="section-title">Τεχνικά στοιχεία</h2>
+            <dl className="wine-tech-table">
+              {techRows.map((row) => (
+                <div className="wine-tech-row" key={row.label}>
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
 
       {/* 10 — Παρόμοια κρασιά */}
       {relatedWines.length > 0 && (
@@ -502,7 +540,7 @@ export default async function WineDetailPage({
                       {relatedVariety ? ` · ${relatedVariety}` : ""}
                     </span>
                     <span className="wine-similar-link">
-                      Εξερεύνηση κρασιού
+                      Εξερεύνησε το κρασί
                       <ArrowIcon />
                     </span>
                   </Link>
@@ -519,11 +557,11 @@ export default async function WineDetailPage({
           <h2 className="section-title">Συνέχισε την εξερεύνηση</h2>
           <div className="winery-grape-list">
             <Link href={`/krasia?winery=${wine.winery.slug}`} className="winery-grape-row">
-              Περισσότερα από {wine.winery.name}
+              Γνώρισε το {wine.winery.name}
               <ArrowIcon size={16} />
             </Link>
             <Link href={`/krasia?region=${wine.region.slug}`} className="winery-grape-row">
-              Περισσότερα από {wine.region.name}
+              Εξερεύνησε την περιοχή {wine.region.name}
               <ArrowIcon size={16} />
             </Link>
             {blend[0] && (

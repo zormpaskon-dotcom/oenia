@@ -23,7 +23,7 @@ const dictionary = {
   explore_compare: { el: "Σύγκριση ετικετών", en: "Compare wines" },
   explore_passport: { el: "Το διαβατήριό σου", en: "Your passport" },
 
-  search_placeholder: { el: "Ψάξε ετικέτα, οινοποιείο ή ποικιλία…", en: "Search a wine, winery, or variety…" },
+  search_placeholder: { el: "Αναζήτησε ετικέτα, οινοποιείο, ποικιλία ή περιοχή…", en: "Search a wine, winery, or variety…" },
   search_close: { el: "Κλείσιμο", en: "Close" },
   search_searching: { el: "Αναζήτηση…", en: "Searching…" },
   search_no_match: { el: "Καμία αντιστοιχία", en: "No matches" },
@@ -43,42 +43,42 @@ const dictionary = {
   search_explore_regions: { el: "Εξερεύνησε τις περιοχές", en: "Explore regions" },
   search_explore_grapes: { el: "Εξερεύνησε τις ποικιλίες", en: "Explore grapes" },
 
-  header_tagline: { el: "Ελληνικό κρασί. Αξίζει την ανακάλυψη.", en: "Greek wine. Worth discovering." },
+  header_tagline: { el: "Γνώρισε την Ελλάδα μέσα από το κρασί της.", en: "Greek wine. Worth discovering." },
 
-  home_hero_eyebrow: { el: "Μια γεύση μιας βαθύτερης ιστορίας", en: "A taste of a richer story" },
-  home_hero_title_l1: { el: "Το ελληνικό κρασί,", en: "Greek wine," },
+  home_hero_eyebrow: { el: "Κάθε κρασί έχει έναν τόπο. Κάθε τόπος, μια ιστορία.", en: "A taste of a richer story" },
+  home_hero_title_l1: { el: "Το ελληνικό κρασί", en: "Greek wine," },
   home_hero_title_l2: { el: "αξίζει να το ανακαλύψεις.", en: "worth discovering." },
   home_hero_lead: {
-    el: "Εξερεύνησε ελληνικά κρασιά, οινοποιεία, περιοχές και τους ανθρώπους πίσω από αυτά.",
+    el: "Ανακάλυψε τα κρασιά, τους τόπους, τις ποικιλίες και τους ανθρώπους που διαμορφώνουν το ελληνικό αμπέλι.",
     en: "Explore Greek wines, wineries, regions and the people behind them.",
   },
-  home_hero_cta: { el: "Εξερεύνηση", en: "Explore" },
-  home_hero_tag: { el: "Το κρασί ενώνει τόπους", en: "Wine connects places" },
+  home_hero_cta: { el: "Ανακάλυψε", en: "Explore" },
+  home_hero_tag: { el: "Το κρασί ενώνει τόπους.", en: "Wine connects places" },
 
-  home_search_eyebrow: { el: "Βρες την επόμενή σου ανακάλυψη", en: "Find your next discovery" },
+  home_search_eyebrow: { el: "Η επόμενή σου ανακάλυψη ξεκινά εδώ.", en: "Find your next discovery" },
   home_search_title: { el: "Τι ψάχνεις;", en: "What are you looking for?" },
   home_search_placeholder: {
-    el: "Ψάξε κρασιά, οινοποιεία, ποικιλίες ή περιοχές…",
+    el: "Αναζήτησε κρασί, οινοποιείο, ποικιλία ή περιοχή…",
     en: "Search wines, wineries, grapes or regions…",
   },
 
-  home_explore_wines_label: { el: "Εξερεύνηση", en: "Explore" },
-  home_explore_wineries_label: { el: "Γνωριμία", en: "Meet" },
-  home_explore_regions_label: { el: "Ανακάλυψη", en: "Discover" },
+  home_explore_wines_label: { el: "Ανακάλυψε", en: "Explore" },
+  home_explore_wineries_label: { el: "Γνώρισε", en: "Meet" },
+  home_explore_regions_label: { el: "Εξερεύνησε", en: "Discover" },
   home_explore_varieties_label: { el: "Μάθε", en: "Learn" },
 
-  home_featured_eyebrow: { el: "Προτεινόμενο κρασί", en: "Featured wine" },
-  home_featured_cta: { el: "Δες το κρασί", en: "Explore wine" },
+  home_featured_eyebrow: { el: "Η επιλογή του Oenia", en: "Featured wine" },
+  home_featured_cta: { el: "Εξερεύνησε το κρασί", en: "Explore wine" },
   home_featured_cite_region_group: { el: "Κυκλάδες", en: "Cyclades" },
 
   home_greece_eyebrow: { el: "Η Ελλάδα σε ένα κρασί", en: "Greece by wine" },
-  home_greece_title_l1: { el: "Πολλά μέρη.", en: "Many places." },
-  home_greece_title_l2: { el: "Μία ιστορία.", en: "One story." },
+  home_greece_title_l1: { el: "Πολλοί τόποι.", en: "Many places." },
+  home_greece_title_l2: { el: "Ένας αμπελώνας.", en: "One story." },
   home_greece_lead: {
-    el: "Από τα ηφαιστειογενή νησιά ως τους ορεινούς αμπελώνες, εξερεύνησε τις περιοχές που διαμορφώνουν το ελληνικό κρασί.",
+    el: "Από τα ηφαιστειογενή νησιά μέχρι τους ορεινούς αμπελώνες, γνώρισε τους τόπους που διαμορφώνουν τον χαρακτήρα του ελληνικού κρασιού.",
     en: "From volcanic islands to mountain vineyards, explore the regions that shape Greek wine.",
   },
-  home_greece_cta: { el: "Εξερεύνηση περιοχών", en: "Explore regions" },
+  home_greece_cta: { el: "Εξερεύνησε τις περιοχές", en: "Explore regions" },
 
   footer_col_discover: { el: "Ανακάλυψη", en: "Discover" },
   footer_col_explore: { el: "Εξερεύνηση", en: "Explore" },

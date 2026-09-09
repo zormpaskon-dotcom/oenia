@@ -252,7 +252,7 @@ export default async function WineryDetailPage({
                       {variety ? ` · ${variety}` : ""} · {winery.region.name}
                     </span>
                     <span className="wine-similar-link">
-                      Εξερεύνηση κρασιού
+                      Εξερεύνησε το κρασί
                       <ArrowIcon />
                     </span>
                   </Link>
@@ -261,7 +261,7 @@ export default async function WineryDetailPage({
             </div>
             <p style={{ marginTop: 40 }}>
               <Link href={`/krasia?winery=${winery.slug}`} className="link-arrow">
-                Δες όλα τα κρασιά ({winery.wines.length})
+                Εξερεύνησε όλες τις ετικέτες ({winery.wines.length})
                 <ArrowIcon />
               </Link>
             </p>

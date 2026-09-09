@@ -214,7 +214,7 @@ export default async function RegionDetailPage({
                       {variety ? ` · ${variety}` : ""} · {COLOR_NAME[wine.color]}
                     </span>
                     <span className="wine-similar-link">
-                      Εξερεύνηση κρασιού
+                      Εξερεύνησε το κρασί
                       <ArrowIcon />
                     </span>
                   </Link>

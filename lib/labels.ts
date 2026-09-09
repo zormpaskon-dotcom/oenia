@@ -6,10 +6,10 @@ export const COLOR_NAME: Record<string, string> = {
 };
 
 export const STYLE_NAME: Record<string, string> = {
-  DRY: "ξηρό",
-  OFF_DRY: "ημίξηρο",
-  SEMI_SWEET: "ημίγλυκο",
-  SWEET: "γλυκό",
+  DRY: "Ξηρό",
+  OFF_DRY: "Ημίξηρο",
+  SEMI_SWEET: "Ημίγλυκο",
+  SWEET: "Γλυκό",
 };
 
 export const APPELLATION_LABEL: Record<string, string> = {

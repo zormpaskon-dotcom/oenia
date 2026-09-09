@@ -307,7 +307,7 @@ export default async function VarietyDetailPage({
                     {wine.winery.name} · {wine.region.name} · {COLOR_NAME[wine.color]}
                   </span>
                   <span className="wine-similar-link">
-                    Εξερεύνηση κρασιού
+                    Εξερεύνησε το κρασί
                     <ArrowIcon />
                   </span>
                 </Link>

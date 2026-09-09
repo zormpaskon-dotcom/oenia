@@ -61,7 +61,7 @@ export default async function ComparePage({
           .join(", ") || "—",
     },
     { label: "Χρώμα", render: (w) => COLOR_NAME[w.color] },
-    { label: "Στιλ", render: (w) => STYLE_NAME[w.style] ?? "—" },
+    { label: "Στυλ", render: (w) => STYLE_NAME[w.style] ?? "—" },
     { label: "Χρονιά", render: (w) => (w.vintage ? String(w.vintage) : "—") },
     { label: "Αλκοόλ", render: (w) => (w.abv ? `${w.abv}%` : "—") },
     { label: "Ονομασία", render: (w) => (w.appellation ? APPELLATION_LABEL[w.appellation] : "—") },

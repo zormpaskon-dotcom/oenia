@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { MACRO_REGION_LABEL } from "@/lib/labels";
 
 export const metadata: Metadata = {
-  title: "Το διαβατήριό μου | Oenia",
+  title: "Το διαβατήριό σου | Oenia",
   description: "Οι ελληνικές περιοχές κρασιού που έχεις ήδη εξερευνήσει.",
 };
 
