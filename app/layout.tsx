@@ -4,6 +4,7 @@ import { Fraunces, Inter, Alex_Brush } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AgeGate from "@/components/AgeGate";
+import EntranceScreen from "@/components/EntranceScreen";
 import CookieBanner from "@/components/CookieBanner";
 import LanguageProvider from "@/components/LanguageProvider";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -60,6 +61,7 @@ export default function RootLayout({
         <Script id="theme-init" strategy="beforeInteractive">
           {`try{var t=localStorage.getItem('oenia-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}`}
         </Script>
+        <EntranceScreen />
         <ThemeProvider>
           <LanguageProvider>
             <AgeGate />

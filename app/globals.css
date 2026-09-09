@@ -1350,6 +1350,40 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 .status-pill.published{ background:var(--paper-alt); color:var(--olive); }
 .status-pill.rejected{ background:var(--paper-alt); color:var(--error); }
 
+/* ── Entrance screen ──
+   Το background PNG περιέχει ήδη το "oenia" wordmark και το "ENTER" ως
+   pixels (ακριβές asset του χρήστη) — δεν αναπαράγουμε λογότυπο/κείμενο με
+   CSS. Το invisible button απλώς κάνει το ήδη-τυπωμένο "ENTER" clickable,
+   τοποθετημένο πάνω στη θέση του μέσα στην εικόνα (σταθερή αναλογία 50%/54%
+   γιατί το object-fit:cover με center crop διατηρεί αυτό το ποσοστό). */
+.entrance-screen{
+  position:fixed; inset:0; z-index:300;
+  background:#000;
+  opacity:1;
+  transition:opacity .7s ease;
+}
+.entrance-screen.is-closing{ opacity:0; pointer-events:none; }
+.entrance-image{ object-fit:cover; object-position:center; }
+.entrance-enter{
+  position:absolute;
+  left:50%; top:54%;
+  transform:translate(-50%,-50%);
+  width:min(260px, 45vw);
+  height:72px;
+  background:none;
+  border:none;
+  padding:0;
+  margin:0;
+  color:transparent;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.entrance-enter:focus-visible{
+  outline:1px solid rgba(255,255,255,0.75);
+  outline-offset:8px;
+  border-radius:2px;
+}
+
 /* ── Age gate ── */
 .age-gate{
   position:fixed; inset:0; z-index:200;
