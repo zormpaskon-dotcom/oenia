@@ -117,6 +117,9 @@ export default async function WineryDetailPage({
           <p className="wine-hero-eyebrow">
             Οινοποιείο · {winery.region.name}
           </p>
+          {winery.logoImage && (
+            <img src={winery.logoImage} alt={`Λογότυπο ${winery.name}`} className="winery-hero-logo" />
+          )}
           <h1 className="wine-hero-name">{winery.name}</h1>
           <p className="wine-hero-place">
             {winery.region.name}
