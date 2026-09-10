@@ -6,6 +6,16 @@ import { prisma } from "@/lib/prisma";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
 import { COLOR_NAME } from "@/lib/labels";
+import WineryProfile from "@/components/winery-profile/WineryProfile";
+import { WINERY_IMAGES } from "@/lib/winery-images";
+
+// Generic premium profile — rollout σε όλα τα wineries με έστω 1
+// επαληθευμένη, landscape hero εικόνα στο WINERY_IMAGES inventory.
+// Ένα winery περνάει από το premium template ΜΟΝΟ αν έχει hero στο
+// WINERY_IMAGES — αλλιώς πέφτει στο ίδιο, αναλλοίωτο legacy JSX
+// παρακάτω (σκόπιμο fallback: 0 verified images, D/E-grade, ή
+// portrait-only/χαμηλής ανάλυσης μοναδικό candidate — βλ. σχόλια στο
+// lib/winery-images.ts ανά winery).
 
 // Γενική, μη-συγκεκριμένη φωτογραφία οινοποιείου/αμπελώνα — χρησιμοποιείται
 // μόνο όταν το οινοποιείο δεν έχει ακόμα δικό του coverImage στη βάση, ώστε
@@ -110,6 +120,20 @@ export default async function WineryDetailPage({
           <Link href="/">Αρχική</Link> / <Link href="/oinopoieia">Οινοποιεία</Link> / {winery.name}
         </p>
       </div>
+
+      {WINERY_IMAGES[winery.slug]?.hero ? (
+        <WineryProfile
+          winery={winery}
+          images={WINERY_IMAGES[winery.slug]}
+          grapes={grapes}
+          storyParagraphs={storyParagraphs}
+          featuredWines={featuredWines}
+          totalWineCount={winery.wines.length}
+          techRows={techRows}
+          hasVisitInfo={hasVisitInfo}
+        />
+      ) : (
+        <>
 
       {/* 2 — Hero */}
       <div className="wrap winery-hero">
@@ -361,6 +385,8 @@ export default async function WineryDetailPage({
           </div>
         </div>
       </section>
+        </>
+      )}
     </>
   );
 }
