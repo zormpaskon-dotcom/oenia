@@ -128,3 +128,33 @@ describe("SEO metadata — public copy, separate from internal editorial notes",
     }
   });
 });
+
+describe("Sitemap URL derivation (Phase 4) — same FOOD_PROFILES source, no DB query needed", () => {
+  it("derives exactly the 8 real FoodCategory slugs from FOOD_PROFILES", () => {
+    const categorySlugs = [...new Set(FOOD_PROFILES.map((d) => d.categorySlug))];
+    expect(categorySlugs.sort()).toEqual(
+      ["cheese", "dessert", "pasta", "red-meat", "seafood", "spicy", "vegetarian", "white-meat"].sort()
+    );
+  });
+
+  it("produces exactly 45 dish URLs, one per canonical dish, no duplicates", () => {
+    const dishSlugs = FOOD_PROFILES.map((d) => d.slug);
+    expect(dishSlugs.length).toBe(45);
+    expect(new Set(dishSlugs).size).toBe(45);
+  });
+
+  it("no umbrella slug can ever leak into the sitemap dish list (structurally impossible)", () => {
+    const dishSlugs = new Set(FOOD_PROFILES.map((d) => d.slug));
+    for (const umbrella of UMBRELLA_ONLY_SLUGS) {
+      expect(dishSlugs.has(umbrella)).toBe(false);
+    }
+  });
+
+  it("category URLs and dish URLs never collide (no slug is both a category and a dish slug)", () => {
+    const categorySlugs = new Set(FOOD_PROFILES.map((d) => d.categorySlug));
+    const dishSlugs = FOOD_PROFILES.map((d) => d.slug);
+    for (const slug of dishSlugs) {
+      expect(categorySlugs.has(slug), `dish slug "${slug}" collides with a category slug`).toBe(false);
+    }
+  });
+});

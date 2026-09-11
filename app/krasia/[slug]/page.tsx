@@ -11,6 +11,8 @@ import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
 import { reportReviewAction } from "@/lib/actions/reviews";
 import { APPELLATION_LABEL, COLOR_NAME, STYLE_NAME, reviewCountLabel } from "@/lib/labels";
+import { getWineDishMatches } from "@/lib/pairing-engine/getWineDishMatches";
+import type { WineInput } from "@/lib/pairing-engine/types";
 
 function ArrowIcon({ size = 13 }: { size?: number }) {
   return (
@@ -45,6 +47,7 @@ async function getWine(slug: string) {
       },
       region: { select: { name: true, slug: true, description: true, heroImage: true } },
       varieties: { include: { variety: true } },
+      pairings: { select: { foodCategoryId: true } },
     },
   });
 }
@@ -119,7 +122,7 @@ export default async function WineDetailPage({
 
   const session = await auth();
 
-  const [cellarEntry, reviews, { related: relatedWines }, wineryGrapes] = await Promise.all([
+  const [cellarEntry, reviews, { related: relatedWines }, wineryGrapes, foodCategories] = await Promise.all([
     session?.user
       ? prisma.cellarEntry.findUnique({
           where: { userId_wineId: { userId: session.user.id, wineId: wine.id } },
@@ -132,7 +135,26 @@ export default async function WineDetailPage({
     }),
     getRelatedWines(wine),
     getWineryVarieties(wine.wineryId),
+    prisma.foodCategory.findMany({ select: { id: true, slug: true } }),
   ]);
+
+  // Reverse pairing lookup — ίδιος scorer/explanation με το /tairiasma (Phase 1),
+  // καμία δεύτερη υλοποίηση. hasExplicitMatch βασίζεται στα ήδη φορτωμένα
+  // wine.pairings (FoodPairing rows), όχι σε νέο query.
+  const foodCategoryIdBySlug = new Map(foodCategories.map((c) => [c.slug, c.id]));
+  const winePairingCategoryIds = new Set(wine.pairings.map((p) => p.foodCategoryId));
+  const wineInputForScoring: WineInput = {
+    id: wine.id,
+    style: wine.style,
+    varieties: wine.varieties.map((v) => ({
+      percentage: v.percentage,
+      variety: { acidity: v.variety.acidity, body: v.variety.body, tannins: v.variety.tannins },
+    })),
+  };
+  const dishMatches = getWineDishMatches(wineInputForScoring, (categorySlug) => {
+    const categoryId = foodCategoryIdBySlug.get(categorySlug);
+    return categoryId ? winePairingCategoryIds.has(categoryId) : false;
+  });
 
   const myReview = session?.user ? reviews.find((r) => r.userId === session.user.id) : undefined;
 
@@ -421,18 +443,22 @@ export default async function WineDetailPage({
         </section>
       )}
 
-      {/* 8 — Ταιριάζει με */}
-      {wine.foodPairings.length > 0 && (
+      {/* 8 — Ταιριάζει με — reverse pairing lookup (Phase 4), ίδιος scorer/
+          explanation με το /tairiasma. Αντικατέστησε το παλιό ελεύθερου-
+          κειμένου wine.foodPairings (βλ. read-only audit πριν το implementation
+          — καμία σημαντική, dish-specific πληροφορία χάθηκε). */}
+      {dishMatches.length > 0 && (
         <section>
           <div className="wrap">
             <h2 className="section-title">Ταιριάζει με</h2>
             <div className="wine-pairing-tags">
-              {wine.foodPairings.map((food) => (
-                <span className="wine-pairing-tag" key={food}>
-                  {food}
-                </span>
+              {dishMatches.map((m) => (
+                <Link href={`/tairiasma/${m.dish.slug}`} className="wine-pairing-tag" key={m.dish.slug}>
+                  {m.dish.name}
+                </Link>
               ))}
             </div>
+            <p className="wine-pairing-note">{dishMatches[0].explanation}</p>
           </div>
         </section>
       )}

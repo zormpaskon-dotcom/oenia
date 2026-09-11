@@ -733,6 +733,10 @@ section{ padding:60px 0; }
   font-size:11.5px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--ink);
   padding-bottom:6px; border-bottom:1px solid var(--line);
 }
+/* Phase 4: το .wine-pairing-tag έγινε πραγματικό <Link> (πριν ήταν <span>) —
+   text-decoration reset + hover feedback, ίδιο μέγεθος/βάρος με πριν. */
+a.wine-pairing-tag{ text-decoration:none; transition:color .2s ease, border-color .2s ease; }
+a.wine-pairing-tag:hover{ color:var(--wine); border-color:var(--wine); }
 .wine-pairing-note{ font-size:15px; color:var(--muted); max-width:56ch; line-height:1.7; }
 
 /* 9 — Τεχνικά στοιχεία */
