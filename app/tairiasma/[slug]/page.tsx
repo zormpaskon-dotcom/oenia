@@ -6,6 +6,7 @@ import { COLOR_GRADIENT, COLOR_NAME } from "@/lib/labels";
 import WinePhoto from "@/components/WinePhoto";
 import { FOOD_PROFILES } from "@/lib/pairing-engine/foodProfiles";
 import { getDishRecommendations } from "@/lib/pairing-engine/getRecommendations";
+import { getRelatedDishes, getRelatedVarieties } from "@/lib/pairing-engine/relatedContent";
 
 // Level-2 canonical dish (π.χ. /tairiasma/sushi) — ξεχωριστός τύπος σελίδας
 // από το Level-1 FoodCategory (π.χ. /tairiasma/seafood) παρακάτω. Το ίδιο
@@ -76,40 +77,85 @@ export default async function PairingCategoryPage({
   const dish = FOOD_PROFILES.find((d) => d.slug === slug);
   if (dish) {
     const recommendations = await getDishRecommendations(dish);
+    const relatedDishes = getRelatedDishes(dish);
+    const relatedVarieties = getRelatedVarieties(recommendations);
 
     return (
-      <div className="wrap">
-        <p className="breadcrumb">
-          <Link href="/">Αρχική</Link> / <Link href="/tairiasma">Τι θα φας;</Link> / {dish.name}
-        </p>
+      <>
+        <div className="wrap">
+          <p className="breadcrumb">
+            <Link href="/">Αρχική</Link> / <Link href="/tairiasma">Τι θα φας;</Link> / {dish.name}
+          </p>
 
-        <div className="page-head">
-          <h1>{dish.name}</h1>
-          <p className="result-count">{dish.editorialSanityCheck}</p>
+          <div className="page-head">
+            <h1>{dish.name}</h1>
+            <p className="result-count">{dish.editorialSanityCheck}</p>
+          </div>
+
+          <div style={{ paddingBottom: 80 }}>
+            {recommendations.length === 0 ? (
+              <p style={{ color: "var(--muted)" }}>Δεν βρέθηκαν προτάσεις κρασιού αυτή τη στιγμή.</p>
+            ) : (
+              <>
+                <h2 className="section-title">Τα ταιριάσματα του Oenia</h2>
+                <div className="wine-similar-grid">
+                  {recommendations.map(({ wine, explanation }, i) => (
+                    <Link key={wine.id} href={`/krasia/${wine.slug}`} className="wine-similar-card reveal">
+                      {i === 0 && (
+                        <div style={{ textAlign: "center", marginBottom: 10 }}>
+                          <span className="badge-pill">Κορυφαία πρόταση</span>
+                        </div>
+                      )}
+                      <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="wine-similar-photo" sizes="150px" />
+                      <h3>{wine.name}</h3>
+                      <span className="wine-similar-meta">
+                        {COLOR_NAME[wine.color]} · {wine.wineryName}
+                      </span>
+                      {explanation && <p className="wine-match-reason">{explanation}</p>}
+                      <span className="wine-similar-link">
+                        Εξερεύνησε το κρασί
+                        <ArrowIcon />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
-        <div style={{ paddingBottom: 80 }}>
-          {recommendations.length === 0 ? (
-            <p style={{ color: "var(--muted)" }}>Δεν βρέθηκαν προτάσεις κρασιού αυτή τη στιγμή.</p>
-          ) : (
-            <div className="wine-similar-grid">
-              {recommendations.map(({ wine }) => (
-                <Link key={wine.id} href={`/krasia/${wine.slug}`} className="wine-similar-card reveal">
-                  <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="wine-similar-photo" sizes="150px" />
-                  <h3>{wine.name}</h3>
-                  <span className="wine-similar-meta">
-                    {COLOR_NAME[wine.color]} · {wine.wineryName}
-                  </span>
-                  <span className="wine-similar-link">
-                    Εξερεύνησε το κρασί
-                    <ArrowIcon />
-                  </span>
-                </Link>
-              ))}
+        {relatedDishes.length > 0 && (
+          <section style={{ background: "var(--paper-alt)" }}>
+            <div className="wrap">
+              <h2 className="section-title">Άλλα πιάτα σε αυτή την κατηγορία</h2>
+              <div className="winery-grape-list">
+                {relatedDishes.map((d) => (
+                  <Link key={d.slug} href={`/tairiasma/${d.slug}`} className="winery-grape-row">
+                    {d.name}
+                    <ArrowIcon size={16} />
+                  </Link>
+                ))}
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+          </section>
+        )}
+
+        {relatedVarieties.length > 0 && (
+          <section style={{ paddingBottom: 60 }}>
+            <div className="wrap">
+              <h2 className="section-title">Ποικιλίες σε αυτά τα ταιριάσματα</h2>
+              <div className="winery-grape-list">
+                {relatedVarieties.map((v) => (
+                  <Link key={v.slug} href={`/poikilies/${v.slug}`} className="winery-grape-row">
+                    {v.name}
+                    <ArrowIcon size={16} />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </>
     );
   }
 

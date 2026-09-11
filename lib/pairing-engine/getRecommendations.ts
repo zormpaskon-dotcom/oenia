@@ -1,5 +1,6 @@
 import type { WineColor } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { getPairingExplanation } from "./explanation";
 import { scoreWineForDish } from "./scoreWineForDish";
 import type { FoodProfile, ScoreResult, WineInput } from "./types";
 
@@ -23,9 +24,10 @@ export type WineDisplay = {
   color: WineColor;
   labelImage: string | null;
   wineryName: string;
+  varieties: { name: string; slug: string }[];
 };
 
-export type DishRecommendation = { wine: WineDisplay; score: ScoreResult };
+export type DishRecommendation = { wine: WineDisplay; score: ScoreResult; explanation: string | null };
 
 // Batched: ένα query για τα κρασιά, ένα για το FoodCategory id — καμία N+1.
 // Το scoring τρέχει καθαρά in-memory μετά το fetch.
@@ -42,7 +44,10 @@ export async function getDishRecommendations(dish: FoodProfile, limit = 12): Pro
         labelImage: true,
         winery: { select: { name: true } },
         varieties: {
-          select: { percentage: true, variety: { select: { acidity: true, body: true, tannins: true } } },
+          select: {
+            percentage: true,
+            variety: { select: { name: true, slug: true, acidity: true, body: true, tannins: true } },
+          },
         },
         pairings: { select: { foodCategoryId: true } },
       },
@@ -66,8 +71,17 @@ export async function getDishRecommendations(dish: FoodProfile, limit = 12): Pro
   return ranked.slice(0, limit).map((score) => {
     const w = wineById.get(score.wineId)!;
     return {
-      wine: { id: w.id, slug: w.slug, name: w.name, color: w.color, labelImage: w.labelImage, wineryName: w.winery.name },
+      wine: {
+        id: w.id,
+        slug: w.slug,
+        name: w.name,
+        color: w.color,
+        labelImage: w.labelImage,
+        wineryName: w.winery.name,
+        varieties: w.varieties.map((v) => ({ name: v.variety.name, slug: v.variety.slug })),
+      },
       score,
+      explanation: getPairingExplanation(dish, score),
     };
   });
 }

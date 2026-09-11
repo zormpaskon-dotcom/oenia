@@ -1293,6 +1293,11 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 .pairing-card .pairing-reason{ font-size:13.5px; color:var(--ink); margin:0; }
 @media (max-width:700px){ .pairing-grid{ grid-template-columns:1fr; } }
 
+/* «Γιατί ταιριάζει» line πάνω σε wine-similar-card (dish pages) — ίδιο
+   ύφος/μέγεθος με .pairing-reason παραπάνω, κεντραρισμένο όπως τα υπόλοιπα
+   στοιχεία της κάρτας. */
+.wine-match-reason{ font-size:13.5px; color:var(--ink); text-align:center; line-height:1.5; margin:0 0 10px; }
+
 /* ── Σύγκριση ετικετών (/sygkrisi) ── */
 .compare-slots{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
 .compare-slot{ border:1px dashed var(--line); border-radius:var(--radius); padding:16px; min-height:96px; display:flex; align-items:center; }
