@@ -130,6 +130,12 @@ export const WINERY_IMAGES: Record<string, WineryImages> = {
     vineyard: { category: "vineyard", src: "https://katogiaveroff.gr/thumbs/o-topos-mas/giniets-1024x480.jpg", width: 1024, height: 480, alt: "Αμπελώνας Katogi Averoff", sourceUrl: "https://katogiaveroff.gr" },
     editorial: { category: "editorial", src: "https://katogiaveroff.gr/thumbs/o-topos-mas/metsovo-night-1020x600.jpg", width: 1020, height: 600, alt: "Το Μέτσοβο τη νύχτα", sourceUrl: "https://katogiaveroff.gr" },
   },
+  "kamara-pure-winery": {
+    hero: { category: "hero", src: "https://www.kamarawinery.com/sites/default/files/2024-11/header%20resize.jpg", width: 2000, height: 1334, alt: "Η οικογένεια Κιουτσούκη στο οινοποιείο Kamara", sourceUrl: "https://www.kamarawinery.com" },
+    vineyard: { category: "vineyard", src: "https://www.kamarawinery.com/sites/default/files/2023-09/IMG_20190430_133305_311.jpg", width: 1080, height: 1080, alt: "Αμπελώνας Kamara Pure Winery, Μυγδονία", sourceUrl: "https://www.kamarawinery.com" },
+    people: { category: "people", src: "https://www.kamarawinery.com/sites/default/files/2023-09/DSC00254%20lq_0.jpg", width: 2000, height: 1125, alt: "Δημήτριος Κιουτσούκης και Ελευθερία Γιαπανίδου", sourceUrl: "https://www.kamarawinery.com", personName: "Δημήτριος Κιουτσούκης & Ελευθερία Γιαπανίδου" },
+    editorial: { category: "editorial", src: "https://www.kamarawinery.com/sites/default/files/2024-11/header%20resize%20grapes%20dry.jpg", width: 2000, height: 1334, alt: "Ξεραμένα σταφύλια από τον αμπελώνα Kamara", sourceUrl: "https://www.kamarawinery.com" },
+  },
   "kechris": {
     hero: { category: "hero", src: "https://www.kechris.gr/modules/homeslider/images/c765d146793c3b56e5e28c861c73cd3a0b040061_KECHRIS_WINERY1.jpg", width: 3000, height: 2000, alt: "Kechris Winery, Θεσσαλονίκη", sourceUrl: "https://www.kechris.gr" },
   },
