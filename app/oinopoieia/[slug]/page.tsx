@@ -39,7 +39,10 @@ async function getWinery(slug: string) {
       wines: {
         where: { status: ContentStatus.PUBLISHED },
         orderBy: { name: "asc" },
-        include: { varieties: { include: { variety: { select: { name: true, slug: true } } } } },
+        include: {
+          varieties: { include: { variety: { select: { name: true, slug: true } } } },
+          region: { select: { name: true } },
+        },
       },
     },
   });

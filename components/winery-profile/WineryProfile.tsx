@@ -30,6 +30,7 @@ type WineForCard = {
   color: WineColor;
   labelImage: string | null;
   varieties: { variety: { name: string; slug: string } }[];
+  region: { name: string };
 };
 
 export default function WineryProfile({
@@ -200,7 +201,7 @@ export default function WineryProfile({
                     <h3>{wine.name}</h3>
                     <span className="wine-similar-meta">
                       {COLOR_NAME[wine.color]}
-                      {variety ? ` · ${variety}` : ""} · {winery.region.name}
+                      {variety ? ` · ${variety}` : ""} · {wine.region.name}
                     </span>
                     <span className="wine-similar-link">
                       Εξερεύνησε το κρασί
