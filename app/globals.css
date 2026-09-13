@@ -893,8 +893,8 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 }
 
 /* ── Κοινά "chip" / "mini card" / "winery row" blocks — χρησιμοποιούνται
-   ακόμα από /arthra/[slug] (chip-row/chip-static), /tairiasma/[slug] και
-   CompareSlots (mini-photo), και /chartis (winery-row/winery-thumb/visit).
+   ακόμα από /arthra/[slug] (chip-row/chip-static), CompareSlots (mini-photo),
+   και /chartis (winery-row/winery-thumb/visit).
    ΜΗΝ αλλάξεις τα ονόματα των κλάσεων. Η σελίδα περιοχής (/perioches/[slug])
    έχει πλέον το δικό της, editorial design system — βλ. παρακάτω. ── */
 .chip-row{ display:flex; gap:10px; flex-wrap:wrap; }
@@ -1303,11 +1303,27 @@ a.chip{ text-decoration:none; display:inline-block; }
 
 /* ── Τι θα φας; (/tairiasma) ── */
 .pairing-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
-.pairing-card{ display:flex; gap:16px; border:1px solid var(--line); border-radius:var(--radius); padding:22px; background:var(--paper); }
-.pairing-card .mini-photo{ width:64px; height:86px; border-radius:8px; flex-shrink:0; display:block; }
+.pairing-card{
+  display:flex; gap:16px; border:1px solid var(--line); border-radius:var(--radius); padding:22px;
+  background:var(--paper); color:inherit; text-decoration:none;
+  transition:border-color .15s ease, transform .15s ease;
+}
+.pairing-card:hover{ border-color:var(--wine); transform:translateY(-2px); }
+.pairing-card .pairing-photo{ width:64px; height:86px; border-radius:8px; flex-shrink:0; }
 .pairing-card .pairing-body h3{ font-size:16px; margin-bottom:2px; }
-.pairing-card .pairing-meta{ font-size:12.5px; color:var(--muted); margin:0 0 10px; }
-.pairing-card .pairing-reason{ font-size:13.5px; color:var(--ink); margin:0; }
+.pairing-card .pairing-meta{ font-size:12.5px; color:var(--muted); margin:0 0 12px; }
+.pairing-link{
+  display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
+  letter-spacing:.05em; text-transform:uppercase; color:var(--wine);
+}
+.pairing-link svg{ transition:transform .2s ease; }
+.pairing-card:hover .pairing-link svg{ transform:translateX(3px); }
+.pairing-load-more{
+  display:block; margin:28px auto 0; background:none; border:1px solid var(--line);
+  border-radius:var(--radius-pill); padding:11px 24px; font-size:14px; color:var(--ink);
+  cursor:pointer; font-family:var(--font-body); transition:border-color .15s ease, background .15s ease;
+}
+.pairing-load-more:hover{ border-color:var(--wine); background:var(--paper-alt); }
 @media (max-width:700px){ .pairing-grid{ grid-template-columns:1fr; } }
 
 /* «Γιατί ταιριάζει» line πάνω σε wine-similar-card (dish pages) — ίδιο

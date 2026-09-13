@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import type { WineColor } from "@prisma/client";
 import { COLOR_GRADIENT } from "@/lib/labels";
@@ -27,7 +30,9 @@ export default function WinePhoto({
   className: string;
   sizes?: string;
 }) {
-  if (!labelImage) {
+  const [failed, setFailed] = useState(false);
+
+  if (!labelImage || failed) {
     return (
       <div
         className={className}
@@ -81,6 +86,7 @@ export default function WinePhoto({
         fill
         sizes={sizes ?? "200px"}
         style={{ objectFit: "contain", mixBlendMode: "multiply" }}
+        onError={() => setFailed(true)}
       />
     </div>
   );
