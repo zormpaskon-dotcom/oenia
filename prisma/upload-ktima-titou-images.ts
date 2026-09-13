@@ -27,6 +27,18 @@ const WINE_IMAGE_MAP: Record<string, string> = {
 const WINERY_LOGO = "https://www.mikroktimatitos.com/wp-content/uploads/2022/09/logo_header.png";
 const WINERY_COVER = "https://www.mikroktimatitos.com/wp-content/uploads/2022/11/intro_photo.png";
 
+// Premium WineryProfile (lib/winery-images.ts) — το προϋπάρχον hero
+// (intro_photo.png) ήταν hotlinked απευθείας στο mikroktimatitos.com και
+// σπάει στο production (naturalWidth:0, το site μπλοκάρει cross-origin
+// Referer). Αντικαθίσταται με φωτογραφίες από το ίδιο site, ανεβασμένες στο
+// δικό μας Blob. Πηγή: https://www.mikroktimatitos.com/kthma/ (gallery).
+const PROFILE_IMAGE_MAP: Record<string, string> = {
+  hero: "https://www.mikroktimatitos.com/wp-content/uploads/2024/07/kthma-gallery-6.jpg",
+  vineyard: "https://www.mikroktimatitos.com/wp-content/uploads/2022/11/kthma-gallery-1.jpg",
+  winery: "https://www.mikroktimatitos.com/wp-content/uploads/2024/07/kthma-gallery-2.jpg",
+  editorial: "https://www.mikroktimatitos.com/wp-content/uploads/2022/11/kthma-gallery-4.jpg",
+};
+
 async function fetchSource(url: string): Promise<Buffer> {
   // Το site έχει hotlink protection βάσει Referer — 503 χωρίς αυτό το header.
   const res = await fetch(url, {
@@ -69,6 +81,17 @@ async function main() {
     console.log(`✓ winery cover -> ${coverBlob.url}`);
   } catch (e) {
     console.error(`✗ winery images: ${(e as Error).message}`);
+  }
+
+  console.log("\nProfile gallery (για lib/winery-images.ts, hardcode τα URLs χειροκίνητα):");
+  for (const [category, url] of Object.entries(PROFILE_IMAGE_MAP)) {
+    try {
+      const buffer = await fetchSource(url);
+      const blob = await put(`wineries/mikro-ktima-titou-${category}-${Date.now()}.jpg`, buffer, { access: "public", contentType: "image/jpeg" });
+      console.log(`✓ ${category} -> ${blob.url}`);
+    } catch (e) {
+      console.error(`✗ ${category}: ${(e as Error).message}`);
+    }
   }
 
   console.log("Done.");

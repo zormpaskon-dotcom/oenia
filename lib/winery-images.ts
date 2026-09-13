@@ -264,9 +264,15 @@ export const WINERY_IMAGES: Record<string, WineryImages> = {
     hero: { category: "hero", src: "https://mikrathira.com/wp-content/uploads/2024/02/home-page.png.webp", width: 1920, height: 1280, alt: "Μικρά Θήρα, Σαντορίνη", sourceUrl: "https://mikrathira.com" },
   },
   "mikro-ktima-titou": {
-    // Μόνο Hero — το καταγεγραμμένο editorial URL (goumenissa_photo.jpg)
-    // επέστρεψε 404 σε επαλήθευση, δεν χρησιμοποιείται μαντεμένο εναλλακτικό.
-    hero: { category: "hero", src: "https://www.mikroktimatitos.com/wp-content/uploads/2022/11/intro_photo.png", width: 1920, height: 689, alt: "Μικρό Κτήμα Τίτου, Γουμένισσα", sourceUrl: "https://www.mikroktimatitos.com" },
+    // Το αρχικό hero (intro_photo.png, hotlinked απευθείας στο
+    // mikroktimatitos.com) έσπαγε στο production — το site έχει Referer-based
+    // hotlink protection που μπλοκάρει cross-origin requests (βλ.
+    // prisma/upload-ktima-titou-images.ts). Αντικαταστάθηκε με φωτογραφίες
+    // από το ίδιο site (/kthma/ gallery), ανεβασμένες στο δικό μας Blob.
+    hero: { category: "hero", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/mikro-ktima-titou-hero-1789289336416.jpg", width: 605, height: 403, alt: "Μικρό Κτήμα Τίτου, Γουμένισσα", sourceUrl: "https://www.mikroktimatitos.com/kthma/" },
+    vineyard: { category: "vineyard", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/mikro-ktima-titou-vineyard-1789289336997.jpg", width: 605, height: 403, alt: "Αμπελώνας Μικρό Κτήμα Τίτου", sourceUrl: "https://www.mikroktimatitos.com/kthma/" },
+    winery: { category: "winery", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/mikro-ktima-titou-winery-1789289337610.jpg", width: 605, height: 403, alt: "Το κελάρι παλαίωσης Μικρό Κτήμα Τίτου", sourceUrl: "https://www.mikroktimatitos.com/kthma/" },
+    editorial: { category: "editorial", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/mikro-ktima-titou-editorial-1789289338281.jpg", width: 605, height: 403, alt: "Χώρος γευσιγνωσίας Μικρό Κτήμα Τίτου", sourceUrl: "https://www.mikroktimatitos.com/kthma/" },
   },
   "garalis-winery": {
     hero: { category: "hero", src: "https://garaliswinery.gr/wp-content/uploads/2022/12/vineyard-home.jpg", width: 1920, height: 1280, alt: "Οινοποιείο Γκαράλη, Λήμνος", sourceUrl: "https://garaliswinery.gr" },
