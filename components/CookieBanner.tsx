@@ -18,17 +18,18 @@ export default function CookieBanner() {
   }
 
   return (
-    <div className={`cookie-banner${visible ? " is-visible" : ""}`} role="dialog" aria-label="Συγκατάθεση cookies">
+    // LEGAL TEXT TO BE FINALIZED — το κείμενο περιγράφει την πραγματική
+    // κατάσταση σήμερα (μόνο απαραίτητη/λειτουργική αποθήκευση, καμία
+    // analytics/tracking), όχι τελική νομική διατύπωση.
+    <div className={`cookie-banner${visible ? " is-visible" : ""}`} role="dialog" aria-label="Ενημέρωση για cookies">
       <p>
-        Χρησιμοποιούμε βασικά cookies για τη λειτουργία του site και, αν συμφωνήσεις, cookies μέτρησης
-        επισκεψιμότητας. <Link href="/politiki-aporritou">Πολιτική απορρήτου</Link>
+        Το Oenia χρησιμοποιεί μόνο cookies/αποθηκευτικό χώρο απαραίτητο για τη λειτουργία του site
+        (σύνδεση λογαριασμού, προτίμηση θέματος/γλώσσας) — καμία χρήση για analytics ή διαφήμιση.{" "}
+        <Link href="/politiki-aporritou">Πολιτική απορρήτου</Link>
       </p>
       <div className="cookie-actions">
-        <button type="button" className="cookie-decline" onClick={() => choose("essential")}>
-          Μόνο απαραίτητα
-        </button>
-        <button type="button" className="cookie-accept" onClick={() => choose("all")}>
-          Αποδοχή όλων
+        <button type="button" className="cookie-accept" onClick={() => choose("acknowledged")}>
+          Το κατάλαβα
         </button>
       </div>
     </div>

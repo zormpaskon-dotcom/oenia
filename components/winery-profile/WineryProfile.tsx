@@ -131,7 +131,7 @@ export default function WineryProfile({
       {storyParagraphs.length > 0 && (
         <section id="story">
           <div className="wrap">
-            <h2 className="section-title">Η ιστορία</h2>
+            <h2 className="section-title section-title-lead">Η ιστορία</h2>
             <div className="winery-story reveal home-reveal">
               {storyParagraphs.map((p, i) => (
                 <p key={i}>{p}</p>
@@ -181,9 +181,9 @@ export default function WineryProfile({
       {/* EDITORIAL — ήσυχο visual break πριν τα κρασιά, μόνο αν υπάρχει */}
       {images.editorial && <WineryVisualSection images={[images.editorial]} background="alt" size="quiet" />}
 
-      {/* ΚΡΑΣΙΑ */}
+      {/* ΚΡΑΣΙΑ — section-pause: αρχή του κεφαλαίου "τα κρασιά" μετά την αφήγηση/εικόνες */}
       {featuredWines.length > 0 && (
-        <section id="wines">
+        <section id="wines" className="section-pause">
           <div className="wrap">
             <h2 className="section-title">Τα κρασιά</h2>
             <div className="wine-similar-grid">

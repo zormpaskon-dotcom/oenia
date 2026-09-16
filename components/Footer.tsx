@@ -48,7 +48,7 @@ export default function Footer() {
           <a href="https://instagram.com" target="_blank" rel="noreferrer">
             {t("footer_instagram")}
           </a>
-          <a href="mailto:hello@oenia.gr">{t("footer_contact")}</a>
+          <a href="mailto:info@worldofoenia.com">{t("footer_contact")}</a>
           <span className="footer-meta-sep" aria-hidden="true" />
           <span>{t("footer_bottom")}</span>
         </div>

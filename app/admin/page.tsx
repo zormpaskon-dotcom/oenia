@@ -56,7 +56,7 @@ async function WineriesTab() {
   const [pending, recent] = await Promise.all([
     prisma.winery.findMany({
       where: { status: ContentStatus.PENDING },
-      include: { region: { select: { name: true, macroRegion: true } } },
+      include: { region: { select: { name: true, macroRegion: true } }, submission: true },
       orderBy: { createdAt: "asc" },
     }),
     prisma.winery.findMany({
@@ -96,10 +96,12 @@ async function WineriesTab() {
             {w.description && <p className="admin-review-desc">{w.description}</p>}
 
             <p className="admin-review-meta">
-              {w.email ? `Email: ${w.email}` : ""}
-              {w.phone ? `  ·  Τηλ: ${w.phone}` : ""}
+              {w.submission?.submitterEmail ? `Email υποβολής: ${w.submission.submitterEmail}` : ""}
+              {w.submission?.submitterPhone ? `  ·  Τηλ υποβολής: ${w.submission.submitterPhone}` : ""}
               {w.websiteUrl ? `  ·  ${w.websiteUrl}` : ""}
-              {!w.email && !w.phone && !w.websiteUrl ? "Χωρίς στοιχεία επικοινωνίας" : ""}
+              {!w.submission?.submitterEmail && !w.submission?.submitterPhone && !w.websiteUrl
+                ? "Χωρίς στοιχεία επικοινωνίας"
+                : ""}
             </p>
 
             <div className="admin-review-actions">
@@ -168,7 +170,7 @@ async function ReviewsTab() {
                   </Link>
                 </h3>
                 <p className="admin-review-meta">
-                  {r.user.name} · {r.rating}/5 ·{" "}
+                  {r.user?.name ?? "Χρήστης Oenia"} · {r.rating}/5 ·{" "}
                   {new Intl.DateTimeFormat("el-GR", { day: "numeric", month: "short", year: "numeric" }).format(
                     r.createdAt
                   )}

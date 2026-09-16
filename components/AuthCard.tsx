@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { loginAction, signupAction, type AuthActionState } from "@/app/login/actions";
 
@@ -76,6 +77,17 @@ export default function AuthCard() {
                 <span className="error-msg" style={{ display: "block" }}>{signupState.error}</span>
               )}
             </div>
+
+            {/* LEGAL TEXT TO BE FINALIZED */}
+            <p style={{ fontSize: 12, color: "var(--muted)", lineHeight: 1.6, margin: "4px 0 18px" }}>
+              Τα στοιχεία σου χρησιμοποιούνται για τη δημιουργία και λειτουργία του λογαριασμού σου. Δες
+              την{" "}
+              <Link href="/politiki-aporritou" className="link-underline" style={{ color: "var(--wine)" }}>
+                Πολιτική απορρήτου
+              </Link>
+              .
+            </p>
+
             <button type="submit" className="submit-btn" disabled={signupPending}>
               {signupPending ? "Δημιουργία…" : "Δημιουργία λογαριασμού"}
             </button>

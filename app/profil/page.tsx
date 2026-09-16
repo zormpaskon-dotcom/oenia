@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { COLOR_GRADIENT } from "@/lib/labels";
 import { formatMonthAccusative } from "@/lib/greek-date";
 import SettingsForm from "@/components/SettingsForm";
+import DeleteAccountForm from "@/components/DeleteAccountForm";
 import { logoutAction } from "./actions";
 
 export const metadata: Metadata = {
@@ -115,6 +116,7 @@ export default async function ProfilePage({
             newsletterOptIn={user.newsletterOptIn}
             isPublicProfile={user.isPublicProfile}
           />
+          <DeleteAccountForm email={user.email} />
         </div>
       )}
     </div>

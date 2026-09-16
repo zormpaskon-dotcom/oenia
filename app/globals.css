@@ -40,10 +40,40 @@
   --font-body:    var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   --font-brand:   var(--font-alex-brush), cursive;
 
+  /* Τυπογραφική κλίμακα — ενοποιεί τις ~40 ad-hoc τιμές (incl. "μισά pixel"
+     όπως 12.5px/13.5px) που είχαν συσσωρευτεί σε ένα μικρό σύνολο βημάτων.
+     Οι υπάρχουσες κλάσεις δείχνουν πλέον εδώ αντί να ορίζουν δικές τους τιμές —
+     καμία απ' αυτές δεν αλλάζει ρόλο/ιεραρχία, μόνο "κουμπώνει" σε κλίμακα. */
+  --text-hero:      clamp(42px, 6vw, 76px);   /* hero τίτλος σελίδας κρασιού/οινοποιείου/περιοχής/ποικιλίας */
+  --text-hero-home: clamp(42px, 5.6vw, 64px); /* homepage hero — ίδιο βάρος, πιο συμπαγές block */
+  --text-display:   clamp(30px, 3.6vw, 44px); /* section h2 (π.χ. "Ο τόπος", page title λιστών) */
+  --text-title-lg:  clamp(24px, 3vw, 34px);   /* pull-quotes, μεγάλα tags */
+  --text-title:     22px;                     /* .section-title */
+  --text-subtitle:  18px;                     /* κάρτα/index h3 */
+  --text-body-lg:   17px;
+  --text-body:      16px;
+  --text-body-sm:   14.5px;
+  --text-small:     13px;
+  --text-meta:      12px;                     /* uppercase eyebrows/kickers/labels */
+
+  /* Κλίμακα αποστάσεων */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+  --gap-card: 20px;   /* κοινό gap για grids καρτών (wine/index/pairing) */
+  --radius-thumb: 6px; /* μικρές φωτογραφίες μπουκαλιού μέσα σε κάρτες/σειρές */
+
+  /* Κίνηση — ενοποιεί τις 3 παρόμοιες cubic-bezier καμπύλες reveal σε μία */
+  --ease-standard: cubic-bezier(.2,.6,.3,1);
+  --duration-fast: .15s;
+  --duration-base: .25s;
+  --duration-slow: .5s;
+  --shadow-card-hover: 0 14px 32px rgba(var(--shadow-color), 0.12);
+
   /* Layout */
   --wrap-max:   1180px;
-  --wrap-wide:  1280px;    /* σελίδα αναζήτησης */
+  --wrap-wide:  1440px;    /* /krasia — wider editorial grid, βλ. .wrap-wide */
   --wrap-pad:   32px;
+  --wrap-pad-lg: 64px;
 
   /* Ρυθμός ενοτήτων */
   --section-y:  78px;
@@ -123,6 +153,17 @@ img{ max-width: 100%; display: block; }
   max-width: var(--wrap-max);
   margin: 0 auto;
   padding: 0 var(--wrap-pad);
+}
+
+/* Ενεργοποιεί το --wrap-wide token — υπήρχε ήδη στο σύστημα, ποτέ δεν είχε
+   δικό του class. Αποκλειστικά για /krasia, δεν αγγίζει το .wrap πουθενά αλλού. */
+.wrap-wide{
+  max-width: var(--wrap-wide);
+  margin: 0 auto;
+  padding: 0 var(--wrap-pad-lg);
+}
+@media (max-width:700px){
+  .wrap-wide{ padding: 0 20px; }
 }
 
 .kicker{
@@ -306,6 +347,62 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
 }
 .mobile-menu-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:32px; }
 
+/* ── Wine filter drawer (/krasia) — ίδιο idiom με το mobile nav drawer
+   παραπάνω (overlay + sliding panel), από αριστερά αντί για δεξιά, με sticky
+   footer. Desktop: πλαϊνό panel. Mobile: πλήρης οθόνη (media query, ίδιο component). ── */
+@keyframes filterDrawerOverlayIn{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes filterDrawerOverlayOut{ from{ opacity:1; } to{ opacity:0; } }
+@keyframes filterDrawerPanelIn{ from{ transform:translateX(-100%); } to{ transform:translateX(0); } }
+@keyframes filterDrawerPanelOut{ from{ transform:translateX(0); } to{ transform:translateX(-100%); } }
+
+.filter-drawer-overlay{
+  position:fixed; inset:0; z-index:200;
+  background:rgba(23,21,21,0.32);
+  animation:filterDrawerOverlayIn var(--duration-base) var(--ease-standard) both;
+}
+.filter-drawer-overlay.is-closing{ animation:filterDrawerOverlayOut var(--duration-base) var(--ease-standard) both; }
+.filter-drawer-panel{
+  position:fixed; top:0; left:0; bottom:0; z-index:201;
+  width:min(400px,90vw);
+  background:var(--paper);
+  border-right:1px solid var(--line);
+  display:flex; flex-direction:column;
+  animation:filterDrawerPanelIn var(--duration-base) var(--ease-standard) both;
+}
+.filter-drawer-panel.is-closing{ animation:filterDrawerPanelOut var(--duration-base) var(--ease-standard) both; }
+.filter-drawer-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 24px; border-bottom:1px solid var(--line); flex-shrink:0;
+}
+.filter-drawer-head h2{ font-size:15px; font-weight:600; letter-spacing:.08em; }
+.filter-drawer-close{
+  width:34px; height:34px; border-radius:50%; border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; background:none;
+  color:var(--ink); cursor:pointer; font-size:20px; line-height:1;
+  transition:border-color var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+.filter-drawer-close:hover{ border-color:var(--wine); color:var(--wine); }
+.filter-drawer-body{ flex:1; overflow-y:auto; padding:28px 24px; }
+.filter-drawer-foot{
+  display:flex; align-items:center; gap:16px; justify-content:space-between;
+  padding:18px 24px; border-top:1px solid var(--line); flex-shrink:0;
+  background:var(--paper);
+}
+.filter-drawer-clear{
+  font-size:13.5px; color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:2px;
+  white-space:nowrap; transition:color var(--duration-fast) ease, border-color var(--duration-fast) ease;
+}
+.filter-drawer-clear:hover{ color:var(--wine); border-color:var(--wine); }
+.filter-drawer-apply{ flex:1; justify-content:center; white-space:nowrap; }
+
+@media (max-width:700px){
+  .filter-drawer-panel{ width:100vw; max-width:none; border-right:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .filter-drawer-overlay, .filter-drawer-overlay.is-closing,
+  .filter-drawer-panel, .filter-drawer-panel.is-closing{ animation:none; }
+}
+
 /* ── Search overlay — editorial, χωρίς glassmorphism ────────────────── */
 .search-overlay{
   position:fixed; inset:0; z-index:200;
@@ -435,9 +532,23 @@ textarea:focus-visible{
   outline-offset: 2px;
 }
 
-/* ── Ροή ενοτήτων (χρησιμοποιείται σε σελίδες ετικέτας/περιοχής/κ.λπ.) ── */
-section{ padding:60px 0; }
-.section-title{ font-size:22px; margin-bottom:28px; }
+/* ── Ροή ενοτήτων (χρησιμοποιείται σε σελίδες ετικέτας/περιοχής/κ.λπ.) ──
+   Χρησιμοποιεί το --section-y (πριν ήταν hardcoded 60px, το token υπήρχε
+   αλλά δεν το διάβαζε κανείς) — λίγο πιο γενναιόδωρος ρυθμός, πιο editorial. */
+section{ padding:var(--section-y) 0; }
+@media (max-width:700px){ section{ padding:52px 0; } }
+.section-title{ font-size:var(--text-title); margin-bottom:28px; }
+/* Η "άγκυρα" ενότητα μιας σελίδας λεπτομέρειας (π.χ. "Το κρασί"/"Η ιστορία"/
+   "Ο τόπος"/"Το σταφύλι") — παίρνει μεγαλύτερο οπτικό βάρος από τις
+   δευτερεύουσες ενότητες (Τεχνικά στοιχεία, Παρόμοια, κ.λπ.) που ήδη
+   μοιράζονται το ίδιο .section-title, χωρίς να φτάνει στο μέγεθος ενός
+   πραγματικού hero. Μία χρήση ανά σελίδα. */
+.section-title-lead{ font-size:var(--text-title-lg); margin-bottom:24px; line-height:1.15; }
+/* Μεγαλύτερη παύση πριν από ένα section που ανοίγει νέο "κεφάλαιο" αφήγησης
+   (π.χ. από ιστορία σε τόπο, από χαρακτηριστικά σε κρασιά) — καθαρά μέσω
+   spacing, χωρίς νέο section/στοιχείο. */
+.section-pause{ padding-top:calc(var(--section-y) * 1.55); }
+@media (max-width:700px){ .section-pause{ padding-top:76px; } }
 
 .wave-divider{ display:block; line-height:0; margin-bottom:-2px; position:relative; z-index:1; }
 .wave-divider svg{ width:100%; height:64px; display:block; }
@@ -449,14 +560,68 @@ section{ padding:60px 0; }
 
 /* ── Σελίδα λίστας ετικετών (/krasia) ── */
 .page-head{ padding:36px 0 4px; }
+/* Χωρίς αυτό, κάθε bare <h1> μέσα σε .page-head (λίστες, νομικές σελίδες,
+   admin, άρθρο/πιάτο hero) έπεφτε στο default μέγεθος του browser (~32px,
+   UA stylesheet) αντί να ακολουθεί την κλίμακα της Oenia — ένα από τα πιο
+   ορατά "φαίνεται μισοτελειωμένο" σημεία του site. */
+.page-head h1{ font-size:var(--text-display); line-height:1.1; letter-spacing:-0.01em; }
 .result-count{ font-size:14px; color:var(--muted); margin-top:10px; }
 
-.layout{ display:grid; grid-template-columns:240px 1fr; gap:44px; padding:32px 0 80px; align-items:start; }
+/* Ίδια βάση με .page-head (ίδιο μέγεθος τίτλου, ήδη tokenized) — μόνο πιο
+   γενναιόδωρο, editorial spacing rhythm, αποκλειστικά για το /krasia. */
+.krasia-intro{ padding-top:80px; }
+.krasia-intro .kicker{ margin-bottom:12px; }
+.krasia-intro h1{ font-size:var(--text-display); line-height:1.1; letter-spacing:-0.01em; margin-bottom:12px; }
+.krasia-intro .result-count{ margin-top:0; }
 
-.filters{ position:sticky; top:24px; }
-.filter-group{ padding-bottom:26px; margin-bottom:26px; border-bottom:1px solid var(--line); }
-.filter-group:last-child{ border-bottom:none; }
-.filter-group h3{ font-size:14px; font-weight:500; margin-bottom:14px; }
+/* Ίδιος editorial ρυθμός με .krasia-intro, για τα υπόλοιπα listing pages
+   (οινοποιεία/περιοχές/ποικιλίες/άρθρα) — σκόπιμα duplicate τιμών (όχι
+   extend/rename του .krasia-intro), ώστε το ήδη QA-ed /krasia να μείνει
+   εντελώς ανέγγιχτο. */
+.page-intro{ padding-top:80px; }
+.page-intro .kicker{ margin-bottom:12px; }
+.page-intro h1{ font-size:var(--text-display); line-height:1.1; letter-spacing:-0.01em; margin-bottom:12px; }
+.page-intro .result-count{ margin-top:0; }
+@media (max-width:700px){ .page-intro{ padding-top:44px; } }
+
+.krasia-toolbar{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  margin-top:48px; padding-bottom:24px; border-bottom:1px solid var(--line);
+}
+
+.krasia-chips{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding-top:18px;
+}
+.krasia-chips-clear{
+  font-size:13px; color:var(--muted); border-bottom:1px solid var(--line);
+  padding-bottom:2px; margin-left:4px; transition:color var(--duration-fast) ease, border-color var(--duration-fast) ease;
+}
+.krasia-chips-clear:hover{ color:var(--wine); border-color:var(--wine); }
+
+.krasia-empty{
+  text-align:center; padding:96px 24px; display:flex; flex-direction:column;
+  align-items:center; gap:14px; color:var(--muted); font-size:15.5px;
+}
+
+.filter-drawer-trigger{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:11px 20px; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--paper); color:var(--ink); font-size:14px; font-family:var(--font-body);
+  cursor:pointer; transition:border-color var(--duration-fast) ease;
+}
+.filter-drawer-trigger:hover{ border-color:var(--wine); }
+.filter-drawer-trigger.has-active{ border-color:var(--wine); color:var(--wine); }
+
+.filter-group{ padding-bottom:32px; margin-bottom:32px; border-bottom:1px solid var(--line); }
+.filter-group:last-child{ border-bottom:none; margin-bottom:0; }
+.filter-group h3{ font-size:14px; font-weight:500; margin:0; }
+.filter-group-toggle{
+  display:flex; align-items:center; justify-content:space-between; width:100%;
+  background:none; border:none; padding:0 0 14px; cursor:pointer; font-family:var(--font-body); color:var(--ink);
+}
+.filter-group-chevron{ display:flex; color:var(--muted); transition:transform var(--duration-fast) ease; }
+.filter-group-chevron.is-open{ transform:rotate(180deg); }
 .filter-option{
   display:flex; align-items:center; gap:10px;
   font-size:14.5px; color:var(--ink); margin-bottom:10px; cursor:pointer;
@@ -471,68 +636,89 @@ section{ padding:60px 0; }
 .filter-option-list{ max-height:220px; overflow-y:auto; padding-right:4px; }
 .filter-no-match{ font-size:13px; color:var(--muted); }
 
-.rating-filter{ display:flex; flex-direction:column; gap:8px; }
-.rating-filter a{
-  display:block; border:1px solid transparent; border-radius:var(--radius);
-  padding:8px 10px; font-size:14px; color:var(--ink);
-}
-.rating-filter a:hover{ background:var(--paper-alt); }
-.rating-filter a.is-active{ border-color:var(--wine); background:var(--paper-alt); color:var(--wine); }
-
-.style-row{ display:flex; flex-wrap:wrap; gap:8px; }
-.style-chip{
-  flex:1 1 calc(50% - 4px); text-align:center; padding:9px 4px; border:1px solid var(--line);
-  border-radius:var(--radius); font-size:13.5px; display:block;
-}
-.style-chip.is-active{ background:var(--wine); color:var(--paper); border-color:var(--wine); }
-
-.clear-filters{
-  display:inline-block; font-size:13.5px; color:var(--muted);
-  border-bottom:1px solid var(--line); padding-bottom:2px; margin-bottom:20px;
-}
-.clear-filters:hover{ color:var(--wine); border-color:var(--wine); }
-
-.results-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
-.active-chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.active-chips{ display:flex; gap:10px; flex-wrap:wrap; }
 .active-chip{
-  font-size:13px; background:var(--paper-alt); border:1px solid var(--line);
-  border-radius:20px; padding:6px 12px 6px 14px; display:flex; align-items:center; gap:8px;
+  font-size:12.5px; background:transparent; border:1px solid var(--line);
+  border-radius:var(--radius); padding:6px 12px 6px 14px; display:flex; align-items:center; gap:9px;
+  transition:border-color var(--duration-fast) ease;
 }
-.active-chip a{ color:var(--muted); font-size:14px; line-height:1; }
+.active-chip:hover{ border-color:var(--muted); }
+.active-chip a{ color:var(--muted); font-size:13px; line-height:1; }
 .active-chip a:hover{ color:var(--wine); }
 
 .sort-select{
-  font-size:14px; padding:9px 14px; border:1px solid var(--line); border-radius:var(--radius);
-  background:var(--paper); font-family:var(--font-body); color:var(--ink); cursor:pointer;
+  font-size:14px; padding:9px 34px 9px 14px; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--paper) url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%238A827B' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 8L10 12.5L14.5 8'/%3E%3C/svg%3E") no-repeat right 12px center;
+  background-size:14px; appearance:none; -webkit-appearance:none;
+  font-family:var(--font-body); color:var(--ink); cursor:pointer;
+  transition:border-color var(--duration-fast) ease;
+}
+.sort-select:hover{ border-color:var(--wine); }
+
+.wine-grid{ display:grid; grid-template-columns:repeat(4,1fr); column-gap:30px; row-gap:60px; padding:40px 0 72px; }
+.wine-card{ position:relative; }
+.wine-card-link{ display:block; color:inherit; text-decoration:none; }
+
+.card-photo{
+  display:block; box-sizing:border-box; width:100%; aspect-ratio:3/4;
+  border-radius:var(--radius); padding:26px; margin-bottom:20px;
+}
+.card-photo img{ transition:transform var(--duration-base) var(--ease-standard); }
+.wine-card-link:hover .card-photo img{ transform:scale(1.025); }
+
+.card-name{
+  font-family:var(--font-display); font-size:18px; font-weight:600;
+  line-height:1.32; color:var(--ink); margin-bottom:5px;
+}
+.card-winery{ font-size:13px; color:var(--muted); margin-bottom:5px; }
+.card-region{ font-size:12.5px; color:var(--muted); margin-bottom:14px; }
+
+.card-rating{ display:flex; align-items:baseline; gap:8px; padding-top:12px; border-top:1px solid var(--line); }
+.card-rating-num{ font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--wine); }
+.card-rating-meta{ font-size:11.5px; color:var(--muted); }
+
+@media (max-width:980px){
+  .wine-grid{ grid-template-columns:repeat(3,1fr); column-gap:24px; row-gap:48px; }
+}
+@media (max-width:700px){
+  .krasia-intro{ padding-top:44px; }
+  .krasia-toolbar{ margin-top:32px; padding-bottom:20px; }
+  .wine-grid{ grid-template-columns:repeat(2,1fr); column-gap:16px; row-gap:36px; padding:28px 0 48px; }
+  .card-photo{ padding:18px; margin-bottom:14px; }
+  .card-name{ font-size:16px; }
 }
 
-.wine-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-.wine-card{
-  border:1px solid var(--line); border-radius:var(--radius);
-  background:var(--paper); overflow:hidden;
-  transition:box-shadow .2s ease, transform .2s ease;
-  position:relative;
+.pagination{
+  display:flex; flex-direction:column; align-items:center; gap:20px;
+  padding:0 0 120px; text-align:center;
 }
-.wine-card:hover{ transform:translateY(-3px); }
-.card-top{ padding:18px 18px 0; display:flex; gap:14px; }
-.card-photo{ width:64px; height:86px; border-radius:2px; flex-shrink:0; }
-.card-info{ flex:1; min-width:0; }
-.card-info h3{ font-size:16px; line-height:1.3; margin-bottom:4px; }
-.card-winery{ font-size:13px; color:var(--muted); margin-bottom:6px; }
-.card-region{ font-size:12.5px; color:var(--gold); }
-
-.rating-badge{ display:flex; align-items:center; gap:10px; padding:14px 18px; margin-top:14px; border-top:1px solid var(--line); }
-.rating-number{
-  font-family:var(--font-display); font-size:22px; font-weight:600; color:var(--wine);
-  background:var(--paper-alt); width:44px; height:44px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+.pagination-range{ font-size:13.5px; color:var(--muted); }
+.pagination-controls{ display:flex; align-items:center; gap:6px; }
+.pagination-arrow, .pagination-page{
+  display:flex; align-items:center; justify-content:center;
+  min-width:36px; height:36px; padding:0 4px; border-radius:var(--radius);
+  font-size:14px; color:var(--ink); border:1px solid transparent;
+  transition:border-color var(--duration-fast) ease, color var(--duration-fast) ease;
 }
-.rating-meta{ font-size:12.5px; color:var(--muted); line-height:1.4; }
-.rating-meta strong{ display:block; color:var(--ink); font-size:13.5px; font-weight:500; }
+.pagination-arrow:hover, .pagination-page:hover{ border-color:var(--line); }
+.pagination-page.is-active{ border-color:var(--wine); color:var(--wine); font-weight:500; }
+.pagination-arrow.is-disabled{ color:var(--line); pointer-events:none; }
+.pagination-ellipsis{ color:var(--muted); padding:0 2px; }
+@media (max-width:700px){ .pagination{ padding-bottom:72px; } }
 
-@media (max-width:980px){ .wine-grid{ grid-template-columns:repeat(2,1fr); } }
-@media (max-width:820px){ .layout{ grid-template-columns:1fr; } .filters{ position:static; } }
-@media (max-width:560px){ .wine-grid{ grid-template-columns:1fr; } }
+/* ── Skeleton loading (/krasia, app/krasia/loading.tsx) — διακριτικό pulse,
+   όχι spinner. Ίδια χρωματική γλώσσα με τα υπόλοιπα placeholders του site. ── */
+@keyframes skeletonPulse{ 0%,100%{ opacity:.6; } 50%{ opacity:1; } }
+.skeleton-line, .skeleton-block{
+  background:var(--paper-alt); border-radius:var(--radius-sm);
+  animation:skeletonPulse 1.6s ease-in-out infinite;
+}
+.wine-card-skeleton{
+  border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; padding:18px;
+}
+@media (prefers-reduced-motion: reduce){
+  .skeleton-line, .skeleton-block{ animation:none; }
+}
 
 /* ── Σελίδα ετικέτας (/krasia/[slug]) ── */
 .rating-block{ display:flex; align-items:center; gap:14px; margin-bottom:26px; flex-wrap:wrap; }
@@ -542,7 +728,7 @@ section{ padding:60px 0; }
 .rating-count{ font-size:14px; color:var(--muted); }
 .share-btn{
   display:flex; align-items:center; gap:7px;
-  background:none; border:1px solid var(--line); border-radius:20px;
+  background:none; border:1px solid var(--line); border-radius:var(--radius-pill);
   padding:8px 16px; font-size:13.5px; color:var(--ink); cursor:pointer;
   font-family:var(--font-body); transition:border-color .2s ease,color .2s ease;
 }
@@ -569,10 +755,8 @@ section{ padding:60px 0; }
 .tasting-notes p{ font-size:16px; color:var(--ink); margin:0; max-width:60ch; line-height:1.7; }
 .tasting-notes .serving-chip{
   display:inline-flex; align-items:center; gap:6px; margin-top:16px;
-  border:1px solid var(--line); border-radius:20px; padding:7px 14px; font-size:13px; color:var(--muted);
+  border:1px solid var(--line); border-radius:var(--radius-pill); padding:7px 14px; font-size:13px; color:var(--muted);
 }
-
-.winery-thumb{ width:64px; height:64px; border-radius:50%; background:linear-gradient(150deg,#D8BFA0,#B99872); flex-shrink:0; }
 
 /* ── Σελίδα ετικέτας v2 — ίδιο design system με την αρχική ── */
 
@@ -598,7 +782,7 @@ section{ padding:60px 0; }
   color:var(--muted); margin:0 0 18px;
 }
 .wine-hero-name{
-  font-size:clamp(40px,6vw,72px); line-height:1.02; letter-spacing:-0.01em;
+  font-size:var(--text-hero); line-height:1.02; letter-spacing:-0.01em;
   color:var(--wine); margin:0 0 20px; text-wrap:balance;
 }
 .winery-hero-logo{ display:block; height:clamp(84px,10vw,128px); width:auto; margin:0 0 20px; }
@@ -634,7 +818,7 @@ section{ padding:60px 0; }
 .wine-quick-strip{
   display:grid; grid-template-columns:repeat(5,1fr);
   border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-  margin:8px 0 0;
+  margin:28px 0 0;
 }
 .wine-quick-item{
   padding:20px clamp(14px,2vw,28px);
@@ -713,7 +897,7 @@ section{ padding:60px 0; }
 .wine-split{ display:grid; grid-template-columns:0.85fr 1fr; gap:clamp(32px,5vw,64px); align-items:center; }
 .wine-split.no-photo{ grid-template-columns:1fr; max-width:68ch; }
 .wine-split-eyebrow{ font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 0 16px; }
-.wine-split-title{ font-size:clamp(30px,3.6vw,44px); color:var(--ink); margin:0 0 20px; line-height:1.08; }
+.wine-split-title{ font-size:var(--text-display); color:var(--ink); margin:0 0 20px; line-height:1.08; }
 .wine-split-copy p{ font-size:15.5px; color:var(--muted); line-height:1.75; max-width:52ch; margin:0 0 28px; }
 .wine-split-photo{ position:relative; aspect-ratio:5/4; overflow:hidden; background:var(--paper-alt); }
 .wine-split-photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
@@ -761,16 +945,6 @@ a.wine-pairing-tag:hover{ color:var(--wine); border-color:var(--wine); }
 
 /* Save wine — λιτό, μέρος του editorial interface, όχι social-media κουμπί */
 .wine-save-row{ display:flex; align-items:center; gap:16px; margin:6px 0 30px; flex-wrap:wrap; }
-
-.label-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin-bottom:60px; }
-.label-card{ background:var(--paper); padding:26px; display:block; }
-.label-photo{ aspect-ratio:3/4; border-radius:var(--radius); margin-bottom:16px; }
-.label-card h3{ font-size:17px; margin-bottom:4px; }
-.label-card .meta{ font-size:13px; color:var(--muted); }
-
-@media (max-width:820px){
-  .label-grid{ grid-template-columns:1fr; }
-}
 
 /* ── Σελίδα οινοποιείου v2 — ίδιο design system με αρχική/κρασί ── */
 
@@ -854,7 +1028,10 @@ a.wine-pairing-tag:hover{ color:var(--wine); border-color:var(--wine); }
 .pronounce-btn.is-speaking{ color:var(--gold); border-color:var(--gold); }
 
 /* ── Σελίδα ποικιλίας v2 — ίδιο design system με αρχική/κρασί/οινοποιείο/περιοχή ── */
-.variety-hero-lead{ font-size:17px; color:var(--muted); line-height:1.7; max-width:52ch; margin:20px 0 0; }
+/* Η εισαγωγική περιγραφή ταυτότητας της ποικιλίας — λίγο μεγαλύτερη και πιο
+   σκούρη (ink αντί για muted) από απλό δευτερεύον κείμενο, ώστε να διαβάζεται
+   σαν σύντομο editorial άνοιγμα και όχι σαν μεταδεδομένα κάτω από τον τίτλο. */
+.variety-hero-lead{ font-size:18px; color:var(--ink); line-height:1.7; max-width:52ch; margin:20px 0 0; }
 
 .variety-tag-list{ display:flex; flex-direction:column; border-top:1px solid var(--line); }
 .variety-tag-row{
@@ -898,7 +1075,7 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
    ΜΗΝ αλλάξεις τα ονόματα των κλάσεων. Η σελίδα περιοχής (/perioches/[slug])
    έχει πλέον το δικό της, editorial design system — βλ. παρακάτω. ── */
 .chip-row{ display:flex; gap:10px; flex-wrap:wrap; }
-.chip-static{ border:1px solid var(--line); border-radius:20px; padding:9px 18px; font-size:14px; }
+.chip-static{ border:1px solid var(--line); border-radius:var(--radius-pill); padding:9px 18px; font-size:14px; }
 
 .mini-photo{ aspect-ratio:3/4; border-radius:8px; margin-bottom:14px; }
 
@@ -930,17 +1107,18 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 }
 
 /* ── Λίστες (/oinopoieia, /poikilies, /perioches) ── */
-.index-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; padding:32px 0 80px; }
+.index-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gap-card); padding:32px 0 80px; }
 .index-card{
   border:1px solid var(--line); border-radius:var(--radius); background:var(--paper);
-  padding:24px; display:block; transition:border-color .2s ease, transform .2s ease;
+  padding:24px; display:block;
+  transition:border-color var(--duration-base) var(--ease-standard);
 }
-.index-card:hover{ border-color:var(--wine); transform:translateY(-3px); }
-.index-card h3{ font-size:18px; margin-bottom:6px; }
+.index-card:hover{ border-color:var(--wine); }
+.index-card h3{ font-size:var(--text-subtitle); margin-bottom:6px; }
 .index-card .meta{ font-size:13px; color:var(--muted); margin-bottom:10px; }
 .index-card p{ font-size:14px; color:var(--muted); margin:0; }
 .index-card .badges{ display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
-.badge-pill{ font-size:11.5px; color:var(--olive); background:var(--paper-alt); border-radius:20px; padding:4px 10px; }
+.badge-pill{ font-size:11.5px; color:var(--olive); background:var(--paper-alt); border-radius:var(--radius-pill); padding:4px 10px; }
 
 /* .index-card έγινε wrapping <div> (όχι πια το ίδιο το <a>) ώστε να χωράει
    και το κύριο category link και τα ξεχωριστά featured-dish links χωρίς
@@ -957,7 +1135,7 @@ a.chip{ text-decoration:none; display:inline-block; }
 
 .filter-row{ display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
 .chip{
-  font-size:13.5px; padding:8px 16px; border-radius:20px; border:1px solid var(--line);
+  font-size:13.5px; padding:8px 16px; border-radius:var(--radius-pill); border:1px solid var(--line);
   color:var(--muted); background:transparent; cursor:pointer;
   transition:border-color .2s ease,color .2s ease,background .2s ease; font-family:var(--font-body);
 }
@@ -967,7 +1145,7 @@ a.chip{ text-decoration:none; display:inline-block; }
 /* Άμεσο φιλτράρισμα (client-side) στις λίστες οινοποιείων/περιοχών/ποικιλιών */
 .quick-filter-bar{
   position:sticky; top:83px; z-index:10; background:var(--paper);
-  padding:18px 0 16px; margin-bottom:4px; border-bottom:1px solid var(--line);
+  margin-top:24px; padding:18px 0 16px; margin-bottom:4px; border-bottom:1px solid var(--line);
 }
 .quick-search{
   width:100%; max-width:420px; font-size:14.5px; padding:11px 16px;
@@ -1030,7 +1208,7 @@ a.chip{ text-decoration:none; display:inline-block; }
 /* ── Κελάρι (try/tried) στη σελίδα ετικέτας ── */
 .cellar-actions{ display:flex; gap:10px; margin:4px 0 26px; flex-wrap:wrap; }
 .cellar-btn{
-  display:flex; align-items:center; gap:8px; padding:10px 18px; border-radius:20px;
+  display:flex; align-items:center; gap:8px; padding:10px 18px; border-radius:var(--radius-pill);
   border:1px solid var(--line); background:none; font-size:13.5px; color:var(--ink);
   cursor:pointer; font-family:var(--font-body); transition:border-color .2s ease,color .2s ease,background .2s ease;
 }
@@ -1076,14 +1254,14 @@ a.chip{ text-decoration:none; display:inline-block; }
 
 .cellar-filters{ display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
 .cellar-filters a{
-  font-size:13.5px; padding:8px 16px; border-radius:20px; border:1px solid var(--line);
+  font-size:13.5px; padding:8px 16px; border-radius:var(--radius-pill); border:1px solid var(--line);
   color:var(--muted); transition:border-color .2s ease,color .2s ease,background .2s ease;
 }
 .cellar-filters a.is-active{ background:var(--wine); border-color:var(--wine); color:var(--paper); }
 
-.cellar-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-.cellar-card{ border:1px solid var(--line); border-radius:14px; padding:18px; display:flex; gap:14px; background:var(--paper); }
-.cellar-photo{ width:48px; height:64px; border-radius:6px; flex-shrink:0; }
+.cellar-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-4); }
+.cellar-card{ border:1px solid var(--line); border-radius:var(--radius); padding:18px; display:flex; gap:14px; background:var(--paper); }
+.cellar-photo{ width:48px; height:64px; border-radius:var(--radius-thumb); flex-shrink:0; }
 .cellar-card h3{ font-size:15px; margin-bottom:3px; }
 .cellar-card .winery{ font-size:12.5px; color:var(--muted); margin-bottom:6px; }
 .status-tag{ font-size:11.5px; padding:3px 9px; border-radius:10px; display:inline-block; }
@@ -1091,7 +1269,7 @@ a.chip{ text-decoration:none; display:inline-block; }
 .status-tag.want{ background:var(--paper-alt); color:var(--gold); }
 
 .review-row{ display:flex; gap:16px; padding:22px 0; border-bottom:1px solid var(--line); }
-.review-row .review-photo{ width:44px; height:58px; border-radius:5px; flex-shrink:0; }
+.review-row .review-photo{ width:44px; height:58px; border-radius:var(--radius-thumb); flex-shrink:0; }
 .review-row h3{ font-size:15.5px; margin-bottom:4px; }
 .review-row p{ font-size:14px; color:var(--muted); margin:0; }
 .review-row .date{ font-size:12.5px; color:var(--muted); opacity:.8; }
@@ -1150,11 +1328,11 @@ a.chip{ text-decoration:none; display:inline-block; }
   padding:56px clamp(28px,4vw,56px) 56px max(var(--wrap-pad), calc((100vw - var(--wrap-max)) / 2 + var(--wrap-pad)));
 }
 .hero-v2-eyebrow{
-  font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  font-size:var(--text-meta); font-weight:600; letter-spacing:.1em; text-transform:uppercase;
   color:var(--muted); margin:0 0 20px;
 }
 .hero-v2-copy h1{
-  font-size:clamp(38px,4.8vw,58px); line-height:1.08; letter-spacing:-0.01em;
+  font-size:var(--text-hero-home); line-height:1.06; letter-spacing:-0.01em;
   color:var(--wine); margin:0 0 22px; text-wrap:balance;
 }
 .hero-v2-lead{ font-size:16.5px; color:var(--muted); max-width:36ch; margin:0 0 34px; }
@@ -1231,11 +1409,30 @@ a.chip{ text-decoration:none; display:inline-block; }
 @media (max-width:900px){ .explore-grid{ grid-template-columns:repeat(2,1fr); gap:22px; } }
 @media (max-width:520px){ .explore-grid{ grid-template-columns:1fr; max-width:340px; margin:0 auto; } }
 
+/* 3.5 — "Δεν ξέρεις από πού να ξεκινήσεις;" — μικρό, editorial, text-only.
+   Ίδιο interaction idiom με .winery-grape-row (divider rows + arrow reveal στο
+   hover), αλλά δικό της namespace ώστε να μην επηρεάσει τα υπάρχοντα usages. */
+.home-discovery{ padding:0 0 var(--section-y); }
+.home-discovery-list{ display:flex; flex-direction:column; border-top:1px solid var(--line); margin-top:28px; }
+.home-discovery-row{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:22px 0; border-bottom:1px solid var(--line); color:inherit;
+  transition:color var(--duration-fast) ease;
+}
+.home-discovery-row-text h3{ font-family:var(--font-display); font-size:19px; font-weight:500; margin-bottom:3px; }
+.home-discovery-row-text p{ font-size:13.5px; color:var(--muted); margin:0; }
+.home-discovery-row svg{
+  opacity:0; transform:translateX(-6px); flex-shrink:0; color:var(--wine);
+  transition:opacity .2s ease, transform .2s ease;
+}
+.home-discovery-row:hover{ color:var(--wine); }
+.home-discovery-row:hover svg{ opacity:1; transform:translateX(0); }
+
 /* 4 — Προτεινόμενο κρασί */
 .featured-wine{ background:var(--paper-alt); padding:52px 0; }
 .featured-wine-layout{ display:grid; grid-template-columns:0.85fr 1fr 0.85fr; gap:24px; align-items:center; }
 .featured-wine-name{
-  font-size:clamp(34px,4.4vw,50px); color:var(--wine); margin:14px 0 6px; line-height:1.05;
+  font-size:clamp(32px,4vw,48px); color:var(--wine); margin:14px 0 6px; line-height:1.05;
 }
 .featured-wine-winery{ font-family:var(--font-display); font-size:19px; margin:0 0 6px; }
 .featured-wine-meta{ font-size:14px; color:var(--muted); margin:0 0 26px; }
@@ -1275,7 +1472,7 @@ a.chip{ text-decoration:none; display:inline-block; }
 }
 .greece-band-copy h2{
   font-family:var(--font-display); font-weight:500;
-  font-size:clamp(32px,3.6vw,44px); color:var(--ink); line-height:1.08; margin:0 0 20px; text-wrap:balance;
+  font-size:var(--text-display); color:var(--ink); line-height:1.08; margin:0 0 20px; text-wrap:balance;
 }
 .greece-band-copy p{ font-size:15.5px; color:var(--muted); max-width:36ch; margin:0 0 30px; }
 @media (max-width:900px){
@@ -1302,14 +1499,14 @@ a.chip{ text-decoration:none; display:inline-block; }
 .leaflet-popup-content{ margin:12px 14px; }
 
 /* ── Τι θα φας; (/tairiasma) ── */
-.pairing-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+.pairing-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--gap-card); }
 .pairing-card{
   display:flex; gap:16px; border:1px solid var(--line); border-radius:var(--radius); padding:22px;
   background:var(--paper); color:inherit; text-decoration:none;
-  transition:border-color .15s ease, transform .15s ease;
+  transition:border-color var(--duration-base) var(--ease-standard);
 }
-.pairing-card:hover{ border-color:var(--wine); transform:translateY(-2px); }
-.pairing-card .pairing-photo{ width:64px; height:86px; border-radius:8px; flex-shrink:0; }
+.pairing-card:hover{ border-color:var(--wine); }
+.pairing-card .pairing-photo{ width:64px; height:86px; border-radius:var(--radius-thumb); flex-shrink:0; }
 .pairing-card .pairing-body h3{ font-size:16px; margin-bottom:2px; }
 .pairing-card .pairing-meta{ font-size:12.5px; color:var(--muted); margin:0 0 12px; }
 .pairing-link{
@@ -1493,7 +1690,7 @@ a.chip{ text-decoration:none; display:inline-block; }
 }
 .wprofile-hero-name{
   font-family:var(--font-display); font-weight:500; text-wrap:balance;
-  font-size:clamp(40px,5.9vw,76px); line-height:1.06; letter-spacing:-0.01em;
+  font-size:var(--text-hero); line-height:1.06; letter-spacing:-0.01em;
   color:var(--on-dark-surface); margin:0 0 18px;
 }
 .wprofile-hero-lead{ font-size:16px; line-height:1.7; max-width:56ch; color:rgba(247,244,239,0.92); margin:0; }

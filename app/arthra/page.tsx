@@ -42,7 +42,7 @@ export default async function ArticlesPage({
   const countByCategory = new Map(categoryCounts.map((c) => [c.category, c._count._all]));
 
   return (
-    <div className="wrap page-head" style={{ paddingBottom: 80 }}>
+    <div className="wrap page-intro" style={{ paddingBottom: 80 }}>
       <p className="kicker">Το ημερολόγιο του Oenia</p>
       <h1>Άρθρα</h1>
       <p className="result-count">{articles.length} άρθρα</p>

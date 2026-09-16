@@ -166,7 +166,7 @@ export default async function RegionDetailPage({
       {region.description && (
         <section id="place">
           <div className="wrap">
-            <h2 className="section-title">Ο τόπος</h2>
+            <h2 className="section-title section-title-lead">Ο τόπος</h2>
             <div className="winery-philosophy reveal home-reveal">
               <p className="winery-philosophy-quote">{region.description}</p>
             </div>
@@ -174,9 +174,10 @@ export default async function RegionDetailPage({
         </section>
       )}
 
-      {/* Οι ποικιλίες */}
+      {/* Οι ποικιλίες — section-pause: "place first → wine second", παύση πριν
+          περάσουμε από τον τόπο στα προϊόντα του */}
       {grapes.length > 0 && (
-        <section id="grapes" style={{ background: "var(--paper-alt)" }}>
+        <section id="grapes" className="section-pause" style={{ background: "var(--paper-alt)" }}>
           <div className="wrap">
             <h2 className="section-title">Οι ποικιλίες</h2>
             <div className="winery-grape-list">

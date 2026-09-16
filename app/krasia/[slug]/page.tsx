@@ -10,7 +10,7 @@ import ReviewForm from "@/components/ReviewForm";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
 import { reportReviewAction } from "@/lib/actions/reviews";
-import { APPELLATION_LABEL, COLOR_NAME, STYLE_NAME, reviewCountLabel } from "@/lib/labels";
+import { APPELLATION_LABEL, COLOR_NAME, STYLE_NAME, ratingLabel } from "@/lib/labels";
 import { getWineDishMatches } from "@/lib/pairing-engine/getWineDishMatches";
 import type { WineInput } from "@/lib/pairing-engine/types";
 
@@ -60,12 +60,10 @@ const RELATED_WINE_INCLUDE = {
 
 async function getRelatedWines(wine: NonNullable<Awaited<ReturnType<typeof getWine>>>) {
   const varietySlug = wine.varieties[0]?.variety.slug;
-  const [sameWinery, sameVariety] = await Promise.all([
-    prisma.wine.findMany({
-      where: { wineryId: wine.wineryId, id: { not: wine.id }, status: ContentStatus.PUBLISHED },
-      take: 4,
-      include: RELATED_WINE_INCLUDE,
-    }),
+  // Προτεραιότητα: ίδια ποικιλία → ίδια περιοχή → ίδιο οινοποιείο (deterministic,
+  // όχι recommendation engine) — ο επισκέπτης που άρεσε το κρασί πρώτα θέλει να
+  // δει το ίδιο σταφύλι, μετά τον ίδιο τόπο, μετά το ίδιο οινοποιείο.
+  const [sameVariety, sameRegion, sameWinery] = await Promise.all([
     varietySlug
       ? prisma.wine.findMany({
           where: {
@@ -77,10 +75,22 @@ async function getRelatedWines(wine: NonNullable<Awaited<ReturnType<typeof getWi
           include: RELATED_WINE_INCLUDE,
         })
       : Promise.resolve([]),
+    prisma.wine.findMany({
+      where: { regionId: wine.regionId, id: { not: wine.id }, status: ContentStatus.PUBLISHED },
+      take: 4,
+      include: RELATED_WINE_INCLUDE,
+    }),
+    prisma.wine.findMany({
+      where: { wineryId: wine.wineryId, id: { not: wine.id }, status: ContentStatus.PUBLISHED },
+      take: 4,
+      include: RELATED_WINE_INCLUDE,
+    }),
   ]);
 
   const seen = new Set([wine.id]);
-  const related = [...sameWinery, ...sameVariety].filter((w) => (seen.has(w.id) ? false : (seen.add(w.id), true)));
+  const related = [...sameVariety, ...sameRegion, ...sameWinery].filter((w) =>
+    seen.has(w.id) ? false : (seen.add(w.id), true)
+  );
 
   return { related: related.slice(0, 3) };
 }
@@ -276,9 +286,7 @@ export default async function WineDetailPage({
                 <span key={i} className={`dot-lg${i < filledDots ? " filled" : ""}`} />
               ))}
             </div>
-            <span className="rating-count">
-              {wine.avgRating.toFixed(1).replace(".", ",")} · {reviewCountLabel(wine.reviewCount)}
-            </span>
+            <span className="rating-count">{ratingLabel(wine.avgRating, wine.reviewCount)}</span>
           </div>
 
           {session?.user ? (
@@ -302,6 +310,7 @@ export default async function WineDetailPage({
                 region: wine.region.name,
                 variety: varietyLabel || wine.region.name,
                 rating: wine.avgRating.toFixed(1).replace(".", ","),
+                hasReviews: wine.reviewCount > 0,
               }}
             />
           </div>
@@ -360,7 +369,7 @@ export default async function WineDetailPage({
       <section id="overview">
         <div className="wrap">
           <div className="wine-overview-copy reveal home-reveal">
-            <h2 className="section-title">Το κρασί</h2>
+            <h2 className="section-title section-title-lead">Το κρασί</h2>
             {wine.description && <p>{wine.description}</p>}
 
             {blend.length > 1 && (
@@ -463,8 +472,8 @@ export default async function WineDetailPage({
         </section>
       )}
 
-      {/* 6 — Ο τόπος */}
-      <section id="place" style={{ background: "var(--paper-alt)" }}>
+      {/* 6 — Ο τόπος — section-pause: αρχή νέου "κεφαλαίου" (τόπος/οινοποιείο) */}
+      <section id="place" className="section-pause" style={{ background: "var(--paper-alt)" }}>
         <div className="wrap">
           <div className={`wine-split${wine.region.heroImage ? "" : " no-photo"}`}>
             <div className="wine-split-copy reveal home-reveal">
@@ -543,9 +552,9 @@ export default async function WineDetailPage({
         </section>
       )}
 
-      {/* 10 — Παρόμοια κρασιά */}
+      {/* 10 — Παρόμοια κρασιά — section-pause: αρχή του "discovery" κεφαλαίου */}
       {relatedWines.length > 0 && (
-        <section>
+        <section className="section-pause">
           <div className="wrap">
             <h2 className="section-title">Παρόμοιες ετικέτες</h2>
             <div className="wine-similar-grid">
@@ -626,7 +635,7 @@ export default async function WineDetailPage({
               {reviews.map((review) => (
                 <div className="review" key={review.id}>
                   <div className="review-head">
-                    <span className="review-user">{review.user.name}</span>
+                    <span className="review-user">{review.user?.name ?? "Χρήστης Oenia"}</span>
                     <span className="review-date">
                       {new Intl.DateTimeFormat("el-GR", { month: "long", year: "numeric" }).format(
                         review.createdAt

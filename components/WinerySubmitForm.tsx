@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { submitWineryAction, type WinerySubmitState } from "@/app/gia-oinopoieia/actions";
 
@@ -97,6 +98,16 @@ export default function WinerySubmitForm({ regions }: { regions: { id: string; n
           {state.error}
         </span>
       )}
+
+      {/* LEGAL TEXT TO BE FINALIZED */}
+      <p style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.6, margin: "4px 0 18px" }}>
+        Το email και το τηλέφωνο χρησιμοποιούνται μόνο για να επικοινωνήσουμε μαζί σου σχετικά με αυτή
+        την αίτηση — δεν δημοσιεύονται αυτόματα ως στοιχεία επικοινωνίας του οινοποιείου. Δες την{" "}
+        <Link href="/politiki-aporritou" className="link-underline" style={{ color: "var(--wine)" }}>
+          Πολιτική απορρήτου
+        </Link>
+        .
+      </p>
 
       <button type="submit" className="submit-btn" disabled={pending} style={{ marginTop: 10 }}>
         {pending ? "Αποστολή…" : "Στείλε την αίτηση"}

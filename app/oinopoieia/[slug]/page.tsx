@@ -210,7 +210,7 @@ export default async function WineryDetailPage({
       {storyParagraphs.length > 0 && (
         <section id="story">
           <div className="wrap">
-            <h2 className="section-title">Η ιστορία</h2>
+            <h2 className="section-title section-title-lead">Η ιστορία</h2>
             <div className="winery-story reveal home-reveal">
               {storyParagraphs.map((p, i) => (
                 <p key={i}>{p}</p>
@@ -259,9 +259,9 @@ export default async function WineryDetailPage({
         </section>
       )}
 
-      {/* 10 — Τα κρασιά */}
+      {/* 10 — Τα κρασιά — section-pause: αρχή του κεφαλαίου "τα κρασιά" */}
       {featuredWines.length > 0 && (
-        <section id="wines" style={{ background: "var(--paper-alt)" }}>
+        <section id="wines" className="section-pause" style={{ background: "var(--paper-alt)" }}>
           <div className="wrap">
             <h2 className="section-title">Τα κρασιά</h2>
             <div className="wine-similar-grid">

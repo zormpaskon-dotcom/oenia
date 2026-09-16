@@ -7,12 +7,22 @@ import { prisma } from "@/lib/prisma";
 import { CATEGORY_LABEL } from "@/lib/labels";
 import JsonLd from "@/components/JsonLd";
 
+function ArrowIcon({ size = 13 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 8h21M15 1l7 7-7 7" />
+    </svg>
+  );
+}
+
 async function getArticle(slug: string) {
   return prisma.article.findUnique({
     where: { slug },
     include: {
       region: { select: { name: true, slug: true } },
       author: { select: { name: true } },
+      relatedWineries: { include: { winery: { select: { name: true, slug: true } } } },
+      relatedWines: { include: { wine: { select: { name: true, slug: true } } } },
     },
   });
 }
@@ -90,7 +100,7 @@ export default async function ArticleDetailPage({
           />
         )}
         {paragraphs.map((p, i) => (
-          <p className="desc" key={i} style={{ marginBottom: 20 }}>
+          <p className="desc" key={i} style={{ marginBottom: 20, maxWidth: 680 }}>
             {p}
           </p>
         ))}
@@ -105,14 +115,32 @@ export default async function ArticleDetailPage({
           </div>
         )}
 
-        {article.region && (
-          <p style={{ marginTop: 32, fontSize: 14, color: "var(--muted)" }}>
-            Διάβασε περισσότερα για την{" "}
-            <Link href={`/perioches/${article.region.slug}`} className="link-underline" style={{ color: "var(--wine)" }}>
-              {article.region.name}
-            </Link>
-            .
-          </p>
+        {(article.region || article.relatedWineries.length > 0 || article.relatedWines.length > 0) && (
+          <div style={{ marginTop: 40 }}>
+            <h2 className="section-title" style={{ fontSize: 15 }}>
+              Συνέχισε την εξερεύνηση
+            </h2>
+            <div className="winery-grape-list">
+              {article.region && (
+                <Link href={`/perioches/${article.region.slug}`} className="winery-grape-row">
+                  Εξερεύνησε την περιοχή {article.region.name}
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
+              {article.relatedWineries.map(({ winery }) => (
+                <Link key={winery.slug} href={`/oinopoieia/${winery.slug}`} className="winery-grape-row">
+                  Γνώρισε το {winery.name}
+                  <ArrowIcon size={16} />
+                </Link>
+              ))}
+              {article.relatedWines.map(({ wine }) => (
+                <Link key={wine.slug} href={`/krasia/${wine.slug}`} className="winery-grape-row">
+                  Εξερεύνησε το {wine.name}
+                  <ArrowIcon size={16} />
+                </Link>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>

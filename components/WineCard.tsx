@@ -16,29 +16,38 @@ export type WineCardData = {
   varieties: { variety: { name: string } }[];
 };
 
+// Layout: bottle photo πρώτα (μεγάλη, πάνω, το "hero" της κάρτας), μετά όνομα
+// → οινοποιείο → περιοχή/ποικιλία → rating, σε φθίνουσα οπτική βαρύτητα.
+// Ίδια δεδομένα/props με πριν, μόνο η παρουσίαση άλλαξε — βλ. πλάνο polish pass.
 export default function WineCard({ wine }: { wine: WineCardData }) {
   const mainVariety = wine.varieties[0]?.variety.name;
 
   return (
     <div className="wine-card reveal">
-      <Link href={`/krasia/${wine.slug}`} style={{ color: "inherit", textDecoration: "none", display: "block" }}>
-        <div className="card-top">
-          <WinePhoto labelImage={wine.labelImage} color={wine.color} wineName={wine.name} className="card-photo" sizes="64px" />
-          <div className="card-info">
-            <h3>{wine.name}</h3>
-            <p className="card-winery">{wine.winery.name}</p>
-            <span className="card-region">
-              {wine.region.name}
-              {mainVariety ? ` · ${mainVariety}` : ""}
+      <Link href={`/krasia/${wine.slug}`} className="wine-card-link">
+        <WinePhoto
+          labelImage={wine.labelImage}
+          color={wine.color}
+          wineName={wine.name}
+          className="card-photo"
+          sizes="(max-width: 640px) 45vw, (max-width: 980px) 30vw, 22vw"
+        />
+        <div className="card-body">
+          <h3 className="card-name">{wine.name}</h3>
+          <p className="card-winery">{wine.winery.name}</p>
+          <p className="card-region">
+            {wine.region.name}
+            {mainVariety ? ` · ${mainVariety}` : ""}
+          </p>
+          <div className="card-rating">
+            {wine.reviewCount > 0 && (
+              <span className="card-rating-num">{wine.avgRating.toFixed(1).replace(".", ",")}</span>
+            )}
+            <span className="card-rating-meta">
+              {wine.reviewCount > 0 ? reviewCountLabel(wine.reviewCount) : "Χωρίς αξιολογήσεις"} ·{" "}
+              {COLOR_NAME[wine.color]}
             </span>
           </div>
-        </div>
-        <div className="rating-badge">
-          <span className="rating-number">{wine.avgRating.toFixed(1).replace(".", ",")}</span>
-          <span className="rating-meta">
-            <strong>{reviewCountLabel(wine.reviewCount)}</strong>
-            {COLOR_NAME[wine.color]}
-          </span>
         </div>
       </Link>
     </div>

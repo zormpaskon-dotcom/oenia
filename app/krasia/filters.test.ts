@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hrefFor, toggleValue, toList, type FilterState } from "./filters";
+import { hrefFor, hrefForPage, toggleValue, toList, type FilterState } from "./filters";
 
 describe("toList", () => {
   it("returns an empty array for undefined", () => {
@@ -29,10 +29,11 @@ describe("toggleValue", () => {
   });
 });
 
-const baseState: FilterState = {
+const baseState: Omit<FilterState, "page"> = {
   color: [],
   region: [],
   variety: [],
+  winery: [],
 };
 
 describe("hrefFor", () => {
@@ -45,7 +46,7 @@ describe("hrefFor", () => {
       ...baseState,
       color: ["red", "rose"],
       region: ["naoussa"],
-      minRating: 4,
+      winery: ["ktima-biblia-chora"],
       style: "dry",
       sort: "rating",
     });
@@ -53,7 +54,7 @@ describe("hrefFor", () => {
     expect(url.pathname).toBe("/krasia");
     expect(url.searchParams.get("color")).toBe("red,rose");
     expect(url.searchParams.get("region")).toBe("naoussa");
-    expect(url.searchParams.get("minRating")).toBe("4");
+    expect(url.searchParams.get("winery")).toBe("ktima-biblia-chora");
     expect(url.searchParams.get("style")).toBe("dry");
     expect(url.searchParams.get("sort")).toBe("rating");
   });
@@ -61,5 +62,23 @@ describe("hrefFor", () => {
   it("omits falsy fields entirely rather than emitting empty params", () => {
     const href = hrefFor({ ...baseState, color: ["red"] });
     expect(href).toBe("/krasia?color=red");
+  });
+
+  it("never includes a page param — page resets implicitly on any filter change", () => {
+    const href = hrefFor({ ...baseState, color: ["red"] });
+    expect(href).not.toContain("page=");
+  });
+});
+
+describe("hrefForPage", () => {
+  it("omits the page param for page 1", () => {
+    expect(hrefForPage(baseState, 1)).toBe("/krasia");
+  });
+
+  it("appends page for page > 1, preserving other filters", () => {
+    const href = hrefForPage({ ...baseState, color: ["red"] }, 3);
+    const url = new URL(href, "http://example.com");
+    expect(url.searchParams.get("color")).toBe("red");
+    expect(url.searchParams.get("page")).toBe("3");
   });
 });

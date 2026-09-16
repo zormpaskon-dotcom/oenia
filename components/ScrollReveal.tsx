@@ -23,13 +23,26 @@ export default function ScrollReveal() {
       document.querySelectorAll(".reveal:not(.is-visible)").forEach((el) => observer.observe(el));
     }
 
-    observeAll();
+    // Κάθε observeAll() (αρχικό + κάθε mutation) περνάει από rAF αντί να τρέχει
+    // synchronously: σε βαρύτερες σελίδες (π.χ. /krasia) το React hydration
+    // αφαιρεί Suspense-boundary markers ως DOM mutations — αν ο MutationObserver
+    // απαντήσει synchronously, το IntersectionObserver προλαβαίνει να γράψει
+    // is-visible πριν ολοκληρωθεί το hydration του δέντρου, προκαλώντας ψευδές
+    // hydration-mismatch warning. Ένα frame καθυστέρηση δεν αλλάζει το animation.
+    let raf = 0;
+    function scheduleObserveAll() {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(observeAll);
+    }
+
+    scheduleObserveAll();
 
     // Καλύπτει στοιχεία που μπαίνουν αργότερα στο DOM (client-side πλοήγηση, φίλτρα).
-    const mutationObserver = new MutationObserver(() => observeAll());
+    const mutationObserver = new MutationObserver(() => scheduleObserveAll());
     mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     return () => {
+      cancelAnimationFrame(raf);
       observer.disconnect();
       mutationObserver.disconnect();
     };

@@ -198,7 +198,7 @@ export default async function VarietyDetailPage({
       {hasCharacterSection && (
         <section id="character">
           <div className="wrap">
-            <h2 className="section-title">Το σταφύλι</h2>
+            <h2 className="section-title section-title-lead">Το σταφύλι</h2>
             {traits.length > 0 && (
               <div className="variety-tag-list reveal home-reveal">
                 {traits.map((trait, i) => (
@@ -287,9 +287,10 @@ export default async function VarietyDetailPage({
         </section>
       )}
 
-      {/* Κρασιά με αυτή την ποικιλία */}
+      {/* Κρασιά με αυτή την ποικιλία — section-pause: από χαρακτηριστικά/γεύση
+          σε πραγματικά κρασιά, φυσικό κλείσιμο της εκπαιδευτικής αφήγησης */}
       {featuredWines.length > 0 && (
-        <section id="wines">
+        <section id="wines" className="section-pause">
           <div className="wrap">
             <h2 className="section-title">Κρασιά με {variety.name}</h2>
             <div className="wine-similar-grid">

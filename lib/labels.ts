@@ -32,6 +32,15 @@ export function reviewCountLabel(count: number) {
   return `${count} ${count === 1 ? "αξιολόγηση" : "αξιολογήσεις"}`;
 }
 
+/** "4,3 · 28 αξιολογήσεις", ή ένα ουδέτερο μήνυμα όταν reviewCount === 0 — ποτέ "0,00 · 0
+ * αξιολογήσεις", που διαβάζεται σαν μηδενική βαθμολογία αντί για "δεν έχει αξιολογηθεί ακόμη". */
+export function ratingLabel(avgRating: number, reviewCount: number, compact = false) {
+  if (reviewCount === 0) {
+    return compact ? "Χωρίς αξιολογήσεις" : "Δεν έχει αξιολογηθεί ακόμη";
+  }
+  return `${avgRating.toFixed(1).replace(".", ",")} · ${reviewCountLabel(reviewCount)}`;
+}
+
 export const CATEGORY_LABEL: Record<string, string> = {
   VARIETIES: "Ποικιλίες",
   REGIONS: "Περιοχές",

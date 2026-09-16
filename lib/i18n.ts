@@ -67,6 +67,19 @@ const dictionary = {
   home_explore_regions_label: { el: "Εξερεύνησε", en: "Discover" },
   home_explore_varieties_label: { el: "Μάθε", en: "Learn" },
 
+  home_discovery_eyebrow: { el: "Δεν ξέρεις από πού να ξεκινήσεις;", en: "Not sure where to start?" },
+  home_discovery_region_title: { el: "Ένα κρασί από έναν τόπο", en: "A wine from a place" },
+  home_discovery_region_cta: { el: "Εξερεύνησε κρασιά ανά περιοχή", en: "Explore wines by region" },
+  home_discovery_variety_title: { el: "Μια ελληνική ποικιλία", en: "A Greek grape variety" },
+  home_discovery_variety_cta: {
+    el: "Γνώρισε τις ποικιλίες του ελληνικού αμπελώνα",
+    en: "Discover the varieties of the Greek vineyard",
+  },
+  home_discovery_winery_title: { el: "Ένα οινοποιείο", en: "A winery" },
+  home_discovery_winery_cta: { el: "Γνώρισε τους ανθρώπους πίσω από το κρασί", en: "Meet the people behind the wine" },
+  home_discovery_pairing_title: { el: "Τι ταιριάζει με το φαγητό σου;", en: "What pairs with your food?" },
+  home_discovery_pairing_cta: { el: "Βρες κρασιά ανά περίσταση και γεύση", en: "Find wines by occasion and taste" },
+
   home_featured_eyebrow: { el: "Η επιλογή του Oenia", en: "Featured wine" },
   home_featured_cta: { el: "Εξερεύνησε το κρασί", en: "Explore wine" },
   home_featured_cite_region_group: { el: "Κυκλάδες", en: "Cyclades" },

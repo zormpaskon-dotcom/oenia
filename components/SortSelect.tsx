@@ -9,11 +9,16 @@ export default function SortSelect({ current }: { current: string }) {
 
   function onChange(value: string) {
     const params = new URLSearchParams(searchParams.toString());
-    if (value === "popular") {
+    if (value === "featured") {
       params.delete("sort");
     } else {
       params.set("sort", value);
     }
+    // Αλλαγή ταξινόμησης → πάντα πίσω στη σελίδα 1, ίδιο σκεπτικό με το
+    // hrefFor/hrefForPage (app/krasia/filters.ts): filter/sort αλλαγή δεν
+    // πρέπει ποτέ να αφήνει τον χρήστη σε μια σελίδα-νούμερο που πλέον δεν
+    // έχει νόημα για το νέο σύνολο αποτελεσμάτων.
+    params.delete("page");
     const qs = params.toString();
     router.push(qs ? `/krasia?${qs}` : "/krasia");
   }

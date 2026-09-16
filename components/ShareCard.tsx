@@ -8,6 +8,7 @@ export type ShareCardData = {
   region: string;
   variety: string;
   rating: string;
+  hasReviews: boolean;
 };
 
 function wrapText(
@@ -89,11 +90,11 @@ function drawCard(canvas: HTMLCanvasElement, card: ShareCardData) {
   ctx.stroke();
   ctx.fillStyle = "#F7F4EF";
   ctx.font = `600 42px ${fraunces}`;
-  ctx.fillText(card.rating, cx, cy + 15);
+  ctx.fillText(card.hasReviews ? card.rating : "–", cx, cy + 15);
 
   ctx.fillStyle = "rgba(247,244,239,0.6)";
   ctx.font = `16px ${inter}`;
-  ctx.fillText("βαθμολογία χρηστών", cx, cy + 100);
+  ctx.fillText(card.hasReviews ? "βαθμολογία χρηστών" : "νέα ετικέτα στο Oenia", cx, cy + 100);
 
   ctx.fillStyle = "rgba(247,244,239,0.55)";
   ctx.font = `16px ${inter}`;

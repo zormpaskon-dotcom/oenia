@@ -13,7 +13,7 @@ export default async function VarietiesPage() {
   });
 
   return (
-    <div className="wrap page-head" style={{ paddingBottom: 80 }}>
+    <div className="wrap-wide page-intro" style={{ paddingBottom: 80 }}>
       <p className="kicker">Εξερεύνηση</p>
       <h1>Ποικιλίες</h1>
 

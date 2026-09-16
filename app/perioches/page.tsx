@@ -55,12 +55,12 @@ export default async function RegionsPage() {
 
   return (
     <>
-      <div className="wrap page-head">
+      <div className="wrap-wide page-intro">
         <p className="kicker">Εξερεύνηση</p>
         <h1>Περιοχές</h1>
       </div>
 
-      <div className="wrap">
+      <div className="wrap-wide">
         <QuickFilterGrid
           items={items}
           nounSingular="περιοχή"

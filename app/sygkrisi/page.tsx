@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import CompareSlots, { type CompareOption } from "@/components/CompareSlots";
-import { APPELLATION_LABEL, COLOR_NAME, reviewCountLabel, STYLE_NAME } from "@/lib/labels";
+import { APPELLATION_LABEL, COLOR_NAME, ratingLabel, STYLE_NAME } from "@/lib/labels";
 
 export const metadata: Metadata = {
   title: "Σύγκριση ετικετών | Oenia",
@@ -67,7 +67,7 @@ export default async function ComparePage({
     { label: "Ονομασία", render: (w) => (w.appellation ? APPELLATION_LABEL[w.appellation] : "—") },
     {
       label: "Βαθμολογία",
-      render: (w) => `${w.avgRating.toFixed(1).replace(".", ",")} · ${reviewCountLabel(w.reviewCount)}`,
+      render: (w) => ratingLabel(w.avgRating, w.reviewCount, true),
     },
     { label: "Ταιριάζει με", render: (w) => w.foodPairings.join(", ") || "—" },
     { label: "Σημειώσεις γεύσης", render: (w) => w.tastingNotes || "—" },

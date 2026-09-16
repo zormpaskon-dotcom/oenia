@@ -106,12 +106,26 @@ model Winery {
 
   wines    Wine[]
   articles ArticleOnWinery[]
+  submission WinerySubmission?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([regionId])
   @@index([status])
+}
+
+// Ιδιωτικά στοιχεία επικοινωνίας του ατόμου που υπέβαλε την αίτηση μέσω
+// /gia-oinopoieia — ΔΕΝ είναι δημόσια στοιχεία του οινοποιείου (γι' αυτό
+// υπάρχουν ξεχωριστά από winery.email/phone, που είναι το δημόσιο business
+// contact). Διαβάζεται μόνο από το admin review UI.
+model WinerySubmission {
+  id             String   @id @default(cuid())
+  wineryId       String   @unique
+  winery         Winery   @relation(fields: [wineryId], references: [id], onDelete: Cascade)
+  submitterEmail String?
+  submitterPhone String?
+  createdAt      DateTime @default(now())
 }
 
 enum ContentStatus {
@@ -285,11 +299,14 @@ enum UserRole {
 }
 
 model Review {
-  id     String @id @default(cuid())
-  userId String
+  id     String  @id @default(cuid())
+  // Προαιρετικό σκόπιμα: όταν διαγράφεται ο λογαριασμός, το review ΔΕΝ
+  // διαγράφεται (παραμένει δημόσιο περιεχόμενο) — μόνο αποσυνδέεται από τον
+  // χρήστη (onDelete: SetNull). Το UI δείχνει "Χρήστης Oenia" όταν user=null.
+  userId String?
   wineId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  wine   Wine   @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  wine   Wine    @relation(fields: [wineId], references: [id], onDelete: Cascade)
 
   rating Int                                 // 1–5
   note   String? @db.Text

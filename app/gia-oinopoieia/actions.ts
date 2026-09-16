@@ -64,7 +64,12 @@ export async function submitWineryAction(
 
   const slug = await uniqueSlug(slugify(name));
 
-  await prisma.winery.create({
+  // Το email/τηλέφωνο εδώ είναι στοιχεία επικοινωνίας του ατόμου που υποβάλλει
+  // την αίτηση, όχι του ίδιου του οινοποιείου — γι' αυτό ΔΕΝ γράφονται στο
+  // δημόσιο Winery.email/phone (αυτά μένουν για το πραγματικό business contact
+  // του οινοποιείου, αν/όταν οριστεί ξεχωριστά). Αποθηκεύονται σε ξεχωριστό,
+  // ιδιωτικό WinerySubmission row, ορατό μόνο στο admin review UI.
+  const winery = await prisma.winery.create({
     data: {
       name,
       slug,
@@ -72,8 +77,6 @@ export async function submitWineryAction(
       foundedYear,
       description: description || null,
       websiteUrl: websiteUrl || null,
-      email: email || null,
-      phone: phone || null,
       acceptsVisitors,
       isOrganic,
       coverImage,
@@ -81,6 +84,16 @@ export async function submitWineryAction(
       isVerified: false,
     },
   });
+
+  if (email || phone) {
+    await prisma.winerySubmission.create({
+      data: {
+        wineryId: winery.id,
+        submitterEmail: email || null,
+        submitterPhone: phone || null,
+      },
+    });
+  }
 
   return { error: null, success: true };
 }

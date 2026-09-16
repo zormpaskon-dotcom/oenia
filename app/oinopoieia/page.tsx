@@ -49,12 +49,12 @@ export default async function WineriesPage() {
 
   return (
     <>
-      <div className="wrap page-head">
+      <div className="wrap-wide page-intro">
         <p className="kicker">Εξερεύνηση</p>
         <h1>Οινοποιεία</h1>
       </div>
 
-      <div className="wrap">
+      <div className="wrap-wide">
         <QuickFilterGrid
           items={items}
           nounSingular="οινοποιείο"

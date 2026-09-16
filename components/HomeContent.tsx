@@ -117,6 +117,43 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
         </div>
       </section>
 
+      {/* 3.5 — Δεν ξέρεις από πού να ξεκινήσεις; */}
+      <section className="home-discovery">
+        <div className="wrap reveal home-reveal">
+          <p className="hero-v2-eyebrow">{t("home_discovery_eyebrow")}</p>
+          <div className="home-discovery-list">
+            <Link href="/perioches" className="home-discovery-row">
+              <div className="home-discovery-row-text">
+                <h3>{t("home_discovery_region_title")}</h3>
+                <p>{t("home_discovery_region_cta")}</p>
+              </div>
+              <ArrowIcon />
+            </Link>
+            <Link href="/poikilies" className="home-discovery-row">
+              <div className="home-discovery-row-text">
+                <h3>{t("home_discovery_variety_title")}</h3>
+                <p>{t("home_discovery_variety_cta")}</p>
+              </div>
+              <ArrowIcon />
+            </Link>
+            <Link href="/oinopoieia" className="home-discovery-row">
+              <div className="home-discovery-row-text">
+                <h3>{t("home_discovery_winery_title")}</h3>
+                <p>{t("home_discovery_winery_cta")}</p>
+              </div>
+              <ArrowIcon />
+            </Link>
+            <Link href="/tairiasma" className="home-discovery-row">
+              <div className="home-discovery-row-text">
+                <h3>{t("home_discovery_pairing_title")}</h3>
+                <p>{t("home_discovery_pairing_cta")}</p>
+              </div>
+              <ArrowIcon />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* 4 — Προτεινόμενο κρασί */}
       {featuredWine && (
         <section className="featured-wine">
