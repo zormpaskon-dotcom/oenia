@@ -292,15 +292,23 @@ export default async function WineDetailPage({
           </div>
 
           {session?.user ? (
-            <div className="wine-save-row">
-              <CellarButtons wineId={wine.id} wineSlug={wine.slug} currentStatus={cellarEntry?.status ?? null} />
-            </div>
+            <>
+              <div className="wine-save-row">
+                <CellarButtons wineId={wine.id} wineSlug={wine.slug} currentStatus={cellarEntry?.status ?? null} />
+              </div>
+              <p style={{ fontSize: 13, color: "var(--muted)", margin: "0 0 26px" }}>
+                {wine.region.name} — μία στάση στο προσωπικό σου ταξίδι στο ελληνικό κρασί.{" "}
+                <Link href="/diavatirio" className="link-underline" style={{ color: "var(--muted)" }}>
+                  Το ταξίδι σου →
+                </Link>
+              </p>
+            </>
           ) : (
             <p style={{ fontSize: 13.5, color: "var(--muted)", margin: "4px 0 26px" }}>
               <Link href="/login" className="link-underline" style={{ color: "var(--wine)" }}>
                 Συνδέσου
               </Link>{" "}
-              για να το προσθέσεις στο κελάρι σου.
+              για να το προσθέσεις στο κελάρι σου και να ξεκινήσεις το ταξίδι σου στο ελληνικό κρασί.
             </p>
           )}
 

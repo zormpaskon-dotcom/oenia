@@ -36,7 +36,7 @@ export default async function PassportPage() {
       <p className="result-count">
         {unlockedCount}/{regions.length} περιοχές — δοκίμασε ένα κρασί από μια περιοχή και σημείωσέ το
         «Το δοκίμασα» στο{" "}
-        <Link href="/krasia" className="link-underline" style={{ color: "var(--wine)" }}>
+        <Link href="/profil?tab=cellar" className="link-underline" style={{ color: "var(--wine)" }}>
           κελάρι σου
         </Link>{" "}
         για να ξεκλειδώσεις τη σφραγίδα της.
@@ -64,10 +64,10 @@ export default async function PassportPage() {
                   {mainVariety && <span className="passport-stamp-variety">{mainVariety}</span>}
                 </Link>
               ) : (
-                <div className="passport-stamp-inner">
+                <Link href={`/perioches/${r.slug}`} className="passport-stamp-inner">
                   <span className="passport-lock">🔒</span>
                   <span className="passport-stamp-region">{r.name}</span>
-                </div>
+                </Link>
               )}
             </div>
           );
