@@ -281,11 +281,13 @@ export default async function WineDetailPage({
 
         <div className="wine-hero-secondary">
           <div className="wine-save-row">
-            <div className="dots-lg" aria-hidden="true">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <span key={i} className={`dot-lg${i < filledDots ? " filled" : ""}`} />
-              ))}
-            </div>
+            {wine.reviewCount > 0 && (
+              <div className="dots-lg" aria-hidden="true">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <span key={i} className={`dot-lg${i < filledDots ? " filled" : ""}`} />
+                ))}
+              </div>
+            )}
             <span className="rating-count">{ratingLabel(wine.avgRating, wine.reviewCount)}</span>
           </div>
 
