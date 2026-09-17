@@ -8,6 +8,7 @@ import WinePhoto from "@/components/WinePhoto";
 import { COLOR_NAME } from "@/lib/labels";
 import WineryProfile from "@/components/winery-profile/WineryProfile";
 import { WINERY_IMAGES } from "@/lib/winery-images";
+import { SITE_URL } from "@/lib/site";
 
 // Generic premium profile — rollout σε όλα τα wineries με έστω 1
 // επαληθευμένη, landscape hero εικόνα στο WINERY_IMAGES inventory.
@@ -56,9 +57,21 @@ export async function generateMetadata({
   const { slug } = await params;
   const winery = await getWinery(slug);
   if (!winery) return {};
+  const title = `${winery.name} — ${winery.region.name} | Oenia`;
+  const description = winery.description ?? undefined;
+  const url = `${SITE_URL}/oinopoieia/${winery.slug}`;
+  const heroImage = WINERY_IMAGES[winery.slug]?.hero?.src;
   return {
-    title: `${winery.name} — ${winery.region.name} | Oenia`,
-    description: winery.description ?? undefined,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      ...(heroImage ? { images: [{ url: heroImage }] } : {}),
+    },
   };
 }
 

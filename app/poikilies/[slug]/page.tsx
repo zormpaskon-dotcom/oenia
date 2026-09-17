@@ -5,6 +5,7 @@ import { ContentStatus, VarietyType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import WinePhoto from "@/components/WinePhoto";
 import PronounceButton from "@/components/PronounceButton";
+import { SITE_URL } from "@/lib/site";
 import { COLOR_NAME } from "@/lib/labels";
 
 // Ατμοσφαιρικές, μη-συγκεκριμένες φωτογραφίες — η Variety δεν έχει δικό της
@@ -80,9 +81,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const variety = await getVariety(slug);
   if (!variety) return {};
+  const title = `${variety.name} — Ποικιλία | Oenia`;
+  const description = variety.description ?? undefined;
+  const url = `${SITE_URL}/poikilies/${variety.slug}`;
   return {
-    title: `${variety.name} — Ποικιλία | Oenia`,
-    description: variety.description ?? undefined,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title, description, url, type: "website" },
   };
 }
 

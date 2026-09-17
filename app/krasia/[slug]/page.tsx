@@ -10,6 +10,7 @@ import ReviewForm from "@/components/ReviewForm";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
 import { reportReviewAction } from "@/lib/actions/reviews";
+import { SITE_URL } from "@/lib/site";
 import { APPELLATION_LABEL, COLOR_NAME, STYLE_NAME, ratingLabel } from "@/lib/labels";
 import { getWineDishMatches } from "@/lib/pairing-engine/getWineDishMatches";
 import type { WineInput } from "@/lib/pairing-engine/types";
@@ -115,9 +116,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const wine = await getWine(slug);
   if (!wine) return {};
+  const title = `${wine.name} — ${wine.winery.name} | Oenia`;
+  const description = wine.description ?? undefined;
+  const url = `${SITE_URL}/krasia/${wine.slug}`;
   return {
-    title: `${wine.name} — ${wine.winery.name} | Oenia`,
-    description: wine.description ?? undefined,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      ...(wine.labelImage ? { images: [{ url: wine.labelImage }] } : {}),
+    },
   };
 }
 

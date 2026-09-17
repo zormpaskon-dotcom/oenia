@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
+import { SITE_URL } from "@/lib/site";
 import { APPELLATION_LABEL, COLOR_NAME, MACRO_REGION_LABEL } from "@/lib/labels";
 
 // Γενική, μη-συγκεκριμένη ατμοσφαιρική φωτογραφία — χρησιμοποιείται μόνο όταν
@@ -57,9 +59,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const region = await getRegion(slug);
   if (!region) return {};
+  const title = `${region.name} — Περιοχή | Oenia`;
+  const description = region.description ?? undefined;
+  const url = `${SITE_URL}/perioches/${region.slug}`;
   return {
-    title: `${region.name} — Περιοχή | Oenia`,
-    description: region.description ?? undefined,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      ...(region.heroImage ? { images: [{ url: region.heroImage }] } : {}),
+    },
   };
 }
 
@@ -96,6 +109,19 @@ export default async function RegionDetailPage({
 
   return (
     <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Place",
+          name: region.name,
+          description: region.description ?? undefined,
+          url: `${SITE_URL}/perioches/${region.slug}`,
+          ...(region.latitude != null && region.longitude != null
+            ? { geo: { "@type": "GeoCoordinates", latitude: region.latitude, longitude: region.longitude } }
+            : {}),
+        }}
+      />
+
       <div className="wrap">
         <p className="breadcrumb">
           <Link href="/">Αρχική</Link> / <Link href="/perioches">Περιοχές</Link> / {region.name}
