@@ -87,7 +87,7 @@ export default async function WineryDetailPage({
   const philosophyQuote = philosophySentences[0];
   const philosophyRest = philosophySentences.slice(1).join(" ");
 
-  const featuredWines = winery.wines.filter((w) => w.labelImage).slice(0, 3);
+  const featuredWines = winery.wines.slice(0, 3);
 
   const hasVisitInfo = winery.acceptsVisitors || !!winery.visitingHours || !!winery.visitingNotes;
 

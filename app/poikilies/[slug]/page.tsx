@@ -318,6 +318,25 @@ export default async function VarietyDetailPage({
         </section>
       )}
 
+      {/* Καμία καταχωρημένη ετικέτα ακόμα — μόνο όταν η ποικιλία δεν έχει
+          κανένα published wine (π.χ. Carignan, Πρεκνάδι σήμερα). Χωρίς αυτό
+          η σελίδα τελείωνε απότομα μετά το προφίλ γεύσης, χωρίς κανένα
+          επόμενο path. Ίδιο οπτικό idiom με τα υπόλοιπα empty states του
+          Oenia (.quick-empty) — καμία επινόηση περιεχομένου. */}
+      {publishedWines.length === 0 && (
+        <section>
+          <div className="wrap">
+            <div className="quick-empty">
+              <p style={{ marginBottom: 14 }}>Δεν υπάρχουν ακόμα καταχωρημένες ετικέτες με {variety.name} στο Oenia.</p>
+              <Link href="/poikilies" className="link-arrow">
+                Εξερεύνησε όλες τις ποικιλίες
+                <ArrowIcon />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Οινοποιεία */}
       {wineries.length > 0 && (
         <section id="wineries" style={{ background: "var(--paper-alt)" }}>
