@@ -604,6 +604,40 @@ section{ padding:var(--section-y) 0; }
   align-items:center; gap:14px; color:var(--muted); font-size:15.5px;
 }
 
+/* Σκόπιμο duplicate τιμών των .krasia-toolbar/.krasia-chips/.krasia-chips-clear/
+   .krasia-empty με γενικό όνομα, ώστε το /oinopoieia (και μελλοντικά /perioches,
+   /poikilies) να τα χρησιμοποιεί χωρίς να αγγίζει τίποτα από το /krasia. */
+.list-toolbar{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  margin-top:48px; padding-bottom:24px; border-bottom:1px solid var(--line);
+}
+
+.list-chips{
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding-top:18px;
+}
+.list-chips-clear{
+  font-size:13px; color:var(--muted); border-bottom:1px solid var(--line);
+  padding-bottom:2px; margin-left:4px; transition:color var(--duration-fast) ease, border-color var(--duration-fast) ease;
+}
+.list-chips-clear:hover{ color:var(--wine); border-color:var(--wine); }
+
+.list-empty{
+  text-align:center; padding:96px 24px; display:flex; flex-direction:column;
+  align-items:center; gap:14px; color:var(--muted); font-size:15.5px;
+}
+
+/* Το .list-toolbar (σε αντίθεση με το .krasia-toolbar) έχει ένα search input
+   ως πρώτο παιδί — χρειάζεται flex-grow ώστε να μην συμπιέζεται στο ελάχιστο
+   πλάτος του σε στενές οθόνες, και stacking σε πολύ στενές οθόνες ώστε να μη
+   στριμώχνεται δίπλα στα φίλτρα/sort. */
+.list-toolbar .quick-search{ flex:1 1 auto; min-width:0; max-width:420px; }
+@media (max-width:560px){
+  .list-toolbar{ flex-wrap:wrap; }
+  .list-toolbar .quick-search{ order:1; flex-basis:100%; max-width:none; }
+  .list-toolbar > div{ order:2; flex:1 1 auto; }
+}
+
 .filter-drawer-trigger{
   display:inline-flex; align-items:center; gap:8px;
   padding:11px 20px; border:1px solid var(--line); border-radius:var(--radius);

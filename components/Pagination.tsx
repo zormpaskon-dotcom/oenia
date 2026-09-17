@@ -26,6 +26,7 @@ export default function Pagination({
   rangeEnd,
   total,
   hrefForPage,
+  noun = "ετικέτες",
 }: {
   currentPage: number;
   pageCount: number;
@@ -33,13 +34,14 @@ export default function Pagination({
   rangeEnd: number;
   total: number;
   hrefForPage: (page: number) => string;
+  noun?: string;
 }) {
   if (total === 0) return null;
 
   return (
     <nav className="pagination" aria-label="Σελιδοποίηση αποτελεσμάτων">
       <p className="pagination-range">
-        {rangeStart}–{rangeEnd} από {total} ετικέτες
+        {rangeStart}–{rangeEnd} από {total} {noun}
       </p>
 
       {pageCount > 1 && (
