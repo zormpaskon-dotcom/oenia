@@ -80,6 +80,17 @@ const dictionary = {
   home_discovery_pairing_title: { el: "Τι ταιριάζει με το φαγητό σου;", en: "What pairs with your food?" },
   home_discovery_pairing_cta: { el: "Βρες κρασιά ανά περίσταση και γεύση", en: "Find wines by occasion and taste" },
 
+  home_picker_eyebrow: { el: "Μια άλλη αφετηρία", en: "Another place to start" },
+  home_picker_title: { el: "Ξεκίνα την ανακάλυψή σου", en: "Start your discovery" },
+  home_picker_white: { el: "Λευκό", en: "White" },
+  home_picker_red: { el: "Κόκκινο", en: "Red" },
+  home_picker_rose: { el: "Ροζέ", en: "Rosé" },
+  home_picker_sparkling: { el: "Αφρώδες", en: "Sparkling" },
+  home_picker_results_eyebrow: {
+    el: "Μια μικρή επιλογή από το Oenia.",
+    en: "A small selection from Oenia.",
+  },
+
   home_featured_eyebrow: { el: "Η επιλογή του Oenia", en: "Featured wine" },
   home_featured_cta: { el: "Εξερεύνησε το κρασί", en: "Explore wine" },
   home_featured_cite_region_group: { el: "Κυκλάδες", en: "Cyclades" },

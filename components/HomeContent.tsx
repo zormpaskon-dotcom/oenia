@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 import WinePhoto from "@/components/WinePhoto";
 import HomeSearchTrigger from "@/components/HomeSearchTrigger";
+import WineCard, { type WineCardData } from "@/components/WineCard";
+import { hrefFor } from "@/app/krasia/filters";
+import type { DiscoveryBucket } from "@/lib/discovery";
 import type { WineColor } from "@prisma/client";
 
 type FeaturedWine = {
@@ -16,6 +19,15 @@ type FeaturedWine = {
   region: { name: string };
   varieties: { variety: { name: string } }[];
 } | null;
+
+type Discovery = { wines: WineCardData[]; total: number } | null;
+
+const DISCOVERY_HREF: Record<DiscoveryBucket, string> = {
+  white: "/?discover=white",
+  red: "/?discover=red",
+  rose: "/?discover=rose",
+  sparkling: "/?discover=sparkling",
+};
 
 // Cache-buster για τις στατικές φωτογραφίες της αρχικής (public/home/*.jpg).
 // Το /public σερβίρεται με cache-control: max-age=0, must-revalidate — αρκεί
@@ -33,7 +45,15 @@ function ArrowIcon({ size = 15 }: { size?: number }) {
   );
 }
 
-export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWine }) {
+export default function HomeContent({
+  featuredWine,
+  discoveryBucket,
+  discovery,
+}: {
+  featuredWine: FeaturedWine;
+  discoveryBucket: DiscoveryBucket | null;
+  discovery: Discovery;
+}) {
   const { t } = useLanguage();
 
   return (
@@ -151,6 +171,45 @@ export default function HomeContent({ featuredWine }: { featuredWine: FeaturedWi
               <ArrowIcon />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* 3.6 — Curated Discovery: επέλεξε χρώμα, δες πραγματικά κρασιά */}
+      <section className="home-picker">
+        <div className="wrap reveal home-reveal">
+          <p className="hero-v2-eyebrow">{t("home_picker_eyebrow")}</p>
+          <h2>{t("home_picker_title")}</h2>
+          <div className="home-picker-row">
+            {(Object.keys(DISCOVERY_HREF) as DiscoveryBucket[]).map((bucket) => (
+              <Link
+                key={bucket}
+                href={DISCOVERY_HREF[bucket]}
+                className={`chip${discoveryBucket === bucket ? " is-active" : ""}`}
+              >
+                {t(`home_picker_${bucket}`)}
+              </Link>
+            ))}
+          </div>
+
+          {discovery && discovery.wines.length > 0 && (
+            <div className="home-picker-results">
+              <p className="home-picker-results-eyebrow">{t("home_picker_results_eyebrow")}</p>
+              <div className="wine-grid home-picker-grid">
+                {discovery.wines.map((wine) => (
+                  <WineCard key={wine.slug} wine={wine} />
+                ))}
+              </div>
+              {discoveryBucket !== "sparkling" && discovery.total > discovery.wines.length && (
+                <Link
+                  href={hrefFor({ color: [discoveryBucket as string], region: [], variety: [], winery: [] })}
+                  className="link-arrow"
+                >
+                  Δες όλα τα {discovery.total} κρασιά
+                  <ArrowIcon size={13} />
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

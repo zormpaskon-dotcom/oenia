@@ -1,6 +1,8 @@
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import HomeContent from "@/components/HomeContent";
+import { COLOR_ENUM } from "@/app/krasia/filters";
+import { isDiscoveryBucket, type DiscoveryBucket } from "@/lib/discovery";
 
 // Το προτεινόμενο κρασί της αρχικής — συγκεκριμένη, επιμελημένη επιλογή (όχι
 // τυχαία), με fallback σε περίπτωση που η ετικέτα αλλάξει/αφαιρεθεί.
@@ -26,8 +28,55 @@ async function getFeaturedWine() {
   });
 }
 
-export default async function Home() {
-  const featuredWine = await getFeaturedWine();
+// "Curated Discovery" — Ένα μόνο, πραγματικό κριτήριο (χρώμα, ή isSparkling),
+// ποτέ scoring/AI/random. Ίδιο include shape με το /krasia (app/krasia/page.tsx)
+// ώστε το αποτέλεσμα να τροφοδοτεί το ίδιο <WineCard> χωρίς προσαρμογή.
+async function getDiscoveryWines(bucket: DiscoveryBucket) {
+  const where =
+    bucket === "sparkling"
+      ? { status: ContentStatus.PUBLISHED, isSparkling: true }
+      : { status: ContentStatus.PUBLISHED, color: COLOR_ENUM[bucket] };
 
-  return <HomeContent featuredWine={featuredWine} />;
+  // Το /krasia δεν υποστηρίζει filter σε isSparkling (μόνο color/region/variety/
+  // winery/style) — δεν το προσθέτουμε εδώ (out of scope). Άρα για το "sparkling"
+  // bucket δείχνουμε ό,τι υπάρχει χωρίς όριο (7 σήμερα) αντί για "δες όλα" link
+  // προς ένα φίλτρο που δεν υπάρχει· τα color buckets κρατούν το μικρό preview
+  // των 6 + πραγματικό "δες όλα" link στο ήδη φιλτραρισμένο /krasia.
+  const take = bucket === "sparkling" ? undefined : 6;
+
+  const [wines, total] = await Promise.all([
+    prisma.wine.findMany({
+      where,
+      // reviewCount/avgRating προηγούνται όταν υπάρχουν πραγματικές αξιολογήσεις·
+      // σήμερα είναι 0 παντού, οπότε η ταξινόμηση καταλήγει σε name asc — ποτέ
+      // Math.random(), ποτέ fake ranking.
+      orderBy: [{ reviewCount: "desc" }, { avgRating: "desc" }, { name: "asc" }],
+      take,
+      include: {
+        winery: { select: { name: true, slug: true } },
+        region: { select: { name: true, slug: true } },
+        varieties: { include: { variety: { select: { name: true } } } },
+      },
+    }),
+    prisma.wine.count({ where }),
+  ]);
+
+  return { wines, total };
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const sp = await searchParams;
+  const discoverParam = typeof sp.discover === "string" ? sp.discover : undefined;
+  const discoveryBucket = isDiscoveryBucket(discoverParam) ? discoverParam : null;
+
+  const [featuredWine, discovery] = await Promise.all([
+    getFeaturedWine(),
+    discoveryBucket ? getDiscoveryWines(discoveryBucket) : Promise.resolve(null),
+  ]);
+
+  return <HomeContent featuredWine={featuredWine} discoveryBucket={discoveryBucket} discovery={discovery} />;
 }

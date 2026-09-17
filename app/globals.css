@@ -1428,6 +1428,21 @@ a.chip{ text-decoration:none; display:inline-block; }
 .home-discovery-row:hover{ color:var(--wine); }
 .home-discovery-row:hover svg{ opacity:1; transform:translateX(0); }
 
+/* 3.6 — Curated Discovery: επέλεξε χρώμα (.chip, ήδη υπάρχον), δες πραγματικά
+   κρασιά (WineCard/.wine-grid, ήδη υπάρχοντα) — καμία νέα κάρτα/έλεγχος. */
+.home-picker{ padding:0 0 var(--section-y); }
+.home-picker h2{ font-size:clamp(26px,3.4vw,36px); margin:12px 0 24px; max-width:20ch; }
+.home-picker-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.home-picker-results{ margin-top:40px; }
+.home-picker-results-eyebrow{ font-size:13.5px; color:var(--muted); margin-bottom:20px; }
+.home-picker-grid{ padding:0 0 32px; }
+/* Σε 4 λέξεις ποικίλου μήκους, το flex-wrap δίνει άτακτο 3+1· ένα 2-column
+   grid (αναλογικές 1fr στήλες, όχι fixed πλάτη) δίνει σταθερό 2+2 χωρίς hacks. */
+@media (max-width:700px){
+  .home-picker-row{ display:grid; grid-template-columns:repeat(2,1fr); }
+  .home-picker-row .chip{ text-align:center; }
+}
+
 /* 4 — Προτεινόμενο κρασί */
 .featured-wine{ background:var(--paper-alt); padding:52px 0; }
 .featured-wine-layout{ display:grid; grid-template-columns:0.85fr 1fr 0.85fr; gap:24px; align-items:center; }
