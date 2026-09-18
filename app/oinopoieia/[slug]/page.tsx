@@ -56,7 +56,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const winery = await getWinery(slug);
-  if (!winery) return {};
+  if (!winery || winery.status !== ContentStatus.PUBLISHED) return {};
   const title = `${winery.name} — ${winery.region.name} | Oenia`;
   const description = winery.description ?? undefined;
   const url = `${SITE_URL}/oinopoieia/${winery.slug}`;
@@ -82,7 +82,7 @@ export default async function WineryDetailPage({
 }) {
   const { slug } = await params;
   const winery = await getWinery(slug);
-  if (!winery) notFound();
+  if (!winery || winery.status !== ContentStatus.PUBLISHED) notFound();
 
   const grapes = Array.from(
     new Map(winery.wines.flatMap((w) => w.varieties.map((v) => [v.variety.slug, v.variety] as const))).values()

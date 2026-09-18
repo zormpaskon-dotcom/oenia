@@ -115,7 +115,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const wine = await getWine(slug);
-  if (!wine) return {};
+  if (!wine || wine.status !== ContentStatus.PUBLISHED) return {};
   const title = `${wine.name} — ${wine.winery.name} | Oenia`;
   const description = wine.description ?? undefined;
   const url = `${SITE_URL}/krasia/${wine.slug}`;
@@ -140,7 +140,7 @@ export default async function WineDetailPage({
 }) {
   const { slug } = await params;
   const wine = await getWine(slug);
-  if (!wine) notFound();
+  if (!wine || wine.status !== ContentStatus.PUBLISHED) notFound();
 
   const session = await auth();
 

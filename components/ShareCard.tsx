@@ -98,7 +98,7 @@ function drawCard(canvas: HTMLCanvasElement, card: ShareCardData) {
 
   ctx.fillStyle = "rgba(247,244,239,0.55)";
   ctx.font = `16px ${inter}`;
-  ctx.fillText("oenia.gr — ελληνικό κρασί, χωρίς πωλήσεις", w / 2, h - 60);
+  ctx.fillText("worldofoenia.com — ελληνικό κρασί, χωρίς πωλήσεις", w / 2, h - 60);
 }
 
 export default function ShareCard({ data }: { data: ShareCardData }) {
