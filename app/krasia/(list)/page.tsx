@@ -20,7 +20,7 @@ import {
   toList,
   toggleValue,
   type FilterState,
-} from "./filters";
+} from "../filters";
 
 const TITLE = "Όλες οι ετικέτες | Oenia";
 const DESCRIPTION = "Εξερεύνησε ελληνικές ετικέτες κρασιού με φίλτρα ανά χρώμα, περιοχή, ποικιλία, οινοποιείο και στυλ.";
