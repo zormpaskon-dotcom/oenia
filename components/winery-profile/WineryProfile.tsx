@@ -48,6 +48,7 @@ export default function WineryProfile({
     slug: string;
     foundedYear: number | null;
     websiteUrl: string | null;
+    logoImage: string | null;
     isVerified: boolean;
     isOrganic: boolean;
     isBiodynamic: boolean;
@@ -77,6 +78,9 @@ export default function WineryProfile({
         <div className="wprofile-hero-scrim" />
         <div className="wrap wprofile-hero-content">
           <p className="wprofile-hero-eyebrow">Οινοποιείο · {winery.region.name}</p>
+          {winery.logoImage && (
+            <img className="wprofile-hero-logo" src={winery.logoImage} alt={`Λογότυπο ${winery.name}`} />
+          )}
           <h1 className="wprofile-hero-name">{winery.name}</h1>
           {shortText && <p className="wprofile-hero-lead">{shortText}</p>}
           <div className="winery-badges-row">

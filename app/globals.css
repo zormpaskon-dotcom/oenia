@@ -1737,6 +1737,11 @@ a.chip{ text-decoration:none; display:inline-block; }
   font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
   color:rgba(247,244,239,0.85); margin:0 0 16px;
 }
+.wprofile-hero-logo{
+  display:block; height:clamp(40px,5vw,64px); width:auto; object-fit:contain;
+  padding:10px 16px; margin:0 0 18px;
+  background:rgba(247,244,239,0.95); border-radius:12px;
+}
 .wprofile-hero-name{
   font-family:var(--font-display); font-weight:500; text-wrap:balance;
   font-size:var(--text-hero); line-height:1.06; letter-spacing:-0.01em;
