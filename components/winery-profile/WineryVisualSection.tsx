@@ -73,7 +73,7 @@ export default function WineryVisualSection({
           <div className="wprofile-split">
             <div className="wprofile-split-copy reveal home-reveal">{copy}</div>
             <div className="wprofile-split-photo">
-              <img className="reveal img-reveal" src={img.src} alt={img.alt} />
+              <img className="reveal img-reveal" src={img.src} alt={img.alt} loading="lazy" />
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function WineryVisualSection({
           <div className="wprofile-pair">
             {images.map((img) => (
               <div className="wprofile-pair-photo" key={img.src}>
-                <img className="reveal img-reveal" src={img.src} alt={img.alt} />
+                <img className="reveal img-reveal" src={img.src} alt={img.alt} loading="lazy" />
               </div>
             ))}
           </div>
@@ -128,12 +128,12 @@ export default function WineryVisualSection({
         <div className="wrap">
           <div className="wprofile-trio">
             <div className="wprofile-trio-main">
-              <img className="reveal img-reveal" src={images[0].src} alt={images[0].alt} />
+              <img className="reveal img-reveal" src={images[0].src} alt={images[0].alt} loading="lazy" />
             </div>
             <div className="wprofile-trio-side">
               {images.slice(1).map((img) => (
                 <div className="wprofile-trio-side-photo" key={img.src}>
-                  <img className="reveal img-reveal" src={img.src} alt={img.alt} />
+                  <img className="reveal img-reveal" src={img.src} alt={img.alt} loading="lazy" />
                 </div>
               ))}
             </div>
@@ -146,7 +146,7 @@ export default function WineryVisualSection({
           <div className="wprofile-grid">
             {images.map((img) => (
               <div className="wprofile-grid-photo" key={img.src}>
-                <img className="reveal img-reveal" src={img.src} alt={img.alt} />
+                <img className="reveal img-reveal" src={img.src} alt={img.alt} loading="lazy" />
               </div>
             ))}
           </div>

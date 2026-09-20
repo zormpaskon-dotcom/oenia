@@ -20,7 +20,8 @@ const STATIC_ROUTES = [
   "/chartis",
   "/tairiasma",
   "/sygkrisi",
-  "/diavatirio",
+  // "/diavatirio" ΔΕΝ μπαίνει εδώ σκόπιμα — login-gated, προσωπική σελίδα
+  // (βλ. app/diavatirio/page.tsx: noindex robots meta).
   "/pos-leitourgoume",
   "/gia-oinopoieia",
   "/politiki-aporritou",

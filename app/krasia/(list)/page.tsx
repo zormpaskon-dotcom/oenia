@@ -7,6 +7,7 @@ import WineFilterDrawer from "@/components/WineFilterDrawer";
 import SortSelect from "@/components/SortSelect";
 import Pagination from "@/components/Pagination";
 import { SITE_URL } from "@/lib/site";
+import { facetSeo } from "@/lib/facet-seo";
 import {
   COLOR_ENUM,
   COLOR_LABELS,
@@ -27,10 +28,15 @@ const DESCRIPTION = "Εξερεύνησε ελληνικές ετικέτες κ
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
-// Ίδιο title/description με πριν (item 17 — "κράτησε το υπάρχον metadata") —
-// η μόνη προσθήκη είναι το self-referencing canonical, ώστε filter/page query
-// strings να μην διαβάζονται σαν duplicate content. Το sitemap/robots δεν
-// άλλαξε — ποτέ δεν είχαν λίστα με filtered URLs.
+// SEO FIX PASS 2: "color" και "style" είναι χαμηλής πληθικότητας (4/4 τιμές),
+// γνήσιες discovery κατηγορίες ("Λευκά", "Γλυκά" κρασιά) — μένουν αυτόνομα
+// indexable ΜΟΝΟ όταν είναι το ΜΟΝΟ ενεργό query param. "region"/"variety"/
+// "winery" έχουν ήδη το δικό τους canonical hub (/perioches, /poikilies,
+// /oinopoieia [slug]) και υψηλή πληθικότητα (41/51/92 τιμές) — δεν μένουν
+// indexable εδώ. sort/page/search είναι πάντα utility. Κάθε συνδυασμός
+// (2+ params) παίρνει noindex+canonical στην καθαρή βάση — βλ. lib/facet-seo.ts.
+const MEANINGFUL_FILTER_KEYS = ["color", "style"] as const;
+
 export async function generateMetadata({
   searchParams,
 }: {
@@ -43,10 +49,12 @@ export async function generateMetadata({
     if (typeof value === "string" && value) params.set(key, value);
   }
   const qs = params.toString();
+  const { indexable } = facetSeo([...params.keys()], MEANINGFUL_FILTER_KEYS);
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: `${SITE_URL}/krasia${qs ? `?${qs}` : ""}` },
+    alternates: { canonical: `${SITE_URL}/krasia${indexable && qs ? `?${qs}` : ""}` },
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
   };
 }
 

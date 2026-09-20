@@ -1,8 +1,35 @@
+import type { Metadata } from "next";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import HomeContent from "@/components/HomeContent";
+import JsonLd from "@/components/JsonLd";
 import { COLOR_ENUM } from "@/app/krasia/filters";
 import { isDiscoveryBucket, type DiscoveryBucket } from "@/lib/discovery";
+import { SITE_URL } from "@/lib/site";
+
+// Ίδιο title/description με το root layout (app/layout.tsx) — εδώ τα
+// επαναλαμβάνουμε ρητά μόνο επειδή τα openGraph/twitter πεδία δεν κληρονομούν
+// αυτόματα τα top-level title/description, όχι γιατί αλλάζει κάτι.
+const HOME_TITLE = "Oenia — Το κρασί της Ελλάδας";
+const HOME_DESCRIPTION =
+  "Ενημερωτικό site για το ελληνικό κρασί: ετικέτες, οινοποιεία, ποικιλίες, άρθρα.";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    url: "/",
+    siteName: "World of Oenia",
+    locale: "el_GR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+  },
+};
 
 // Το προτεινόμενο κρασί της αρχικής — συγκεκριμένη, επιμελημένη επιλογή (όχι
 // τυχαία), με fallback σε περίπτωση που η ετικέτα αλλάξει/αφαιρεθεί.
@@ -78,5 +105,25 @@ export default async function Home({
     discoveryBucket ? getDiscoveryWines(discoveryBucket) : Promise.resolve(null),
   ]);
 
-  return <HomeContent featuredWine={featuredWine} discoveryBucket={discoveryBucket} discovery={discovery} />;
+  return (
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "World of Oenia",
+          url: SITE_URL,
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "World of Oenia",
+          url: SITE_URL,
+        }}
+      />
+      <HomeContent featuredWine={featuredWine} discoveryBucket={discoveryBucket} discovery={discovery} />
+    </>
+  );
 }

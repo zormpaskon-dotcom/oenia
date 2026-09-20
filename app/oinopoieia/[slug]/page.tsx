@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -122,12 +123,29 @@ export default async function WineryDetailPage({
           name: winery.name,
           description: winery.description ?? undefined,
           url: winery.websiteUrl ?? undefined,
+          // Δεν υπάρχει ξεχωριστό "official social/profile" πεδίο στη βάση —
+          // το μόνο ήδη αποθηκευμένο, επαληθευμένο URL για το ίδιο entity
+          // είναι το websiteUrl, γι' αυτό επαναλαμβάνεται και ως sameAs.
+          sameAs: winery.websiteUrl ?? undefined,
           telephone: winery.phone ?? undefined,
+          foundingDate: winery.foundedYear ? String(winery.foundedYear) : undefined,
+          image: WINERY_IMAGES[winery.slug]?.hero?.src ?? undefined,
           address: winery.address ? { "@type": "PostalAddress", streetAddress: winery.address } : undefined,
           geo:
             winery.latitude != null && winery.longitude != null
               ? { "@type": "GeoCoordinates", latitude: winery.latitude, longitude: winery.longitude }
               : undefined,
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Αρχική", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Οινοποιεία", item: `${SITE_URL}/oinopoieia` },
+            { "@type": "ListItem", position: 3, name: winery.name, item: `${SITE_URL}/oinopoieia/${winery.slug}` },
+          ],
         }}
       />
 
@@ -176,7 +194,14 @@ export default async function WineryDetailPage({
         </div>
 
         <div className="winery-hero-photo reveal img-reveal">
-          <img src={winery.coverImage ?? FALLBACK_WINERY_PHOTO} alt="" />
+          <Image
+            src={winery.coverImage ?? FALLBACK_WINERY_PHOTO}
+            alt=""
+            fill
+            sizes="(max-width: 820px) 100vw, 44vw"
+            style={{ objectFit: "cover" }}
+            priority
+          />
         </div>
       </div>
 
@@ -248,7 +273,7 @@ export default async function WineryDetailPage({
             </div>
             {winery.region.heroImage && (
               <div className="wine-split-photo">
-                <img className="reveal img-reveal" src={winery.region.heroImage} alt={winery.region.name} />
+                <img className="reveal img-reveal" src={winery.region.heroImage} alt={winery.region.name} loading="lazy" />
               </div>
             )}
           </div>
@@ -292,7 +317,7 @@ export default async function WineryDetailPage({
                     <h3>{wine.name}</h3>
                     <span className="wine-similar-meta">
                       {COLOR_NAME[wine.color]}
-                      {variety ? ` · ${variety}` : ""} · {winery.region.name}
+                      {variety ? ` · ${variety}` : ""} · {wine.region.name}
                     </span>
                     <span className="wine-similar-link">
                       Εξερεύνησε το κρασί

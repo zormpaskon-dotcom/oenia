@@ -6,6 +6,7 @@ import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { CATEGORY_LABEL } from "@/lib/labels";
 import JsonLd from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/site";
 
 function ArrowIcon({ size = 13 }: { size?: number }) {
   return (
@@ -35,9 +36,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = await getArticle(slug);
   if (!article) return {};
+  const title = `${article.title} | Oenia`;
+  const description = article.excerpt ?? undefined;
+  const url = `${SITE_URL}/arthra/${article.slug}`;
   return {
-    title: `${article.title} | Oenia`,
-    description: article.excerpt ?? undefined,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      ...(article.coverImage ? { images: [{ url: article.coverImage }] } : {}),
+    },
   };
 }
 

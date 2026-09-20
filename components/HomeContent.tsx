@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/components/LanguageProvider";
 import WinePhoto from "@/components/WinePhoto";
 import HomeSearchTrigger from "@/components/HomeSearchTrigger";
@@ -74,7 +75,15 @@ export default function HomeContent({
           </Link>
         </div>
         <div className="hero-v2-photo">
-          <img className="reveal img-reveal" src={`/home/hero.jpg?v=${IMG_V}`} alt="" />
+          <Image
+            className="reveal img-reveal"
+            src={`/home/hero.jpg?v=${IMG_V}`}
+            alt=""
+            fill
+            sizes="(max-width: 900px) 100vw, 55vw"
+            style={{ objectFit: "cover" }}
+            priority
+          />
           <p className="hero-v2-tag">{t("home_hero_tag")}</p>
         </div>
       </section>
@@ -93,7 +102,7 @@ export default function HomeContent({
         <div className="wrap explore-grid">
           <Link href="/krasia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src={`/home/explore-wines.jpg?v=${IMG_V}`} alt="" />
+              <img src={`/home/explore-wines.jpg?v=${IMG_V}`} alt="" loading="lazy" />
             </div>
             <h3>{t("nav_wines")}</h3>
             <span className="explore-card-meta">
@@ -104,7 +113,7 @@ export default function HomeContent({
 
           <Link href="/oinopoieia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src={`/home/explore-wineries.jpg?v=${IMG_V}`} alt="" />
+              <img src={`/home/explore-wineries.jpg?v=${IMG_V}`} alt="" loading="lazy" />
             </div>
             <h3>{t("nav_wineries")}</h3>
             <span className="explore-card-meta">
@@ -115,7 +124,7 @@ export default function HomeContent({
 
           <Link href="/perioches" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src={`/home/explore-regions.jpg?v=${IMG_V}`} alt="" />
+              <img src={`/home/explore-regions.jpg?v=${IMG_V}`} alt="" loading="lazy" />
             </div>
             <h3>{t("nav_regions")}</h3>
             <span className="explore-card-meta">
@@ -126,7 +135,7 @@ export default function HomeContent({
 
           <Link href="/poikilies" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
-              <img src={`/home/explore-grapes.jpg?v=${IMG_V}`} alt="" />
+              <img src={`/home/explore-grapes.jpg?v=${IMG_V}`} alt="" loading="lazy" />
             </div>
             <h3>{t("nav_varieties")}</h3>
             <span className="explore-card-meta">
@@ -270,7 +279,7 @@ export default function HomeContent({
           </Link>
         </div>
         <div className="greece-band-photo">
-          <img className="reveal img-reveal" src={`/home/greece-band.jpg?v=${IMG_V}`} alt="" />
+          <img className="reveal img-reveal" src={`/home/greece-band.jpg?v=${IMG_V}`} alt="" loading="lazy" />
         </div>
       </section>
     </>

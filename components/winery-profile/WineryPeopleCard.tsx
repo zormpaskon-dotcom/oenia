@@ -22,7 +22,7 @@ export default function WineryPeopleCard({
         <p className="wine-split-eyebrow">Οι άνθρωποι</p>
         <div className="wprofile-people reveal home-reveal">
           <div className="wprofile-people-photo">
-            <img className="reveal img-reveal" src={photoSrc} alt={photoAlt} />
+            <img className="reveal img-reveal" src={photoSrc} alt={photoAlt} loading="lazy" />
           </div>
           <div className="wprofile-people-copy">
             <h3 className="wprofile-people-name">{name}</h3>

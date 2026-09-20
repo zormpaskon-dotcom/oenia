@@ -11,6 +11,7 @@ import { logoutAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Το προφίλ μου | Oenia",
+  robots: { index: false, follow: false },
 };
 
 function initialsOf(name: string) {

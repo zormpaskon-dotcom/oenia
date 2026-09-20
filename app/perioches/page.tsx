@@ -4,6 +4,7 @@ import { Appellation, ContentStatus, MacroRegion, Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma";
 import { APPELLATION_LABEL, MACRO_REGION_LABEL } from "@/lib/labels";
 import { SITE_URL } from "@/lib/site";
+import { facetSeo } from "@/lib/facet-seo";
 import ListSearchInput from "@/components/ListSearchInput";
 import ListSortSelect from "@/components/ListSortSelect";
 import {
@@ -23,8 +24,12 @@ const NO_APPELLATION_LABEL = "Χωρίς ονομασία";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
-// Ίδιο σκεπτικό με /krasia, /oinopoieia: self-referencing canonical ώστε τα
-// filter/search/sort query strings να μην διαβάζονται σαν duplicate content.
+// SEO FIX PASS 2: "macroRegion" (7 τιμές — Βόρεια Ελλάδα, Πελοπόννησος κ.λπ.)
+// και "appellation" (3 τιμές — ΠΟΠ/ΠΓΕ/Τοπικός) είναι χαμηλής πληθικότητας,
+// γνήσιες γεωγραφικές/νομικές κατηγορίες διερεύνησης — μένουν αυτόνομα
+// indexable ΜΟΝΟ όταν είναι το ΜΟΝΟ ενεργό query param. search/sort utility.
+const MEANINGFUL_FILTER_KEYS = ["macroRegion", "appellation"] as const;
+
 export async function generateMetadata({
   searchParams,
 }: {
@@ -37,10 +42,12 @@ export async function generateMetadata({
     if (typeof value === "string" && value) params.set(key, value);
   }
   const qs = params.toString();
+  const { indexable } = facetSeo([...params.keys()], MEANINGFUL_FILTER_KEYS);
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: `${SITE_URL}/perioches${qs ? `?${qs}` : ""}` },
+    alternates: { canonical: `${SITE_URL}/perioches${indexable && qs ? `?${qs}` : ""}` },
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
   };
 }
 

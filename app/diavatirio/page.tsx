@@ -8,6 +8,7 @@ import { MACRO_REGION_LABEL } from "@/lib/labels";
 export const metadata: Metadata = {
   title: "Το διαβατήριό σου | Oenia",
   description: "Οι ελληνικές περιοχές κρασιού που έχεις ήδη εξερευνήσει.",
+  robots: { index: false, follow: false },
 };
 
 export default async function PassportPage() {

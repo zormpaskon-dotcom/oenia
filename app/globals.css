@@ -321,13 +321,20 @@ nav a.link-underline:hover::after{ transform:scaleX(1); }
   .menu-trigger{ display:flex; }
 }
 
-/* Mobile nav drawer */
+/* Mobile nav drawer — ίδιο containing-block ζήτημα με το .search-overlay
+   παρακάτω (~γραμμή 483): το .site-header έχει backdrop-filter (.glass), που
+   κατά το CSS spec δημιουργεί containing block για τα position:fixed παιδιά
+   του (το MobileMenu ζει μέσα στο header). Χωρίς ρητό height:100vh/100dvh, το
+   inset:0/top:0+bottom:0 λύνεται ως προς το ύψος του header (~78px) αντί για
+   όλη την οθόνη — το panel φαινόταν σαν να "κόβεται" αμέσως μετά το header. */
 .mobile-menu-overlay{
   position:fixed; inset:0; z-index:200;
+  height:100vh; height:100dvh;
   background:rgba(23,21,21,0.32);
 }
 .mobile-menu-panel{
   position:fixed; top:0; right:0; bottom:0; z-index:201;
+  height:100vh; height:100dvh;
   width:min(360px,86vw);
   background:var(--paper);
   border-left:1px solid var(--line);
@@ -986,7 +993,11 @@ a.wine-pairing-tag:hover{ color:var(--wine); border-color:var(--wine); }
 .winery-hero{
   display:grid; grid-template-columns:minmax(320px,0.78fr) 1fr;
   align-items:center; gap:clamp(32px,5vw,72px);
-  padding:8px 0 40px;
+  /* Οριζόντιο padding = var(--wrap-pad), όχι 0 — αυτή η class συνυπάρχει με
+     .wrap στο ίδιο στοιχείο και το ακύρωνε εντελώς, αφήνοντας τίτλους να
+     ακουμπάνε την άκρη της οθόνης σε στενές οθόνες (βλ. Performance/Mobile
+     audit). Ίδια τιμή με ό,τι θα έδινε ήδη το .wrap μόνο του. */
+  padding:8px var(--wrap-pad) 40px;
 }
 .winery-hero-photo{ position:relative; overflow:hidden; aspect-ratio:4/5; background:var(--paper-alt); }
 .winery-hero-photo img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
@@ -1732,7 +1743,10 @@ a.chip{ text-decoration:none; display:inline-block; }
   position:absolute; inset:0;
   background:linear-gradient(to top, rgba(0,0,0,.74) 0%, rgba(0,0,0,.22) 55%, rgba(0,0,0,0) 100%);
 }
-.wprofile-hero-content{ position:relative; z-index:1; padding:48px 0 56px; color:var(--on-dark-surface); }
+/* Οριζόντιο padding = var(--wrap-pad), όχι 0 — ίδιο ζήτημα με το .winery-hero
+   παραπάνω: αυτή η class συνυπάρχει με .wrap στο ίδιο στοιχείο και το
+   ακύρωνε εντελώς (βλ. Performance/Mobile audit). */
+.wprofile-hero-content{ position:relative; z-index:1; padding:48px var(--wrap-pad) 56px; color:var(--on-dark-surface); }
 .wprofile-hero-eyebrow{
   font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
   color:rgba(247,244,239,0.85); margin:0 0 16px;

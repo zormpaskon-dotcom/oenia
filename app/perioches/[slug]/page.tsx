@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -121,6 +122,17 @@ export default async function RegionDetailPage({
             : {}),
         }}
       />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Αρχική", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Περιοχές", item: `${SITE_URL}/perioches` },
+            { "@type": "ListItem", position: 3, name: region.name, item: `${SITE_URL}/perioches/${region.slug}` },
+          ],
+        }}
+      />
 
       <div className="wrap">
         <p className="breadcrumb">
@@ -143,7 +155,14 @@ export default async function RegionDetailPage({
         </div>
 
         <div className="winery-hero-photo reveal img-reveal">
-          <img src={heroPhoto} alt="" />
+          <Image
+            src={heroPhoto}
+            alt=""
+            fill
+            sizes="(max-width: 820px) 100vw, 44vw"
+            style={{ objectFit: "cover" }}
+            priority
+          />
         </div>
       </div>
 
@@ -341,7 +360,7 @@ export default async function RegionDetailPage({
             </Link>
           </div>
           <div className="greece-band-photo">
-            <img className="reveal img-reveal" src={heroPhoto} alt="" />
+            <img className="reveal img-reveal" src={heroPhoto} alt="" loading="lazy" />
           </div>
         </section>
       )}

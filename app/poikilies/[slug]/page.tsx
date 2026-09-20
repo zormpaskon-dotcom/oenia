@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ContentStatus, VarietyType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import WinePhoto from "@/components/WinePhoto";
 import PronounceButton from "@/components/PronounceButton";
+import JsonLd from "@/components/JsonLd";
 import { SITE_URL } from "@/lib/site";
 import { COLOR_NAME } from "@/lib/labels";
 
@@ -127,6 +129,17 @@ export default async function VarietyDetailPage({
 
   return (
     <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Αρχική", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Ποικιλίες", item: `${SITE_URL}/poikilies` },
+            { "@type": "ListItem", position: 3, name: variety.name, item: `${SITE_URL}/poikilies/${variety.slug}` },
+          ],
+        }}
+      />
       <div className="wrap">
         <p className="breadcrumb">
           <Link href="/">Αρχική</Link> / <Link href="/poikilies">Ποικιλίες</Link> / {variety.name}
@@ -150,7 +163,14 @@ export default async function VarietyDetailPage({
         </div>
 
         <div className="winery-hero-photo reveal img-reveal">
-          <img src={FALLBACK_VARIETY_PHOTO} alt="" />
+          <Image
+            src={FALLBACK_VARIETY_PHOTO}
+            alt=""
+            fill
+            sizes="(max-width: 820px) 100vw, 44vw"
+            style={{ objectFit: "cover" }}
+            priority
+          />
         </div>
       </div>
 
@@ -286,7 +306,7 @@ export default async function VarietyDetailPage({
                 )}
               </div>
               <div className="wine-split-photo">
-                <img className="reveal img-reveal" src={FALLBACK_GROWS_PHOTO} alt="" />
+                <img className="reveal img-reveal" src={FALLBACK_GROWS_PHOTO} alt="" loading="lazy" />
               </div>
             </div>
           </div>
@@ -425,7 +445,7 @@ export default async function VarietyDetailPage({
             </Link>
           </div>
           <div className="greece-band-photo">
-            <img className="reveal img-reveal" src={FALLBACK_CTA_PHOTO} alt="" />
+            <img className="reveal img-reveal" src={FALLBACK_CTA_PHOTO} alt="" loading="lazy" />
           </div>
         </section>
       )}

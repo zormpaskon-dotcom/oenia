@@ -245,16 +245,45 @@ export default async function WineDetailPage({
           "@type": "Product",
           name: wine.name,
           description: wine.description ?? undefined,
+          image: wine.labelImage ?? undefined,
           brand: { "@type": "Brand", name: wine.winery.name },
-          ...(wine.reviewCount > 0
+          // Χωρίς e-commerce (βλ. prisma/schema.prisma) — σκόπιμα ΚΑΝΕΝΑ
+          // "offers" (τιμή/διαθεσιμότητα/seller). aggregateRating/review μόνο
+          // όταν υπάρχουν πραγματικές, ήδη δημοσιευμένες αξιολογήσεις — ποτέ
+          // fabricated τιμή βαθμολογίας για κρασί χωρίς reviews.
+          ...(reviews.length > 0
             ? {
                 aggregateRating: {
                   "@type": "AggregateRating",
                   ratingValue: wine.avgRating,
                   reviewCount: wine.reviewCount,
                 },
+                review: reviews.map((r) => ({
+                  "@type": "Review",
+                  author: { "@type": "Person", name: r.user?.name ?? "Χρήστης Oenia" },
+                  datePublished: r.createdAt.toISOString(),
+                  reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5, worstRating: 1 },
+                  reviewBody: r.note ?? undefined,
+                })),
               }
             : {}),
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Αρχική", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Ετικέτες", item: `${SITE_URL}/krasia` },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: wine.region.name,
+              item: `${SITE_URL}/perioches/${wine.region.slug}`,
+            },
+            { "@type": "ListItem", position: 4, name: wine.name, item: `${SITE_URL}/krasia/${wine.slug}` },
+          ],
         }}
       />
 
@@ -509,7 +538,7 @@ export default async function WineDetailPage({
             </div>
             {wine.region.heroImage && (
               <div className="wine-split-photo">
-                <img className="reveal img-reveal" src={wine.region.heroImage} alt={wine.region.name} />
+                <img className="reveal img-reveal" src={wine.region.heroImage} alt={wine.region.name} loading="lazy" />
               </div>
             )}
           </div>
@@ -550,7 +579,7 @@ export default async function WineDetailPage({
             </div>
             {wine.winery.coverImage && (
               <div className="wine-split-photo">
-                <img className="reveal img-reveal" src={wine.winery.coverImage} alt={wine.winery.name} />
+                <img className="reveal img-reveal" src={wine.winery.coverImage} alt={wine.winery.name} loading="lazy" />
               </div>
             )}
           </div>

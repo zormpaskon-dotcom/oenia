@@ -4,6 +4,7 @@ import { ContentStatus, MacroRegion, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { MACRO_REGION_LABEL } from "@/lib/labels";
 import { SITE_URL } from "@/lib/site";
+import { facetSeo } from "@/lib/facet-seo";
 import WineFilterDrawer from "@/components/WineFilterDrawer";
 import ListSearchInput from "@/components/ListSearchInput";
 import ListSortSelect from "@/components/ListSortSelect";
@@ -24,8 +25,13 @@ const DESCRIPTION = "Όλα τα οινοποιεία στο Oenia, ανά πε�
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
-// Ίδιο σκεπτικό με το app/krasia/page.tsx: self-referencing canonical ώστε τα
-// filter/page query strings να μην διαβάζονται σαν duplicate content.
+// SEO FIX PASS 2: καμία meaningful κατηγορία εδώ — "region" (41 τιμές) και
+// "variety" (51 τιμές) είναι ήδη καλυμμένα από το δικό τους canonical hub
+// (/perioches/[slug], /poikilies/[slug]), οπότε ένα φιλτραρισμένο
+// /oinopoieia;region=... θα ήταν απλά duplicate εκείνου του περιεχομένου.
+// Μόνο η καθαρή βάση (χωρίς κανένα param) μένει indexable.
+const MEANINGFUL_FILTER_KEYS: readonly string[] = [];
+
 export async function generateMetadata({
   searchParams,
 }: {
@@ -38,10 +44,12 @@ export async function generateMetadata({
     if (typeof value === "string" && value) params.set(key, value);
   }
   const qs = params.toString();
+  const { indexable } = facetSeo([...params.keys()], MEANINGFUL_FILTER_KEYS);
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: `${SITE_URL}/oinopoieia${qs ? `?${qs}` : ""}` },
+    alternates: { canonical: `${SITE_URL}/oinopoieia${indexable && qs ? `?${qs}` : ""}` },
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
   };
 }
 
