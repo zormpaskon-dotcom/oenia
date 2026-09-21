@@ -21,7 +21,8 @@ import { put } from "@vercel/blob";
 const FILES: Record<string, string> = {
   hero: "/Users/konstantinoszormpas/Downloads/caption-3.jpg",
   vineyard: "/Users/konstantinoszormpas/Downloads/vineyard-view.jpg",
-  winery: "/Users/konstantinoszormpas/Downloads/the-old-stone-built-winery.jpg",
+  // Ζητήθηκε ρητά: το "Μέσα στο κελάρι" να δείχνει τα βαρέλια, όχι την αυλή.
+  winery: "/Users/konstantinoszormpas/Downloads/red-wine-maturing-in.jpg",
   editorial: "/Users/konstantinoszormpas/Downloads/birds-eye-view-of-the.jpg",
 };
 
