@@ -316,6 +316,11 @@ export const WINERY_IMAGES: Record<string, WineryImages> = {
     // πάνω από το Βατόλακκο Χανίων· από τη σελίδα History του επίσημου site.
     hero: { category: "hero", src: "https://static.wixstatic.com/media/57f3d4_152240b658a742a393314ff35e058e38~mv2_d_3000_2000_s_2.jpg", width: 3000, height: 2000, alt: "Αμπελώνας του Manousakis Winery πάνω από το Βατόλακκο Χανίων, με θέα στα Λευκά Όρη", sourceUrl: "https://www.manousakiswinery.com/history" },
   },
+  "t-oinos": {
+    // Wide landscape αμπελώνα με ξερολιθιές μέσα στο χαρακτηριστικό
+    // βραχώδες τοπίο της Τήνου· από την αρχική σελίδα του επίσημου site.
+    hero: { category: "hero", src: "https://toinos.com/wp-content/uploads/2023/06/toinos_home_1.jpg", width: 2048, height: 1365, alt: "Αμπελώνας του T-Oinos μέσα στο βραχώδες τοπίο της Τήνου, με παραδοσιακές ξερολιθιές", sourceUrl: "https://toinos.com" },
+  },
   "papagiannakos-winery": {
     hero: { category: "hero", src: "https://papagiannakos.gr/wp-content/uploads/2022/12/building.jpg", width: 1600, height: 800, alt: "Οινοποιείο Παπαγιαννάκος, Αττική", sourceUrl: "https://papagiannakos.gr" },
     vineyard: { category: "vineyard", src: "https://papagiannakos.gr/wp-content/uploads/2022/12/ampelonas_papagiannakou.jpg", width: 1600, height: 834, alt: "Αμπελώνας Παπαγιαννάκος", sourceUrl: "https://papagiannakos.gr" },
