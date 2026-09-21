@@ -311,6 +311,11 @@ export const WINERY_IMAGES: Record<string, WineryImages> = {
     // product-shot ποτήρι/σταφύλια που βρέθηκε στην ίδια σελίδα).
     hero: { category: "hero", src: "https://www.rapsaniwine.gr/wp-content/uploads/2016/04/IMG_20160311_edit.jpg", width: 3838, height: 2368, alt: "Οινοποιείο Ντούγκος (Χρυσοχόου), Ραψάνη", sourceUrl: "https://www.rapsaniwine.gr" },
   },
+  "manousakis-winery": {
+    // Wide landscape αμπελώνα με θέα στην κοιλάδα, τη θάλασσα και τα βουνά
+    // πάνω από το Βατόλακκο Χανίων· από τη σελίδα History του επίσημου site.
+    hero: { category: "hero", src: "https://static.wixstatic.com/media/57f3d4_152240b658a742a393314ff35e058e38~mv2_d_3000_2000_s_2.jpg", width: 3000, height: 2000, alt: "Αμπελώνας του Manousakis Winery πάνω από το Βατόλακκο Χανίων, με θέα στα Λευκά Όρη", sourceUrl: "https://www.manousakiswinery.com/history" },
+  },
   "papagiannakos-winery": {
     hero: { category: "hero", src: "https://papagiannakos.gr/wp-content/uploads/2022/12/building.jpg", width: 1600, height: 800, alt: "Οινοποιείο Παπαγιαννάκος, Αττική", sourceUrl: "https://papagiannakos.gr" },
     vineyard: { category: "vineyard", src: "https://papagiannakos.gr/wp-content/uploads/2022/12/ampelonas_papagiannakou.jpg", width: 1600, height: 834, alt: "Αμπελώνας Παπαγιαννάκος", sourceUrl: "https://papagiannakos.gr" },
