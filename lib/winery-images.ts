@@ -43,6 +43,16 @@ export type WineryImages = {
 };
 
 export const WINERY_IMAGES: Record<string, WineryImages> = {
+  // Πραγματικές φωτογραφίες του κτήματος, δόθηκαν απευθείας από τον χρήστη
+  // (όχι από το mercouri.gr) — ανέβηκαν στο Vercel Blob με το
+  // prisma/upload-merkouri-images.ts. sourceUrl δείχνει στο επίσημο site του
+  // παραγωγού σαν σημείο αναφοράς, όχι σαν πηγή της ίδιας της εικόνας.
+  "ktima-merkouri": {
+    hero: { category: "hero", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/ktima-merkouri-hero-1789980433304.jpg", width: 1311, height: 983, alt: "Το ιστορικό κτήριο του Κτήματος Μερκούρη στο Κορακοχώρι Ηλείας", sourceUrl: "https://www.mercouri.gr/" },
+    vineyard: { category: "vineyard", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/ktima-merkouri-vineyard-1789980434349.jpg", width: 2000, height: 1333, alt: "Αμπελώνας του Κτήματος Μερκούρη στην Ορεινή Ηλεία", sourceUrl: "https://www.mercouri.gr/" },
+    winery: { category: "winery", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/ktima-merkouri-winery-1789980435364.jpg", width: 2000, height: 1170, alt: "Οι παλιές πέτρινες εγκαταστάσεις οινοποίησης του Κτήματος Μερκούρη", sourceUrl: "https://www.mercouri.gr/" },
+    editorial: { category: "editorial", src: "https://ffntw7jezxxxft5d.public.blob.vercel-storage.com/wineries/ktima-merkouri-editorial-1789980437039.jpg", width: 2000, height: 1328, alt: "Αεροφωτογραφία του Κτήματος Μερκούρη δίπλα στη θάλασσα", sourceUrl: "https://www.mercouri.gr/" },
+  },
   // ══════════════════════════════════════════════════════════════════
   // Ήδη δοκιμασμένα test wineries (5-case validation) — αμετάβλητα
   // ══════════════════════════════════════════════════════════════════
