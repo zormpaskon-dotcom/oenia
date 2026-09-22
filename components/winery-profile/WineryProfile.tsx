@@ -73,7 +73,12 @@ export default function WineryProfile({
       {/* HERO — full-bleed, πάντα υπάρχει (προϋπόθεση για να φτάσουμε εδώ) */}
       <section className="wprofile-hero">
         <div className="wprofile-hero-bg">
-          <img className="reveal img-reveal" src={hero.src} alt={hero.alt} />
+          {/* Πραγματικό LCP element της σελίδας — hotlinked από ~50 διαφορετικά
+              winery domains εκτός next.config.ts remotePatterns, οπότε δεν
+              περνάει με ασφάλεια από next/image (θα έσπαγε σε unwhitelisted
+              domain). fetchpriority="high" είναι το ασφαλές, μηδενικού-ρίσκου
+              ισοδύναμο του next/image priority για ένα plain <img>. */}
+          <img className="reveal img-reveal" src={hero.src} alt={hero.alt} fetchPriority="high" />
         </div>
         <div className="wprofile-hero-scrim" />
         <div className="wrap wprofile-hero-content">

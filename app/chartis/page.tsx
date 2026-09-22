@@ -3,10 +3,21 @@ import Link from "next/link";
 import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import WineMap, { type MapWinery } from "@/components/WineMap";
+import { SITE_URL } from "@/lib/site";
+import { catalogSocialMeta } from "@/lib/catalog-seo";
+
+// PHASE 3A / Section 7 — καθαρή public catalog σελίδα (καμία searchParams/
+// session εξάρτηση, βλ. ίδιο σχόλιο στο app/oinopoieia/[slug]/page.tsx).
+export const revalidate = 60;
+
+const TITLE = "Χάρτης οινοποιείων | Oenia";
+const DESCRIPTION = "Διαδραστικός χάρτης με τα οινοποιεία που έχουμε καταγράψει, ανά περιοχή.";
 
 export const metadata: Metadata = {
-  title: "Χάρτης οινοποιείων | Oenia",
-  description: "Διαδραστικός χάρτης με τα οινοποιεία που έχουμε καταγράψει, ανά περιοχή.",
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: `${SITE_URL}/chartis` },
+  ...catalogSocialMeta({ title: TITLE, description: DESCRIPTION, path: "/chartis", image: "/home/greece-band.jpg" }),
 };
 
 export default async function MapPage() {

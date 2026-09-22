@@ -11,6 +11,13 @@ import WineryProfile from "@/components/winery-profile/WineryProfile";
 import { WINERY_IMAGES } from "@/lib/winery-images";
 import { SITE_URL } from "@/lib/site";
 
+// PHASE 3A / Section 7 — καθαρή public catalog σελίδα: μόνο params.slug,
+// καμία εξάρτηση από session/auth/searchParams. ISR 60s: αρκετά κοντό ώστε
+// νέο/ενημερωμένο winery content να εμφανίζεται μέσα σε ένα λεπτό, αρκετά
+// μεγάλο ώστε να μειώνει πραγματικά repeated Prisma load στις πιο δημοφιλείς
+// σελίδες οινοποιείων.
+export const revalidate = 60;
+
 // Generic premium profile — rollout σε όλα τα wineries με έστω 1
 // επαληθευμένη, landscape hero εικόνα στο WINERY_IMAGES inventory.
 // Ένα winery περνάει από το premium template ΜΟΝΟ αν έχει hero στο

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { MACRO_REGION_LABEL } from "@/lib/labels";
 import { SITE_URL } from "@/lib/site";
 import { facetSeo } from "@/lib/facet-seo";
+import { catalogSocialMeta } from "@/lib/catalog-seo";
 import WineFilterDrawer from "@/components/WineFilterDrawer";
 import ListSearchInput from "@/components/ListSearchInput";
 import ListSortSelect from "@/components/ListSortSelect";
@@ -45,11 +46,13 @@ export async function generateMetadata({
   }
   const qs = params.toString();
   const { indexable } = facetSeo([...params.keys()], MEANINGFUL_FILTER_KEYS);
+  const path = `/oinopoieia${indexable && qs ? `?${qs}` : ""}`;
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: `${SITE_URL}/oinopoieia${indexable && qs ? `?${qs}` : ""}` },
+    alternates: { canonical: `${SITE_URL}${path}` },
     ...(indexable ? {} : { robots: { index: false, follow: true } }),
+    ...catalogSocialMeta({ title: TITLE, description: DESCRIPTION, path, image: "/home/explore-wineries.jpg" }),
   };
 }
 

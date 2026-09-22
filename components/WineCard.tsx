@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { WineColor } from "@prisma/client";
 import { COLOR_NAME, reviewCountLabel } from "@/lib/labels";
 import WinePhoto from "@/components/WinePhoto";
+import CompareButton from "@/components/CompareButton";
 
 export type WineCardData = {
   slug: string;
@@ -24,6 +25,7 @@ export default function WineCard({ wine }: { wine: WineCardData }) {
 
   return (
     <div className="wine-card reveal">
+      <CompareButton slug={wine.slug} />
       <Link href={`/krasia/${wine.slug}`} className="wine-card-link">
         <WinePhoto
           labelImage={wine.labelImage}

@@ -2,11 +2,22 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getFeaturedDishesForCategory, getPopularDishes } from "@/lib/pairing-engine/relatedContent";
+import { SITE_URL } from "@/lib/site";
+import { catalogSocialMeta } from "@/lib/catalog-seo";
+
+const TITLE = "Τι θα φας; | Oenia";
+const DESCRIPTION = "Διάλεξε τι θα φας και βρες ελληνικά κρασιά που ταιριάζουν.";
 
 export const metadata: Metadata = {
-  title: "Τι θα φας; | Oenia",
-  description: "Διάλεξε τι θα φας και βρες ελληνικά κρασιά που ταιριάζουν.",
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: `${SITE_URL}/tairiasma` },
+  ...catalogSocialMeta({ title: TITLE, description: DESCRIPTION, path: "/tairiasma", image: "/home/greece-band.jpg" }),
 };
+
+// PHASE 3A / Section 7 — καθαρή public catalog σελίδα (καμία searchParams/
+// session εξάρτηση, βλ. ίδιο σχόλιο στο app/oinopoieia/[slug]/page.tsx).
+export const revalidate = 60;
 
 export default async function PairingIndexPage() {
   const categories = await prisma.foodCategory.findMany({

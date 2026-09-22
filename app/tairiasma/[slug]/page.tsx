@@ -10,6 +10,11 @@ import { FOOD_PROFILES } from "@/lib/pairing-engine/foodProfiles";
 import { getDishRecommendations } from "@/lib/pairing-engine/getRecommendations";
 import { getRelatedDishes, getRelatedVarieties } from "@/lib/pairing-engine/relatedContent";
 
+// PHASE 3A / Section 7 — καθαρή public catalog σελίδα (μόνο params.slug,
+// καμία session/searchParams εξάρτηση) — βλ. ίδιο σχόλιο στο
+// app/oinopoieia/[slug]/page.tsx.
+export const revalidate = 60;
+
 // Level-2 canonical dish (π.χ. /tairiasma/sushi) — ξεχωριστός τύπος σελίδας
 // από το Level-1 FoodCategory (π.χ. /tairiasma/seafood) παρακάτω. Το ίδιο
 // [slug] param εξυπηρετεί και τα δύο: πρώτα ελέγχουμε αν είναι εγκεκριμένο

@@ -8,6 +8,7 @@ import SortSelect from "@/components/SortSelect";
 import Pagination from "@/components/Pagination";
 import { SITE_URL } from "@/lib/site";
 import { facetSeo } from "@/lib/facet-seo";
+import { catalogSocialMeta } from "@/lib/catalog-seo";
 import {
   COLOR_ENUM,
   COLOR_LABELS,
@@ -50,11 +51,13 @@ export async function generateMetadata({
   }
   const qs = params.toString();
   const { indexable } = facetSeo([...params.keys()], MEANINGFUL_FILTER_KEYS);
+  const path = `/krasia${indexable && qs ? `?${qs}` : ""}`;
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: `${SITE_URL}/krasia${indexable && qs ? `?${qs}` : ""}` },
+    alternates: { canonical: `${SITE_URL}${path}` },
     ...(indexable ? {} : { robots: { index: false, follow: true } }),
+    ...catalogSocialMeta({ title: TITLE, description: DESCRIPTION, path, image: "/home/explore-wines.jpg" }),
   };
 }
 

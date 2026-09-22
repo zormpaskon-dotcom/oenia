@@ -4,13 +4,35 @@ import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import CompareSlots, { type CompareOption } from "@/components/CompareSlots";
 import { APPELLATION_LABEL, COLOR_NAME, ratingLabel, STYLE_NAME } from "@/lib/labels";
+import { SITE_URL } from "@/lib/site";
+import { facetSeo } from "@/lib/facet-seo";
+import { catalogSocialMeta } from "@/lib/catalog-seo";
 
-export const metadata: Metadata = {
-  title: "Σύγκριση ετικετών | Oenia",
-  description: "Σύγκρινε έως 3 ελληνικές ετικέτες κρασιού δίπλα-δίπλα.",
-};
+const TITLE = "Σύγκριση ετικετών | Oenia";
+const DESCRIPTION = "Σύγκρινε έως 3 ελληνικές ετικέτες κρασιού δίπλα-δίπλα.";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
+
+// PHASE 3A: το ?w=slug1,slug2,slug3 έχει combinatorial χώρο (421 κρασιά →
+// εκατοντάδες χιλιάδες πιθανοί συνδυασμοί) — καμία τιμή του δεν μένει
+// αυτόνομα indexable, ίδιο μοτίβο με /oinopoieia (meaningfulKeys: []). Η
+// καθαρή βάση /sygkrisi παραμένει κανονικά indexable.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const hasW = typeof sp.w === "string" && sp.w.length > 0;
+  const { indexable } = facetSeo(hasW ? ["w"] : [], []);
+  return {
+    title: TITLE,
+    description: DESCRIPTION,
+    alternates: { canonical: `${SITE_URL}/sygkrisi` },
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
+    ...catalogSocialMeta({ title: TITLE, description: DESCRIPTION, path: "/sygkrisi", image: "/home/greece-band.jpg" }),
+  };
+}
 
 export default async function ComparePage({
   searchParams,

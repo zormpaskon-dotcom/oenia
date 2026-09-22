@@ -704,6 +704,18 @@ section{ padding:var(--section-y) 0; }
   display:block; box-sizing:border-box; width:100%; aspect-ratio:3/4;
   border-radius:var(--radius); padding:26px; margin-bottom:20px;
 }
+
+/* Secondary action πάνω στην κάρτα κρασιού — sibling του .wine-card-link,
+   όχι παιδί του, ώστε να μην έχουμε nested <a>/<button> και να μην πειράζει
+   το click target της κάρτας. Ήσυχο, μικρό pill, ίδια γλώσσα με .share-btn. */
+.card-compare-btn{
+  position:absolute; top:12px; right:12px; z-index:2;
+  font-family:var(--font-body); font-size:11px; color:var(--muted);
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-pill);
+  padding:5px 12px; cursor:pointer;
+  transition:border-color var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+.card-compare-btn:hover{ border-color:var(--wine); color:var(--wine); }
 .card-photo img{ transition:transform var(--duration-base) var(--ease-standard); }
 .wine-card-link:hover .card-photo img{ transform:scale(1.025); }
 
@@ -1600,10 +1612,30 @@ a.chip{ text-decoration:none; display:inline-block; }
 .compare-row{ display:grid; grid-template-columns:160px repeat(3,1fr); border-bottom:1px solid var(--line); }
 .compare-row:last-child{ border-bottom:none; }
 .compare-row-label{ background:var(--paper-alt); font-size:12.5px; color:var(--muted); display:flex; align-items:center; padding:14px 16px; }
-.compare-cell{ padding:14px 16px; font-size:14px; display:flex; align-items:center; }
+.compare-cell{ padding:14px 16px; font-size:14px; display:flex; align-items:center; min-width:0; }
 @media (max-width:820px){
   .compare-slots{ grid-template-columns:1fr; }
-  .compare-row{ grid-template-columns:130px repeat(3,1fr); font-size:12.5px; }
+  /* Κάτω από 820px τα 3 wine-columns δεν χωράνε ευανάγνωστα δίπλα σε ένα
+     label column — αντί να τα στριμώχνουμε σε ίσα κλάσματα (παλιό
+     1fr×3, έσπαγε τα κείμενα σε άσχημο wrap), δίνουμε σε κάθε στήλη ένα
+     ελάχιστο αναγνώσιμο πλάτος και κάνουμε το ίδιο το .compare-table
+     οριζόντια scrollable — μόνο αυτό το component, όχι όλη τη σελίδα. Το
+     label column μένει sticky ώστε να ξέρεις τι κοιτάς ενώ κάνεις scroll
+     τις στήλες κρασιών.
+     Σημείωση: το row-width ΠΡΕΠΕΙ να είναι min-width (όχι width:max-content)
+     — το max-content πάνω σε flex .compare-cell παιδιά χωρίς min-width:0
+     υπολόγιζε πλάτος σειράς στα ~5000px (στο μήκος της πιο μακριάς
+     πρότασης tastingNotes), σπάζοντας εντελώς το intended scroll-range. */
+  .compare-table{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .compare-row{
+    grid-template-columns:112px repeat(3, minmax(136px, 1fr));
+    min-width:520px;
+    font-size:12.5px;
+  }
+  .compare-row-label{
+    position:sticky; left:0; z-index:1;
+    box-shadow:1px 0 0 var(--line);
+  }
 }
 
 /* ── Διαβατήριο (/diavatirio) ── */

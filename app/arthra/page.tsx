@@ -3,13 +3,62 @@ import Link from "next/link";
 import { ArticleCategory, ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { CATEGORY_LABEL } from "@/lib/labels";
+import { SITE_URL } from "@/lib/site";
+import { catalogSocialMeta } from "@/lib/catalog-seo";
 
-export const metadata: Metadata = {
-  title: "Άρθρα | Oenia",
-  description: "Άρθρα για ελληνικές ποικιλίες, περιοχές, παραγωγούς και οδηγούς κρασιού.",
-};
+const TITLE = "Άρθρα | Oenia";
+const DESCRIPTION = "Άρθρα για ελληνικές ποικιλίες, περιοχές, παραγωγούς και οδηγούς κρασιού.";
 
 const CATEGORY_ORDER = Object.values(ArticleCategory);
+
+type SearchParams = { [key: string]: string | string[] | undefined };
+
+// PHASE 3A / Section 4 — "category" δεν είναι πάντα μια χρήσιμη, μοναδική
+// landing page: σήμερα 2 από τις 5 κατηγορίες (REGIONS, NEWS) έχουν 0 άρθρα,
+// και ένα άγνωστο/ανύπαρκτο ?category=xyz απλά πέφτει σε "δείξε τα πάντα"
+// στο ίδιο URL (βλ. ArticlesPage παρακάτω). Κανένα από τα δύο δεν αξίζει να
+// γίνει ξεχωριστή indexable σελίδα με το ίδιο title/description της βάσης
+// (thin/duplicate content). Κανόνας: μια κατηγορία γίνεται self-canonical +
+// indexable με μοναδικό title/description ΜΟΝΟ όταν είναι πραγματική τιμή
+// του enum ΚΑΙ έχει τουλάχιστον 1 δημοσιευμένο άρθρο αυτή τη στιγμή — ίδιο
+// πνεύμα με τα "meaningful" filter keys του lib/facet-seo.ts, απλά
+// βασισμένο σε πραγματικό, ζωντανό content count αντί για στατική λίστα
+// τιμών, μιας και εδώ η "χρησιμότητα" μιας κατηγορίας εξαρτάται από το αν
+// έχει καθόλου περιεχόμενο, όχι μόνο από το αν είναι έγκυρη τιμή enum.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const raw = typeof sp.category === "string" ? sp.category : undefined;
+  const isValidCategory = !!raw && CATEGORY_ORDER.includes(raw as ArticleCategory);
+
+  const count = isValidCategory
+    ? await prisma.article.count({
+        where: { status: ContentStatus.PUBLISHED, publishedAt: { not: null }, category: raw as ArticleCategory },
+      })
+    : 0;
+  const hasContent = isValidCategory && count > 0;
+  // Χωρίς category param: πάντα indexable (η καθαρή βάση). Με category param:
+  // indexable ΜΟΝΟ αν είναι έγκυρη τιμή ΚΑΙ έχει περιεχόμενο· ένα άγνωστο ή
+  // άδειο category ΠΟΤΕ δεν μένει indexable (βλ. σχόλιο πάνω).
+  const indexable = !raw || hasContent;
+
+  const title = hasContent ? `${CATEGORY_LABEL[raw as ArticleCategory]} | Άρθρα | Oenia` : TITLE;
+  const description = hasContent
+    ? `${count} άρθρο${count === 1 ? "" : "α"} στην κατηγορία «${CATEGORY_LABEL[raw as ArticleCategory]}» — από το ημερολόγιο του Oenia για το ελληνικό κρασί.`
+    : DESCRIPTION;
+  const path = indexable && hasContent ? `/arthra?category=${raw}` : "/arthra";
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}${path}` },
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
+    ...catalogSocialMeta({ title, description, path, image: "/home/greece-band.jpg" }),
+  };
+}
 
 export default async function ArticlesPage({
   searchParams,

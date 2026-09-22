@@ -9,6 +9,11 @@ import WinePhoto from "@/components/WinePhoto";
 import { SITE_URL } from "@/lib/site";
 import { APPELLATION_LABEL, COLOR_NAME, MACRO_REGION_LABEL } from "@/lib/labels";
 
+// PHASE 3A / Section 7 — καθαρή public catalog σελίδα (μόνο params.slug,
+// καμία session/searchParams εξάρτηση) — βλ. ίδιο σχόλιο στο
+// app/oinopoieia/[slug]/page.tsx.
+export const revalidate = 60;
+
 // Γενική, μη-συγκεκριμένη ατμοσφαιρική φωτογραφία — χρησιμοποιείται μόνο όταν
 // η περιοχή δεν έχει ακόμα δικό της heroImage στη βάση, ώστε το hero να μην
 // μένει ποτέ άδειο. Δεν εμφανίζεται ποτέ ως «η φωτογραφία της συγκεκριμένης

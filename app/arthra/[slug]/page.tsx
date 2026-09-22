@@ -8,6 +8,11 @@ import { CATEGORY_LABEL } from "@/lib/labels";
 import JsonLd from "@/components/JsonLd";
 import { SITE_URL } from "@/lib/site";
 
+// PHASE 3A / Section 7 — καθαρή public catalog σελίδα (μόνο params.slug,
+// καμία session/searchParams εξάρτηση) — βλ. ίδιο σχόλιο στο
+// app/oinopoieia/[slug]/page.tsx.
+export const revalidate = 60;
+
 function ArrowIcon({ size = 13 }: { size?: number }) {
   return (
     <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

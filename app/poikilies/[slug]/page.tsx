@@ -10,6 +10,11 @@ import JsonLd from "@/components/JsonLd";
 import { SITE_URL } from "@/lib/site";
 import { COLOR_NAME } from "@/lib/labels";
 
+// PHASE 3A / Section 7 — καθαρή public catalog σελίδα (μόνο params.slug,
+// καμία session/searchParams εξάρτηση) — βλ. ίδιο σχόλιο στο
+// app/oinopoieia/[slug]/page.tsx.
+export const revalidate = 60;
+
 // Ατμοσφαιρικές, μη-συγκεκριμένες φωτογραφίες — η Variety δεν έχει δικό της
 // πεδίο εικόνας στη βάση, οπότε χρησιμοποιούμε ήδη υπαρκτά, θεματικά ταιριαστά
 // assets του Oenia (ίδιο πνεύμα με τα FALLBACK_* των σελίδων οινοποιείου/περιοχής).

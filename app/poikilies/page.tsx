@@ -4,6 +4,7 @@ import { Prisma, Variety, VarietyType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { SITE_URL } from "@/lib/site";
 import { facetSeo } from "@/lib/facet-seo";
+import { catalogSocialMeta } from "@/lib/catalog-seo";
 import ListSearchInput from "@/components/ListSearchInput";
 import ListSortSelect from "@/components/ListSortSelect";
 import { SORT_OPTIONS, TYPE_ENUM, hrefFor, isTypeFilterValue, type FilterState } from "./filters";
@@ -31,11 +32,13 @@ export async function generateMetadata({
   }
   const qs = params.toString();
   const { indexable } = facetSeo([...params.keys()], MEANINGFUL_FILTER_KEYS);
+  const path = `/poikilies${indexable && qs ? `?${qs}` : ""}`;
   return {
     title: TITLE,
     description: DESCRIPTION,
-    alternates: { canonical: `${SITE_URL}/poikilies${indexable && qs ? `?${qs}` : ""}` },
+    alternates: { canonical: `${SITE_URL}${path}` },
     ...(indexable ? {} : { robots: { index: false, follow: true } }),
+    ...catalogSocialMeta({ title: TITLE, description: DESCRIPTION, path, image: "/home/explore-grapes.jpg" }),
   };
 }
 

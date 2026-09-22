@@ -93,11 +93,11 @@ export default function WineryVisualSection({
         )}
         {bucket === "portrait" ? (
           <div className="wprofile-tall">
-            <img className="reveal img-reveal" src={img.src} alt={img.alt} />
+            <img className="reveal img-reveal" src={img.src} alt={img.alt} loading="lazy" />
           </div>
         ) : (
           <div className="wprofile-bleed" style={{ height: BLEED_HEIGHT[bucket][size] }}>
-            <img className="reveal img-reveal" src={img.src} alt={img.alt} />
+            <img className="reveal img-reveal" src={img.src} alt={img.alt} loading="lazy" />
           </div>
         )}
       </section>
