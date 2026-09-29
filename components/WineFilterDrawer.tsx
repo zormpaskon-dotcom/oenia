@@ -17,7 +17,7 @@ export type WineFilterDrawerProps = {
   resultsCount: number;
 };
 
-// Ίδιο interaction pattern με το MobileMenu.tsx (open state, Escape να κλείνει,
+// Ίδιο interaction pattern με το NavMenu.tsx (open state, Escape να κλείνει,
 // overlay click να κλείνει, role="dialog") — το ίδιο "drawer" idiom του site,
 // όχι νέο μηχανισμό. Τα φίλτρα παραμένουν απλά <Link> (ίδιο URL-driven σύστημα
 // με πριν) — κάθε click κάνει πραγματική navigation και ενημερώνει τα πραγματικά
