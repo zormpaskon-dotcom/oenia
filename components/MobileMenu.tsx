@@ -6,15 +6,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import LanguageToggle from "@/components/LanguageToggle";
 import ThemeToggle from "@/components/ThemeToggle";
 import AuthNavLink from "@/components/AuthNavLink";
-import type { TranslationKey } from "@/lib/i18n";
-
-const links = [
-  { href: "/krasia", key: "nav_wines" },
-  { href: "/oinopoieia", key: "nav_wineries" },
-  { href: "/perioches", key: "nav_regions" },
-  { href: "/poikilies", key: "nav_varieties" },
-  { href: "/arthra", key: "nav_articles" },
-] as const satisfies ReadonlyArray<{ href: string; key: TranslationKey }>;
+import { PRIMARY_NAV } from "@/lib/nav";
 
 export default function MobileMenu({ initials }: { initials: string | null }) {
   const { t } = useLanguage();
@@ -63,7 +55,7 @@ export default function MobileMenu({ initials }: { initials: string | null }) {
             </div>
 
             <nav className="mobile-menu-links">
-              {links.map((link) => (
+              {PRIMARY_NAV.map((link) => (
                 <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>
                   {t(link.key)}
                 </Link>

@@ -10,6 +10,7 @@ import WineFilterDrawer from "@/components/WineFilterDrawer";
 import ListSearchInput from "@/components/ListSearchInput";
 import ListSortSelect from "@/components/ListSortSelect";
 import Pagination from "@/components/Pagination";
+import { WINERY_IMAGES } from "@/lib/winery-images";
 import {
   PAGE_SIZE,
   SORT_OPTIONS,
@@ -23,6 +24,14 @@ import {
 
 const TITLE = "Οινοποιεία | Oenia";
 const DESCRIPTION = "Όλα τα οινοποιεία στο Oenia, ανά περιοχή.";
+
+function ArrowIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="catalog-row-arrow">
+      <path d="M1 8h21M15 1l7 7-7 7" />
+    </svg>
+  );
+}
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -203,8 +212,8 @@ export default async function WineriesPage({
     <>
       <div className="wrap-wide page-intro">
         <p className="kicker">Εξερεύνηση</p>
-        <h1>Οινοποιεία</h1>
-        <p className="result-count">{totalCount} οινοποιεία</p>
+        <h1>{totalCount} ελληνικά οινοποιεία.</h1>
+        <p className="result-count">Γνώρισε τους ανθρώπους και τους τόπους πίσω από κάθε ετικέτα.</p>
       </div>
 
       <div className="wrap-wide list-toolbar">
@@ -254,24 +263,37 @@ export default async function WineriesPage({
             </Link>
           </div>
         ) : (
-          <div className="index-grid">
-            {wineries.map((w) => (
-              <Link key={w.id} href={`/oinopoieia/${w.slug}`} className="index-card reveal">
-                <h3>{w.name}</h3>
-                <p className="meta">
-                  {w.region.name}
-                  {w.subRegion ? `, ${w.subRegion}` : ""}
-                  {w.foundedYear ? ` · Από το ${w.foundedYear}` : ""}
-                </p>
-                {w.description && <p>{w.description}</p>}
-                <div className="badges">
-                  {w.isVerified && <span className="badge-pill">Επαληθευμένο</span>}
-                  {w.isOrganic && <span className="badge-pill">Βιολογικό</span>}
-                  {w.acceptsVisitors && <span className="badge-pill">Δέχεται επισκέπτες</span>}
-                  <span className="badge-pill">{w._count.wines} ετικέτες</span>
-                </div>
-              </Link>
-            ))}
+          <div className="catalog-list">
+            {wineries.map((w) => {
+              const hero = WINERY_IMAGES[w.slug]?.hero;
+              const facts = [
+                `${w._count.wines} ${w._count.wines === 1 ? "ετικέτα" : "ετικέτες"}`,
+                w.isVerified ? "Επαληθευμένο" : null,
+                w.isOrganic ? "Βιολογικό" : null,
+                w.acceptsVisitors ? "Δέχεται επισκέπτες" : null,
+              ].filter(Boolean);
+
+              return (
+                <Link key={w.id} href={`/oinopoieia/${w.slug}`} className={`catalog-row reveal${hero ? "" : " no-photo"}`}>
+                  {hero && (
+                    <div className="catalog-row-photo">
+                      <img className="img-reveal" src={hero.src} alt={hero.alt} loading="lazy" />
+                    </div>
+                  )}
+                  <div className="catalog-row-text">
+                    <p className="catalog-row-eyebrow">
+                      {w.region.name}
+                      {w.subRegion ? `, ${w.subRegion}` : ""}
+                      {w.foundedYear ? ` · Από το ${w.foundedYear}` : ""}
+                    </p>
+                    <h3>{w.name}</h3>
+                    {w.description && <p className="catalog-row-desc">{w.description}</p>}
+                    <p className="catalog-row-facts">{facts.join(" · ")}</p>
+                  </div>
+                  <ArrowIcon />
+                </Link>
+              );
+            })}
           </div>
         )}
 

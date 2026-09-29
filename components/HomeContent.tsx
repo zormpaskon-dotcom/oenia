@@ -8,7 +8,9 @@ import HomeSearchTrigger from "@/components/HomeSearchTrigger";
 import WineCard, { type WineCardData } from "@/components/WineCard";
 import { hrefFor } from "@/app/krasia/filters";
 import type { DiscoveryBucket } from "@/lib/discovery";
-import type { WineColor } from "@prisma/client";
+import type { WineColor, ArticleCategory } from "@prisma/client";
+import { CATEGORY_LABEL } from "@/lib/labels";
+import { formatMonthAccusative } from "@/lib/greek-date";
 
 type FeaturedWine = {
   slug: string;
@@ -22,6 +24,14 @@ type FeaturedWine = {
 } | null;
 
 type Discovery = { wines: WineCardData[]; total: number } | null;
+
+type RecentArticle = {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  category: ArticleCategory;
+  publishedAt: Date | null;
+};
 
 const DISCOVERY_HREF: Record<DiscoveryBucket, string> = {
   white: "/?discover=white",
@@ -50,10 +60,12 @@ export default function HomeContent({
   featuredWine,
   discoveryBucket,
   discovery,
+  recentArticles,
 }: {
   featuredWine: FeaturedWine;
   discoveryBucket: DiscoveryBucket | null;
   discovery: Discovery;
+  recentArticles: RecentArticle[];
 }) {
   const { t } = useLanguage();
 
@@ -69,10 +81,11 @@ export default function HomeContent({
             {t("home_hero_title_l2")}
           </h1>
           <p className="hero-v2-lead">{t("home_hero_lead")}</p>
-          <Link href="/krasia" className="btn-primary">
+          <Link href="/krasia" className="link-arrow">
             {t("home_hero_cta")}
             <ArrowIcon />
           </Link>
+          <span className="hero-v2-scroll">{t("home_hero_scroll")}</span>
         </div>
         <div className="hero-v2-photo">
           <Image
@@ -88,17 +101,21 @@ export default function HomeContent({
         </div>
       </section>
 
-      {/* 2 — Αναζήτηση */}
-      <section className="search-section">
-        <div className="wrap reveal home-reveal">
+      {/* 2 — Discovery: μία ενιαία ενότητα (search + 4-photo grid + color
+          picker) κάτω από ΕΝΑ eyebrow/heading αντί για τα προηγούμενα 3
+          ξεχωριστά sections — μείωση επανάληψης, refinement pass §1. Το
+          παλιό "Δεν ξέρεις από πού να ξεκινήσεις" row-list αφαιρέθηκε: 3 από
+          τους 4 προορισμούς του ήδη καλύπτονται από το photo grid· ο
+          μοναδικός του προορισμός (/tairiasma) παραμένει προσβάσιμος ως
+          μικρό link δίπλα στα chips του picker, καμία λειτουργικότητα δεν
+          χάθηκε. */}
+      <section className="discovery-section">
+        <div className="wrap reveal home-reveal discovery-intro">
           <p className="hero-v2-eyebrow">{t("home_search_eyebrow")}</p>
           <h2>{t("home_search_title")}</h2>
           <HomeSearchTrigger placeholder={t("home_search_placeholder")} />
         </div>
-      </section>
 
-      {/* 3 — Εξερεύνηση */}
-      <section className="explore-section">
         <div className="wrap explore-grid">
           <Link href="/krasia" className="explore-card reveal home-reveal">
             <div className="explore-card-photo">
@@ -144,50 +161,8 @@ export default function HomeContent({
             </span>
           </Link>
         </div>
-      </section>
 
-      {/* 3.5 — Δεν ξέρεις από πού να ξεκινήσεις; */}
-      <section className="home-discovery">
-        <div className="wrap reveal home-reveal">
-          <p className="hero-v2-eyebrow">{t("home_discovery_eyebrow")}</p>
-          <div className="home-discovery-list">
-            <Link href="/perioches" className="home-discovery-row">
-              <div className="home-discovery-row-text">
-                <h3>{t("home_discovery_region_title")}</h3>
-                <p>{t("home_discovery_region_cta")}</p>
-              </div>
-              <ArrowIcon />
-            </Link>
-            <Link href="/poikilies" className="home-discovery-row">
-              <div className="home-discovery-row-text">
-                <h3>{t("home_discovery_variety_title")}</h3>
-                <p>{t("home_discovery_variety_cta")}</p>
-              </div>
-              <ArrowIcon />
-            </Link>
-            <Link href="/oinopoieia" className="home-discovery-row">
-              <div className="home-discovery-row-text">
-                <h3>{t("home_discovery_winery_title")}</h3>
-                <p>{t("home_discovery_winery_cta")}</p>
-              </div>
-              <ArrowIcon />
-            </Link>
-            <Link href="/tairiasma" className="home-discovery-row">
-              <div className="home-discovery-row-text">
-                <h3>{t("home_discovery_pairing_title")}</h3>
-                <p>{t("home_discovery_pairing_cta")}</p>
-              </div>
-              <ArrowIcon />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 3.6 — Curated Discovery: επέλεξε χρώμα, δες πραγματικά κρασιά */}
-      <section className="home-picker">
-        <div className="wrap reveal home-reveal">
-          <p className="hero-v2-eyebrow">{t("home_picker_eyebrow")}</p>
-          <h2>{t("home_picker_title")}</h2>
+        <div className="wrap reveal home-reveal discovery-picker">
           <div className="home-picker-row">
             {(Object.keys(DISCOVERY_HREF) as DiscoveryBucket[]).map((bucket) => (
               <Link
@@ -198,6 +173,10 @@ export default function HomeContent({
                 {t(`home_picker_${bucket}`)}
               </Link>
             ))}
+            <Link href="/tairiasma" className="link-arrow discovery-pairing-link">
+              {t("home_discovery_pairing_cta")}
+              <ArrowIcon size={13} />
+            </Link>
           </div>
 
           {discovery && discovery.wines.length > 0 && (
@@ -259,6 +238,42 @@ export default function HomeContent({
                 </p>
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {/* 4.5 — Journal preview: τα 3 πιο πρόσφατα άρθρα. Καμία εικόνα (καμία
+          δημοσίευση δεν έχει ακόμα coverImage) — text-first, ίδιο πνεύμα με
+          το section 11 του brief για ελλιπή εικονογράφηση. */}
+      {recentArticles.length > 0 && (
+        <section className="home-journal">
+          <div className="wrap reveal home-reveal">
+            <div className="home-journal-head">
+              <div>
+                <p className="hero-v2-eyebrow">{t("home_journal_eyebrow")}</p>
+                <h2>{t("home_journal_title")}</h2>
+              </div>
+              <Link href="/arthra" className="link-arrow">
+                {t("home_journal_cta")}
+                <ArrowIcon size={13} />
+              </Link>
+            </div>
+            <div className="home-journal-list">
+              {recentArticles.map((a) => (
+                <Link key={a.slug} href={`/arthra/${a.slug}`} className="home-journal-row">
+                  <span className="home-journal-row-meta">
+                    {CATEGORY_LABEL[a.category]}
+                    {a.publishedAt ? ` · ${formatMonthAccusative(new Date(a.publishedAt))}` : ""}
+                  </span>
+                  <h3>{a.title}</h3>
+                  {a.excerpt && <p>{a.excerpt}</p>}
+                  <span className="home-journal-row-cta">
+                    {t("home_journal_read")}
+                    <ArrowIcon size={13} />
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}

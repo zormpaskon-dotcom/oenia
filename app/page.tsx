@@ -91,6 +91,20 @@ async function getDiscoveryWines(bucket: DiscoveryBucket) {
   return { wines, total };
 }
 
+// Journal preview — τα 3 πιο πρόσφατα δημοσιευμένα άρθρα. Καμία εικόνα
+// (coverImage) δεν υπάρχει ακόμα σε κανένα άρθρο, οπότε το section
+// σχεδιάστηκε text-first (βλ. section 11 του redesign brief: "αν λείπει η
+// εικόνα, text-first layout" — ίδια αρχή εφαρμοσμένη εδώ, όχι μόνο στις
+// ποικιλίες) αντί να επινοηθεί/συμπληρωθεί φωτογραφία.
+async function getRecentArticles() {
+  return prisma.article.findMany({
+    where: { status: ContentStatus.PUBLISHED, publishedAt: { not: null } },
+    orderBy: { publishedAt: "desc" },
+    take: 3,
+    select: { slug: true, title: true, excerpt: true, category: true, publishedAt: true },
+  });
+}
+
 export default async function Home({
   searchParams,
 }: {
@@ -100,9 +114,10 @@ export default async function Home({
   const discoverParam = typeof sp.discover === "string" ? sp.discover : undefined;
   const discoveryBucket = isDiscoveryBucket(discoverParam) ? discoverParam : null;
 
-  const [featuredWine, discovery] = await Promise.all([
+  const [featuredWine, discovery, recentArticles] = await Promise.all([
     getFeaturedWine(),
     discoveryBucket ? getDiscoveryWines(discoveryBucket) : Promise.resolve(null),
+    getRecentArticles(),
   ]);
 
   return (
@@ -123,7 +138,12 @@ export default async function Home({
           url: SITE_URL,
         }}
       />
-      <HomeContent featuredWine={featuredWine} discoveryBucket={discoveryBucket} discovery={discovery} />
+      <HomeContent
+        featuredWine={featuredWine}
+        discoveryBucket={discoveryBucket}
+        discovery={discovery}
+        recentArticles={recentArticles}
+      />
     </>
   );
 }

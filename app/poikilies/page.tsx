@@ -91,11 +91,11 @@ export default async function VarietiesPage({
   return (
     <div className="wrap-wide page-intro" style={{ paddingBottom: 80 }}>
       <p className="kicker">Εξερεύνηση</p>
-      <h1>Ποικιλίες</h1>
+      <h1>
+        {totalCount} {totalCount === 1 ? "ελληνική ποικιλία." : "ελληνικές ποικιλίες."}
+      </h1>
 
-      <p className="result-count">
-        {totalCount} {totalCount === 1 ? "ποικιλία" : "ποικιλίες"}
-      </p>
+      <p className="result-count">Από τις εμβληματικές μέχρι τις σπάνιες, κάθε ποικιλία έχει τη δική της ιστορία.</p>
 
       <div className="list-toolbar" style={{ marginTop: 24 }}>
         <ListSearchInput

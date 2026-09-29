@@ -378,6 +378,12 @@ export default async function WineDetailPage({
       {/* 2 — Γρήγορα στοιχεία */}
       <div className="wrap">
         <div className="wine-quick-strip">
+          {wine.vintage != null && (
+            <div className="wine-quick-item">
+              <span className="l">Εσοδεία</span>
+              <span className="v">{wine.vintage}</span>
+            </div>
+          )}
           {varietyLabel && (
             <div className="wine-quick-item">
               <span className="l">Ποικιλία</span>
@@ -400,6 +406,12 @@ export default async function WineDetailPage({
             <div className="wine-quick-item">
               <span className="l">Αλκοόλ</span>
               <span className="v">{wine.abv}%</span>
+            </div>
+          )}
+          {wine.appellation && (
+            <div className="wine-quick-item">
+              <span className="l">Ονομασία</span>
+              <span className="v">{APPELLATION_LABEL[wine.appellation]}</span>
             </div>
           )}
         </div>

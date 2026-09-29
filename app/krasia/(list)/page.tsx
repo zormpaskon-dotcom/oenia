@@ -255,8 +255,8 @@ export default async function KrasiaPage({
     <>
       <div className="wrap-wide krasia-intro">
         <p className="kicker">ΕΞΕΡΕΥΝΗΣΗ</p>
-        <h1>Όλες οι ετικέτες</h1>
-        <p className="result-count">{totalCount} ετικέτες</p>
+        <h1>{totalCount} ελληνικές ετικέτες.</h1>
+        <p className="result-count">Ανακάλυψε κρασιά από κάθε περιοχή, ποικιλία και στυλ της Ελλάδας.</p>
       </div>
 
       <div className="wrap-wide krasia-toolbar">

@@ -17,6 +17,10 @@ const dictionary = {
   nav_search: { el: "Αναζήτηση", en: "Search" },
   nav_menu: { el: "Μενού", en: "Menu" },
   nav_close_menu: { el: "Κλείσιμο μενού", en: "Close menu" },
+  nav_map: { el: "Χάρτης", en: "Map" },
+  nav_passport: { el: "Διαβατήριο", en: "Passport" },
+  nav_about: { el: "Σχετικά με την Oenia", en: "About Oenia" },
+  nav_tagline: { el: "Ελληνικό κρασί", en: "Greek wine" },
 
   explore_map: { el: "Χάρτης", en: "Map" },
   explore_pairing: { el: "Τι θα φας;", en: "What are you eating?" },
@@ -54,6 +58,7 @@ const dictionary = {
   },
   home_hero_cta: { el: "Ανακάλυψε", en: "Explore" },
   home_hero_tag: { el: "Το κρασί ενώνει τόπους.", en: "Wine connects places" },
+  home_hero_scroll: { el: "Κύλισε για να ανακαλύψεις", en: "Scroll to discover" },
 
   home_search_eyebrow: { el: "Η επόμενή σου ανακάλυψη ξεκινά εδώ.", en: "Find your next discovery" },
   home_search_title: { el: "Τι ψάχνεις;", en: "What are you looking for?" },
@@ -103,6 +108,11 @@ const dictionary = {
     en: "From volcanic islands to mountain vineyards, explore the regions that shape Greek wine.",
   },
   home_greece_cta: { el: "Εξερεύνησε τις περιοχές", en: "Explore regions" },
+
+  home_journal_eyebrow: { el: "Το ημερολόγιο του Oenia", en: "The Oenia journal" },
+  home_journal_title: { el: "Πρόσφατα άρθρα", en: "From the journal" },
+  home_journal_cta: { el: "Όλα τα άρθρα", en: "All articles" },
+  home_journal_read: { el: "Διάβασε", en: "Read" },
 
   footer_col_discover: { el: "Ανακάλυψη", en: "Discover" },
   footer_col_explore: { el: "Εξερεύνηση", en: "Explore" },

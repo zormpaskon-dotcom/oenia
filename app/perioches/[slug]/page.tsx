@@ -347,6 +347,12 @@ export default async function RegionDetailPage({
                   <ArrowIcon size={16} />
                 </Link>
               )}
+              {region.wineries.length > 0 && (
+                <Link href="/chartis" className="winery-grape-row">
+                  Δες την περιοχή στον χάρτη
+                  <ArrowIcon size={16} />
+                </Link>
+              )}
             </div>
           </div>
         </section>

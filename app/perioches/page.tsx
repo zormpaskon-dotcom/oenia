@@ -23,6 +23,14 @@ const TITLE = "Περιοχές | Oenia";
 const DESCRIPTION = "Οι ζώνες ΠΟΠ/ΠΓΕ του ελληνικού κρασιού.";
 const NO_APPELLATION_LABEL = "Χωρίς ονομασία";
 
+function ArrowIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="region-index-arrow">
+      <path d="M1 8h21M15 1l7 7-7 7" />
+    </svg>
+  );
+}
+
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 // SEO FIX PASS 2: "macroRegion" (7 τιμές — Βόρεια Ελλάδα, Πελοπόννησος κ.λπ.)
@@ -147,8 +155,8 @@ export default async function RegionsPage({
     <>
       <div className="wrap-wide page-intro">
         <p className="kicker">Εξερεύνηση</p>
-        <h1>Περιοχές</h1>
-        <p className="result-count">{regions.length} περιοχές</p>
+        <h1>{regions.length} ελληνικές περιοχές.</h1>
+        <p className="result-count">Από τα ηφαιστειογενή νησιά μέχρι τους ορεινούς αμπελώνες, κάθε ζώνη έχει τον δικό της χαρακτήρα.</p>
       </div>
 
       <div className="wrap-wide list-toolbar">
@@ -194,22 +202,37 @@ export default async function RegionsPage({
             </Link>
           </div>
         ) : (
-          <div className="index-grid">
-            {regions.map((r) => (
-              <Link key={r.id} href={`/perioches/${r.slug}`} className="index-card reveal">
-                <h3>{r.name}</h3>
-                <p className="meta">
-                  {MACRO_REGION_LABEL[r.macroRegion] ?? r.macroRegion}
-                  {r.appellation ? ` · ${APPELLATION_LABEL[r.appellation]}` : ""}
-                  {r.recognizedYear ? ` · Από το ${r.recognizedYear}` : ""}
-                </p>
-                {r.description && <p>{r.description}</p>}
-                <div className="badges">
-                  <span className="badge-pill">{r._count.wines} ετικέτες</span>
-                  <span className="badge-pill">{r._count.wineries} οινοποιεία</span>
-                </div>
-              </Link>
-            ))}
+          // Καμία περιοχή δεν έχει ακόμα heroImage στη βάση (ούτε curated
+          // inventory όπως το WINERY_IMAGES υπάρχει για περιοχές) — text-first
+          // εδώ, αλλά ΔΙΚΟ ΤΗΣ σύστημα (.region-index), όχι .catalog-row: η
+          // επανάληψη 55 πανομοιότυπων text-only rows λύνεται με τυπογραφία
+          // (σειριακή αρίθμηση + ασύμμετρη 2-στηλη διάταξη + μεγαλύτερο όνομα)
+          // αντί για icon/φωτογραφία-συμπλήρωση — refinement pass §3, ρητά
+          // όχι compass/map-pin/κυκλικό icon.
+          <div className="region-index">
+            {regions.map((r, i) => {
+              const facts = [
+                `${r._count.wines} ${r._count.wines === 1 ? "ετικέτα" : "ετικέτες"}`,
+                `${r._count.wineries} ${r._count.wineries === 1 ? "οινοποιείο" : "οινοποιεία"}`,
+              ];
+
+              return (
+                <Link key={r.id} href={`/perioches/${r.slug}`} className="region-index-row reveal">
+                  <span className="region-index-num">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="region-index-content">
+                    <span className="region-index-name">{r.name}</span>
+                    <span className="region-index-meta">
+                      {MACRO_REGION_LABEL[r.macroRegion] ?? r.macroRegion}
+                      {r.appellation ? ` · ${APPELLATION_LABEL[r.appellation]}` : ""}
+                      {r.recognizedYear ? ` · Από το ${r.recognizedYear}` : ""}
+                    </span>
+                    {r.description && <span className="region-index-desc">{r.description}</span>}
+                    <span className="region-index-facts">{facts.join(" · ")}</span>
+                  </span>
+                  <ArrowIcon />
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
