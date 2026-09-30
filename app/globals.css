@@ -771,6 +771,15 @@ section{ padding:var(--section-y) 0; }
 .pagination-ellipsis{ color:var(--muted); padding:0 2px; }
 @media (max-width:700px){ .pagination{ padding-bottom:72px; } }
 
+/* "01/04"-style μετρητής αντί για numbered links — βλ. Pagination.tsx variant="counter". */
+.pagination-counter .pagination-controls{ gap:22px; }
+.pagination-counter-num{
+  font-family:var(--font-display); font-size:16px; color:var(--ink);
+  font-variant-numeric:tabular-nums; min-width:56px;
+}
+.pagination-counter .pagination-arrow{ width:40px; height:40px; border:1px solid var(--line); }
+.pagination-counter .pagination-arrow:hover{ border-color:var(--wine); color:var(--wine); }
+
 /* ── Skeleton loading (/krasia, app/krasia/loading.tsx) — διακριτικό pulse,
    όχι spinner. Ίδια χρωματική γλώσσα με τα υπόλοιπα placeholders του site. ── */
 @keyframes skeletonPulse{ 0%,100%{ opacity:.6; } 50%{ opacity:1; } }
@@ -1215,83 +1224,50 @@ a.variety-item:hover, a.variety-item:focus-visible{ background:rgba(74,33,23,0.0
 .index-card-dishes a:hover{ color:var(--wine); }
 a.chip{ text-decoration:none; display:inline-block; }
 
-/* ── /oinopoieia, /perioches — editorial καταχώρηση, δικό της namespace
-   (.catalog-row, ΟΧΙ .winery-row — εκείνο το class name είναι ήδη πιασμένο
-   από το προϋπάρχον /chartis winery-list, διαφορετικό markup/CSS· conflict
-   που βρέθηκε και διορθώθηκε στο Phase G). Επίσης όχι .index-card/.badge-pill
-   — αυτά παραμένουν αναλλοίωτα για /arthra, /tairiasma, /admin. Landscape
-   φωτογραφία ΜΟΝΟ όταν υπάρχει επαληθευμένη εικόνα στο WINERY_IMAGES
-   inventory (lib/winery-images.ts) — καμία γενική/stock εικόνα συμπλήρωσης.
-   Χωρίς badge pills — τα factual στοιχεία γίνονται μία γραμμή απλού κειμένου. ── */
-.catalog-list{ display:flex; flex-direction:column; border-top:1px solid var(--line); margin-top:8px; }
-.catalog-row{
-  display:flex; align-items:center; gap:32px;
-  padding:32px 0; border-bottom:1px solid var(--line); color:inherit;
+/* ── /oinopoieia, /perioches — photo-first κάρτες (redesign pass, δες plan
+   "Photo-first redesign: winery & region listings"). Κοινό .entity-grid/
+   .entity-card σύστημα και για τα δύο listings — πραγματική φωτογραφία
+   (WineryPhoto/RegionPhoto) όπου υπάρχει, αλλιώς σχεδιασμένο gradient
+   placeholder (ίδιο idiom με WinePhoto.tsx στο /krasia). 3 στήλες, λιγότερες
+   από το 4-column .wine-grid — οι κάρτες εδώ κουβαλάνε περισσότερο κείμενο
+   (eyebrow, όνομα, περιγραφή, facts-line). ── */
+.entity-grid{
+  display:grid; grid-template-columns:repeat(3,1fr); column-gap:28px; row-gap:48px;
+  padding:40px 0 72px;
 }
-.catalog-row-photo{
-  flex-shrink:0; width:240px; aspect-ratio:4/3; overflow:hidden;
-  border-radius:var(--radius); background:var(--paper-alt);
+.entity-card{ position:relative; }
+.entity-card-link{ display:block; color:inherit; text-decoration:none; }
+.entity-card-photo{
+  display:block; width:100%; aspect-ratio:4/3; overflow:hidden;
+  border-radius:var(--radius); background:var(--paper-alt); margin-bottom:16px;
 }
-.catalog-row-photo img{ width:100%; height:100%; object-fit:cover; transition:transform var(--duration-base) var(--ease-standard); }
-.catalog-row:hover .catalog-row-photo img{ transform:scale(1.03); }
-.catalog-row-text{ flex:1; min-width:0; }
-.catalog-row-eyebrow{
+.entity-card-photo img{ width:100%; height:100%; object-fit:cover; transition:transform var(--duration-base) var(--ease-standard); }
+.entity-card-link:hover .entity-card-photo img{ transform:scale(1.03); }
+.entity-card-eyebrow{
   font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
   color:var(--muted); margin:0 0 8px;
 }
-.catalog-row-text h3{ font-size:22px; font-weight:500; margin:0 0 8px; }
-.catalog-row-desc{ font-size:14.5px; color:var(--muted); margin:0 0 10px; max-width:64ch; }
-.catalog-row-facts{ font-size:12.5px; color:var(--muted); margin:0; }
-.catalog-row-arrow{
-  flex-shrink:0; opacity:0; transform:translateX(-6px); color:var(--wine);
-  transition:opacity .2s ease, transform .2s ease;
-}
-.catalog-row:hover{ color:var(--wine); }
-.catalog-row:hover .catalog-row-arrow{ opacity:1; transform:translateX(0); }
-.catalog-row.no-photo .catalog-row-text h3{ font-size:24px; }
-@media (max-width:700px){
-  .catalog-row{ flex-direction:column; align-items:stretch; gap:16px; padding:24px 0; }
-  .catalog-row-photo{ width:100%; aspect-ratio:16/10; }
-  .catalog-row-text h3{ font-size:19px; }
-  .catalog-row-arrow{ display:none; }
-}
+.entity-card-link h3{ font-family:var(--font-display); font-size:20px; font-weight:500; color:var(--ink); margin:0 0 8px; }
+.entity-card-desc{ font-size:14px; color:var(--muted); margin:0 0 10px; max-width:44ch; }
+.entity-card-facts{ font-size:12.5px; color:var(--muted); margin:0; }
 
-/* ── /perioches — δικό της σύστημα, ΔΕΝ είναι .catalog-row (refinement pass
-   §3). 55 πανομοιότυπα text-only rows λύνονται με σειριακή αρίθμηση +
-   ασύμμετρη 2-στηλη διάταξη (στενή στήλη αριθμού, πλατιά στήλη περιεχομένου)
-   + μεγαλύτερο όνομα + πιο σιωπηλή περιγραφή — τυπογραφία/whitespace, ρητά
-   όχι icon/circular device/φωτογραφία. ── */
-.region-index{ display:flex; flex-direction:column; border-top:1px solid var(--line); margin-top:8px; }
-.region-index-row{
-  display:grid; grid-template-columns:56px 1fr auto; align-items:start; gap:24px;
-  padding:44px 0; border-bottom:1px solid var(--line); color:inherit;
+/* Bookmark overlay πάνω στη φωτογραφία — οπτικό-μόνο, βλ. BookmarkButton.tsx. */
+.card-bookmark-btn{
+  position:absolute; top:12px; right:12px; z-index:2;
+  display:flex; align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:50%; border:none; cursor:pointer;
+  background:var(--glass-bg-strong); backdrop-filter:blur(6px); color:var(--ink);
+  transition:color var(--duration-fast) ease;
 }
-.region-index-num{
-  font-family:var(--font-body); font-size:13px; color:var(--muted);
-  font-variant-numeric:tabular-nums; padding-top:12px;
+.card-bookmark-btn.is-saved,
+.card-bookmark-btn:hover{ color:var(--wine); }
+
+@media (max-width:980px){
+  .entity-grid{ grid-template-columns:repeat(2,1fr); column-gap:22px; row-gap:40px; }
 }
-.region-index-content{ display:flex; flex-direction:column; min-width:0; }
-.region-index-meta{
-  font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
-  color:var(--muted); margin-bottom:10px;
-}
-.region-index-name{
-  font-family:var(--font-display); font-size:clamp(30px,3.2vw,40px); font-weight:500;
-  color:var(--ink); line-height:1.1; margin-bottom:16px;
-}
-.region-index-desc{ font-size:13.5px; color:var(--muted); margin-bottom:10px; max-width:56ch; }
-.region-index-facts{ font-size:12px; color:var(--muted); }
-.region-index-arrow{
-  align-self:center; opacity:0; transform:translateX(-6px); color:var(--wine);
-  transition:opacity .2s ease, transform .2s ease;
-}
-.region-index-row:hover{ color:var(--wine); }
-.region-index-row:hover .region-index-arrow{ opacity:1; transform:translateX(0); }
 @media (max-width:700px){
-  .region-index-row{ grid-template-columns:32px 1fr; padding:32px 0; }
-  .region-index-num{ padding-top:6px; }
-  .region-index-name{ font-size:26px; margin-bottom:12px; }
-  .region-index-arrow{ display:none; }
+  .entity-grid{ grid-template-columns:1fr; row-gap:32px; padding:28px 0 48px; }
+  .entity-card-link h3{ font-size:18px; }
 }
 
 .filter-row{ display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }

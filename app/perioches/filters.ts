@@ -1,7 +1,6 @@
 import { Appellation, MacroRegion } from "@prisma/client";
 
-// Ίδιο URL-driven pattern με /krasia και /oinopoieia — αλλά χωρίς page (δεν
-// υπάρχει pagination εδώ, 53 περιοχές χωράνε ολόκληρες σε μία σελίδα).
+// Ίδιο URL-driven pattern με /krasia και /oinopoieia.
 export const SORT_OPTIONS = [
   { value: "featured", label: "Προτεινόμενα" },
   { value: "wines", label: "Περισσότερα κρασιά" },
@@ -12,6 +11,11 @@ export const SORT_OPTIONS = [
 
 export type SortValue = (typeof SORT_OPTIONS)[number]["value"];
 
+// Προστέθηκε στο photo-first redesign pass — με κάρτες αντί για text rows,
+// 55 περιοχές σε μία σελίδα θα ήταν πολύ μεγάλο scroll (πριν ήταν text-only,
+// χωρούσε όλο μαζί).
+export const PAGE_SIZE = 24;
+
 // "NONE" = regions χωρίς appellation (Appellation? είναι null στη βάση) —
 // δεν υπάρχει σαν πραγματική enum τιμή, είναι δικό μας sentinel για το URL.
 export type AppellationFilterValue = Appellation | "NONE";
@@ -21,6 +25,7 @@ export type FilterState = {
   appellation: AppellationFilterValue[];
   search?: string;
   sort?: string;
+  page: number;
 };
 
 const MACRO_REGION_VALUES = new Set<string>(Object.values(MacroRegion));
@@ -44,9 +49,8 @@ export function isAppellationFilterValue(value: string): value is AppellationFil
   return APPELLATION_FILTER_VALUES.has(value);
 }
 
-// Χωρίς page — hrefFor παίρνει ολόκληρο το FilterState (δεν υπάρχει pagination
-// που να χρειάζεται να το εξαιρέσουμε, σε αντίθεση με /krasia, /oinopoieia).
-export function hrefFor(state: FilterState): string {
+// Δεν γράφει ποτέ `page` — ίδιο σκεπτικό με το app/oinopoieia/filters.ts.
+export function hrefFor(state: Omit<FilterState, "page">): string {
   const params = new URLSearchParams();
   if (state.macroRegion.length) params.set("macroRegion", state.macroRegion.join(","));
   if (state.appellation.length) params.set("appellation", state.appellation.join(","));
@@ -54,4 +58,11 @@ export function hrefFor(state: FilterState): string {
   if (state.sort) params.set("sort", state.sort);
   const qs = params.toString();
   return qs ? `/perioches?${qs}` : "/perioches";
+}
+
+export function hrefForPage(state: Omit<FilterState, "page">, page: number): string {
+  const base = hrefFor(state);
+  if (page <= 1) return base;
+  const sep = base.includes("?") ? "&" : "?";
+  return `${base}${sep}page=${page}`;
 }

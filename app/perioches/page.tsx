@@ -8,9 +8,13 @@ import { facetSeo } from "@/lib/facet-seo";
 import { catalogSocialMeta } from "@/lib/catalog-seo";
 import ListSearchInput from "@/components/ListSearchInput";
 import ListSortSelect from "@/components/ListSortSelect";
+import Pagination from "@/components/Pagination";
+import RegionCard from "@/components/RegionCard";
 import {
+  PAGE_SIZE,
   SORT_OPTIONS,
   hrefFor,
+  hrefForPage,
   isAppellationFilterValue,
   isMacroRegionValue,
   toList,
@@ -22,14 +26,6 @@ import {
 const TITLE = "Περιοχές | Oenia";
 const DESCRIPTION = "Οι ζώνες ΠΟΠ/ΠΓΕ του ελληνικού κρασιού.";
 const NO_APPELLATION_LABEL = "Χωρίς ονομασία";
-
-function ArrowIcon({ size = 15 }: { size?: number }) {
-  return (
-    <svg width={size} height={size * 0.73} viewBox="0 0 24 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="region-index-arrow">
-      <path d="M1 8h21M15 1l7 7-7 7" />
-    </svg>
-  );
-}
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -46,7 +42,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const sp = await searchParams;
   const params = new URLSearchParams();
-  for (const key of ["macroRegion", "appellation", "search", "sort"]) {
+  for (const key of ["macroRegion", "appellation", "search", "sort", "page"]) {
     const value = sp[key];
     if (typeof value === "string" && value) params.set(key, value);
   }
@@ -77,11 +73,22 @@ export default async function RegionsPage({
 }) {
   const sp = await searchParams;
 
+  const rawPage = sp.page ? Number(sp.page) : 1;
+
   const state: FilterState = {
     macroRegion: toList(sp.macroRegion).filter(isMacroRegionValue),
     appellation: toList(sp.appellation).filter(isAppellationFilterValue),
     search: typeof sp.search === "string" ? sp.search : undefined,
     sort: typeof sp.sort === "string" ? sp.sort : undefined,
+    page: Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1,
+  };
+  // Χωρίς το page — ίδιο σκεπτικό με το /oinopoieia: τα hrefFor() των φίλτρων
+  // δεν το γράφουν ποτέ, κάθε αλλαγή filter/search/sort γυρνάει σε σελίδα 1.
+  const linkState: Omit<FilterState, "page"> = {
+    macroRegion: state.macroRegion,
+    appellation: state.appellation,
+    search: state.search,
+    sort: state.sort,
   };
 
   const appellationEnumValues = state.appellation.filter((a): a is Appellation => a !== "NONE");
@@ -103,23 +110,33 @@ export default async function RegionsPage({
   const orderBy = ORDER_BY[state.sort ?? "featured"] ?? ORDER_BY.featured;
 
   // Facet counts είναι σκόπιμα global (δεν λαμβάνουν υπόψη τα υπόλοιπα ενεργά
-  // φίλτρα) — ίδια απλοποίηση με /krasia, /oinopoieia. Μόνο 53 regions, άρα
+  // φίλτρα) — ίδια απλοποίηση με /krasia, /oinopoieia. Μόνο 55 regions, άρα
   // ένα ανεξάρτητο, ελαφρύ query αρκεί.
-  const [regions, allRegionsForFacets] = await Promise.all([
-    prisma.region.findMany({
-      where: regionWhere,
-      orderBy,
-      include: {
-        _count: {
-          select: {
-            wines: { where: { status: ContentStatus.PUBLISHED } },
-            wineries: { where: { status: ContentStatus.PUBLISHED } },
-          },
-        },
-      },
-    }),
+  const [totalCount, allRegionsForFacets] = await Promise.all([
+    prisma.region.count({ where: regionWhere }),
     prisma.region.findMany({ select: { macroRegion: true, appellation: true } }),
   ]);
+
+  // clamp πρέπει να ξέρει το total πριν ζητήσουμε τη σελίδα των περιοχών,
+  // γι' αυτό τρέχει ξεχωριστά, μετά το Promise.all παραπάνω — ίδιο σκεπτικό
+  // με το /oinopoieia.
+  const pageCount = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const currentPage = Math.min(Math.max(1, state.page), pageCount);
+
+  const regions = await prisma.region.findMany({
+    where: regionWhere,
+    orderBy,
+    take: PAGE_SIZE,
+    skip: (currentPage - 1) * PAGE_SIZE,
+    include: {
+      _count: {
+        select: {
+          wines: { where: { status: ContentStatus.PUBLISHED } },
+          wineries: { where: { status: ContentStatus.PUBLISHED } },
+        },
+      },
+    },
+  });
 
   const macroRegionCounts = new Map<MacroRegion, number>();
   const appellationCounts = new Map<AppellationFilterValue, number>();
@@ -136,7 +153,7 @@ export default async function RegionsPage({
       label: MACRO_REGION_LABEL[mr] ?? mr,
       count,
       active: state.macroRegion.includes(mr),
-      href: hrefFor({ ...state, macroRegion: toggleValue(state.macroRegion, mr) }),
+      href: hrefFor({ ...linkState, macroRegion: toggleValue(state.macroRegion, mr) }),
     }));
 
   const APPELLATION_ORDER: AppellationFilterValue[] = ["PDO", "PGI", "TABLE", "NONE"];
@@ -145,17 +162,20 @@ export default async function RegionsPage({
     label: a === "NONE" ? NO_APPELLATION_LABEL : APPELLATION_LABEL[a] ?? a,
     count: appellationCounts.get(a) ?? 0,
     active: state.appellation.includes(a),
-    href: hrefFor({ ...state, appellation: toggleValue(state.appellation, a) }),
+    href: hrefFor({ ...linkState, appellation: toggleValue(state.appellation, a) }),
   }));
 
   const hasActiveFilters = state.macroRegion.length > 0 || state.appellation.length > 0 || !!state.search;
   const clearHref = "/perioches";
 
+  const rangeStart = totalCount === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(currentPage * PAGE_SIZE, totalCount);
+
   return (
     <>
       <div className="wrap-wide page-intro">
         <p className="kicker">Εξερεύνηση</p>
-        <h1>{regions.length} ελληνικές περιοχές.</h1>
+        <h1>{totalCount} ελληνικές περιοχές.</h1>
         <p className="result-count">Από τα ηφαιστειογενή νησιά μέχρι τους ορεινούς αμπελώνες, κάθε ζώνη έχει τον δικό της χαρακτήρα.</p>
       </div>
 
@@ -202,39 +222,23 @@ export default async function RegionsPage({
             </Link>
           </div>
         ) : (
-          // Καμία περιοχή δεν έχει ακόμα heroImage στη βάση (ούτε curated
-          // inventory όπως το WINERY_IMAGES υπάρχει για περιοχές) — text-first
-          // εδώ, αλλά ΔΙΚΟ ΤΗΣ σύστημα (.region-index), όχι .catalog-row: η
-          // επανάληψη 55 πανομοιότυπων text-only rows λύνεται με τυπογραφία
-          // (σειριακή αρίθμηση + ασύμμετρη 2-στηλη διάταξη + μεγαλύτερο όνομα)
-          // αντί για icon/φωτογραφία-συμπλήρωση — refinement pass §3, ρητά
-          // όχι compass/map-pin/κυκλικό icon.
-          <div className="region-index">
-            {regions.map((r, i) => {
-              const facts = [
-                `${r._count.wines} ${r._count.wines === 1 ? "ετικέτα" : "ετικέτες"}`,
-                `${r._count.wineries} ${r._count.wineries === 1 ? "οινοποιείο" : "οινοποιεία"}`,
-              ];
-
-              return (
-                <Link key={r.id} href={`/perioches/${r.slug}`} className="region-index-row reveal">
-                  <span className="region-index-num">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="region-index-content">
-                    <span className="region-index-name">{r.name}</span>
-                    <span className="region-index-meta">
-                      {MACRO_REGION_LABEL[r.macroRegion] ?? r.macroRegion}
-                      {r.appellation ? ` · ${APPELLATION_LABEL[r.appellation]}` : ""}
-                      {r.recognizedYear ? ` · Από το ${r.recognizedYear}` : ""}
-                    </span>
-                    {r.description && <span className="region-index-desc">{r.description}</span>}
-                    <span className="region-index-facts">{facts.join(" · ")}</span>
-                  </span>
-                  <ArrowIcon />
-                </Link>
-              );
-            })}
+          <div className="entity-grid">
+            {regions.map((r) => (
+              <RegionCard key={r.id} region={r} />
+            ))}
           </div>
         )}
+
+        <Pagination
+          currentPage={currentPage}
+          pageCount={pageCount}
+          rangeStart={rangeStart}
+          rangeEnd={rangeEnd}
+          total={totalCount}
+          hrefForPage={(p) => hrefForPage(linkState, p)}
+          noun="περιοχές"
+          variant="counter"
+        />
       </div>
     </>
   );

@@ -27,6 +27,7 @@ export default function Pagination({
   total,
   hrefForPage,
   noun = "ετικέτες",
+  variant = "numbered",
 }: {
   currentPage: number;
   pageCount: number;
@@ -35,8 +36,42 @@ export default function Pagination({
   total: number;
   hrefForPage: (page: number) => string;
   noun?: string;
+  variant?: "numbered" | "counter";
 }) {
   if (total === 0) return null;
+
+  if (variant === "counter") {
+    return (
+      <nav className="pagination pagination-counter" aria-label="Σελιδοποίηση αποτελεσμάτων">
+        <div className="pagination-controls">
+          <Link
+            href={hrefForPage(currentPage - 1)}
+            className={`pagination-arrow${currentPage <= 1 ? " is-disabled" : ""}`}
+            aria-label="Προηγούμενη σελίδα"
+            aria-disabled={currentPage <= 1}
+            tabIndex={currentPage <= 1 ? -1 : undefined}
+          >
+            ←
+          </Link>
+          <span className="pagination-counter-num" aria-current="page">
+            {String(currentPage).padStart(2, "0")} / {String(pageCount).padStart(2, "0")}
+          </span>
+          <Link
+            href={hrefForPage(currentPage + 1)}
+            className={`pagination-arrow${currentPage >= pageCount ? " is-disabled" : ""}`}
+            aria-label="Επόμενη σελίδα"
+            aria-disabled={currentPage >= pageCount}
+            tabIndex={currentPage >= pageCount ? -1 : undefined}
+          >
+            →
+          </Link>
+        </div>
+        <p className="pagination-range">
+          {rangeStart}–{rangeEnd} από {total} {noun}
+        </p>
+      </nav>
+    );
+  }
 
   return (
     <nav className="pagination" aria-label="Σελιδοποίηση αποτελεσμάτων">
