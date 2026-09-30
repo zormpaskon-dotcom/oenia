@@ -888,7 +888,11 @@ section{ padding:var(--section-y) 0; }
 
 /* 2 — Λωρίδα γρήγορων στοιχείων — grid με σταθερές στήλες ανά breakpoint,
    ώστε το τελευταίο στοιχείο να μην απλώνεται ποτέ σε ολόκληρη τη σειρά
-   (το πρόβλημα του flex-wrap όταν 5 στοιχεία δεν χωράνε ακριβώς). */
+   (το πρόβλημα του flex-wrap όταν 5 στοιχεία δεν χωράνε ακριβώς). Ακόμα
+   χρησιμοποιείται από /perioches/[slug] και /poikilies/[slug] (εκτός scope
+   του sidebar redesign) — ΜΗΝ το αφαιρέσεις χωρίς να ελέγξεις πρώτα κι
+   εκείνες τις σελίδες. Το /oinopoieia/[slug] και /krasia/[slug] χρησιμοποιούν
+   πλέον το .detail-top-grid/.detail-sidebar παρακάτω αντί γι' αυτό. */
 .wine-quick-strip{
   display:grid; grid-template-columns:repeat(5,1fr);
   border-top:1px solid var(--line); border-bottom:1px solid var(--line);
@@ -916,6 +920,38 @@ section{ padding:var(--section-y) 0; }
   .wine-quick-item:nth-child(3n+1){ border-left:1px solid var(--line); padding-left:clamp(14px,2vw,28px); }
   .wine-quick-item:nth-child(odd){ border-left:none; padding-left:0; }
   .wine-quick-item:nth-child(n+3){ border-top:1px solid var(--line); padding-top:16px; margin-top:2px; }
+}
+
+/* Πρώτη αφηγηματική ενότητα (Ιστορία/Επισκόπηση) + sticky sidebar στοιχείων
+   δίπλα της, μόνο στο /oinopoieia/[slug] και /krasia/[slug] — αντικαθιστά
+   το .wine-quick-strip ΜΟΝΟ σε αυτές τις δύο σελίδες. Sticky top:140px =
+   ίδιο νούμερο με το section[id]{scroll-margin-top} πιο κάτω (ήδη
+   καθιερωμένη "απόσταση αναπνοής" κάτω από topbar+subnav). Το sidebar ΔΕΝ
+   ακολουθεί όλη τη σελίδα — μόνο μέσα σε αυτό το grid, ώστε τα επόμενα
+   full-bleed sections (WineryVisualSection κ.λπ.) να μένουν ανεπηρέαστα. */
+.detail-top-grid{
+  display:grid; grid-template-columns:1fr 280px; gap:clamp(32px,5vw,56px);
+  align-items:start; margin:28px 0 0;
+}
+.detail-sidebar{
+  position:sticky; top:140px;
+  border:1px solid var(--line); border-radius:var(--radius); padding:24px;
+  background:var(--paper);
+}
+.detail-sidebar-list{ display:flex; flex-direction:column; gap:18px; }
+.detail-sidebar-row{ padding-top:18px; border-top:1px solid var(--line); }
+.detail-sidebar-row:first-child{ padding-top:0; border-top:none; }
+.detail-sidebar-row .l{
+  display:block; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:6px;
+}
+.detail-sidebar-row .v{ font-family:var(--font-display); font-size:17px; color:var(--ink); }
+.detail-sidebar-link{ color:var(--ink); text-decoration:none; border-bottom:1px solid var(--line); }
+.detail-sidebar-link:hover{ color:var(--wine); border-color:var(--wine); }
+
+@media (max-width:900px){
+  .detail-top-grid{ grid-template-columns:1fr; }
+  .detail-sidebar{ position:static; }
 }
 
 /* Sticky δευτερεύον μενού πλοήγησης εντός σελίδας — κοινό σε wine/winery/

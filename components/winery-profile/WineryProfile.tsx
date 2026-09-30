@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { WineColor } from "@prisma/client";
 import WinePhoto from "@/components/WinePhoto";
+import BookmarkButton from "@/components/BookmarkButton";
+import DetailSidebar from "@/components/DetailSidebar";
 import { COLOR_NAME } from "@/lib/labels";
 import type { WineryImages } from "@/lib/winery-images";
 import WineryVisualSection from "./WineryVisualSection";
@@ -81,6 +83,7 @@ export default function WineryProfile({
           <img className="reveal img-reveal" src={hero.src} alt={hero.alt} fetchPriority="high" />
         </div>
         <div className="wprofile-hero-scrim" />
+        <BookmarkButton label={winery.name} />
         <div className="wrap wprofile-hero-content">
           <p className="wprofile-hero-eyebrow">Οινοποιείο · {winery.region.name}</p>
           {winery.logoImage && (
@@ -97,32 +100,6 @@ export default function WineryProfile({
         </div>
       </section>
 
-      {/* Γρήγορα στοιχεία */}
-      <div className="wrap">
-        <div className="wine-quick-strip">
-          {winery.foundedYear && (
-            <div className="wine-quick-item">
-              <span className="l">Ίδρυση</span>
-              <span className="v">{winery.foundedYear}</span>
-            </div>
-          )}
-          <div className="wine-quick-item">
-            <span className="l">Περιοχή</span>
-            <span className="v">{winery.region.name}</span>
-          </div>
-          {grapes.length > 0 && (
-            <div className="wine-quick-item">
-              <span className="l">Ποικιλίες</span>
-              <span className="v">{grapes.length}</span>
-            </div>
-          )}
-          <div className="wine-quick-item">
-            <span className="l">Ετικέτες</span>
-            <span className="v">{totalWineCount}</span>
-          </div>
-        </div>
-      </div>
-
       {/* Sticky δευτερεύον μενού — μόνο anchors για ενότητες που όντως υπάρχουν */}
       <nav className="wine-subnav">
         <div className="wrap wine-subnav-inner">
@@ -136,19 +113,32 @@ export default function WineryProfile({
         </div>
       </nav>
 
-      {/* STORY — υπάρχον κείμενο, όχι νέο */}
-      {storyParagraphs.length > 0 && (
-        <section id="story">
-          <div className="wrap">
-            <h2 className="section-title section-title-lead">Η ιστορία</h2>
-            <div className="winery-story reveal home-reveal">
-              {storyParagraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
+      {/* STORY + sticky sidebar στοιχείων — αντικατέστησε το παλιό οριζόντιο
+          .wine-quick-strip (βλ. σχόλιο στο app/globals.css §2). */}
+      <div className="wrap">
+        <div className="detail-top-grid">
+          <div>
+            {storyParagraphs.length > 0 && (
+              <section id="story">
+                <h2 className="section-title section-title-lead">Η ιστορία</h2>
+                <div className="winery-story reveal home-reveal">
+                  {storyParagraphs.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
-        </section>
-      )}
+          <DetailSidebar
+            rows={[
+              ...(winery.foundedYear ? [{ label: "Ίδρυση", value: String(winery.foundedYear) }] : []),
+              { label: "Περιοχή", value: winery.region.name, href: `/perioches/${winery.region.slug}` },
+              ...(grapes.length > 0 ? [{ label: "Ποικιλίες", value: String(grapes.length) }] : []),
+              { label: "Ετικέτες", value: String(totalWineCount) },
+            ]}
+          />
+        </div>
+      </div>
 
       {/* Ο ΤΟΠΟΣ — μόνο αν υπάρχει vineyard image */}
       {images.vineyard && (

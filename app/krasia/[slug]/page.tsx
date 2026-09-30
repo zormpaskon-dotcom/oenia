@@ -9,6 +9,7 @@ import CellarButtons from "@/components/CellarButtons";
 import ReviewForm from "@/components/ReviewForm";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
+import DetailSidebar from "@/components/DetailSidebar";
 import { reportReviewAction } from "@/lib/actions/reviews";
 import { SITE_URL } from "@/lib/site";
 import { APPELLATION_LABEL, COLOR_NAME, STYLE_NAME, ratingLabel } from "@/lib/labels";
@@ -232,6 +233,7 @@ export default async function WineDetailPage({
     ...(wine.vintage != null ? [{ label: "Χρονιά", value: String(wine.vintage) }] : []),
     ...(varietyLabel ? [{ label: "Ποικιλία", value: varietyLabel }] : []),
     { label: "Περιοχή", value: wine.region.name },
+    { label: "Στυλ", value: STYLE_NAME[wine.style] },
     ...(wine.appellation ? [{ label: "Ονομασία", value: APPELLATION_LABEL[wine.appellation] }] : []),
     ...(wine.abv != null ? [{ label: "Αλκοόλ", value: `${wine.abv}%` }] : []),
     ...(wine.servingTemp ? [{ label: "Θερμοκρασία σερβιρίσματος", value: wine.servingTemp }] : []),
@@ -375,48 +377,6 @@ export default async function WineDetailPage({
         </div>
       </div>
 
-      {/* 2 — Γρήγορα στοιχεία */}
-      <div className="wrap">
-        <div className="wine-quick-strip">
-          {wine.vintage != null && (
-            <div className="wine-quick-item">
-              <span className="l">Εσοδεία</span>
-              <span className="v">{wine.vintage}</span>
-            </div>
-          )}
-          {varietyLabel && (
-            <div className="wine-quick-item">
-              <span className="l">Ποικιλία</span>
-              <span className="v">{varietyLabel}</span>
-            </div>
-          )}
-          <div className="wine-quick-item">
-            <span className="l">Περιοχή</span>
-            <span className="v">{wine.region.name}</span>
-          </div>
-          <div className="wine-quick-item">
-            <span className="l">Χρώμα</span>
-            <span className="v">{COLOR_NAME[wine.color]}</span>
-          </div>
-          <div className="wine-quick-item">
-            <span className="l">Στυλ</span>
-            <span className="v">{STYLE_NAME[wine.style]}</span>
-          </div>
-          {wine.abv != null && (
-            <div className="wine-quick-item">
-              <span className="l">Αλκοόλ</span>
-              <span className="v">{wine.abv}%</span>
-            </div>
-          )}
-          {wine.appellation && (
-            <div className="wine-quick-item">
-              <span className="l">Ονομασία</span>
-              <span className="v">{APPELLATION_LABEL[wine.appellation]}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Sticky δευτερεύον μενού */}
       <nav className="wine-subnav">
         <div className="wrap wine-subnav-inner">
@@ -428,43 +388,54 @@ export default async function WineDetailPage({
         </div>
       </nav>
 
-      {/* 4 — Το κρασί */}
-      <section id="overview">
-        <div className="wrap">
-          <div className="wine-overview-copy reveal home-reveal">
-            <h2 className="section-title section-title-lead">Το κρασί</h2>
-            {wine.description && <p>{wine.description}</p>}
+      {/* 4 — Το κρασί + sticky sidebar στοιχείων (αντικατέστησε το παλιό
+          οριζόντιο .wine-quick-strip, βλ. app/globals.css §2) */}
+      <div className="wrap">
+        <div className="detail-top-grid">
+          <section id="overview">
+            <div className="wine-overview-copy reveal home-reveal">
+              <h2 className="section-title section-title-lead">Το κρασί</h2>
+              {wine.description && <p>{wine.description}</p>}
 
-            {blend.length > 1 && (
-              <div className="wine-blend-row">
-                {blend.map((v) => (
-                  <Link href={`/poikilies/${v.variety.slug}`} className="wine-blend-chip" key={v.variety.slug}>
-                    {v.percentage ? `${v.percentage}% ` : ""}
-                    {v.variety.name}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {(wine.vineyardNotes || wine.winemakingNotes) && (
-            <div className="wine-notes-grid">
-              {wine.vineyardNotes && (
-                <div className="wine-note-block reveal home-reveal">
-                  <h4>Ο αμπελώνας</h4>
-                  <p>{wine.vineyardNotes}</p>
-                </div>
-              )}
-              {wine.winemakingNotes && (
-                <div className="wine-note-block reveal home-reveal">
-                  <h4>Η οινοποίηση</h4>
-                  <p>{wine.winemakingNotes}</p>
+              {blend.length > 1 && (
+                <div className="wine-blend-row">
+                  {blend.map((v) => (
+                    <Link href={`/poikilies/${v.variety.slug}`} className="wine-blend-chip" key={v.variety.slug}>
+                      {v.percentage ? `${v.percentage}% ` : ""}
+                      {v.variety.name}
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
-          )}
+
+            {(wine.vineyardNotes || wine.winemakingNotes) && (
+              <div className="wine-notes-grid">
+                {wine.vineyardNotes && (
+                  <div className="wine-note-block reveal home-reveal">
+                    <h4>Ο αμπελώνας</h4>
+                    <p>{wine.vineyardNotes}</p>
+                  </div>
+                )}
+                {wine.winemakingNotes && (
+                  <div className="wine-note-block reveal home-reveal">
+                    <h4>Η οινοποίηση</h4>
+                    <p>{wine.winemakingNotes}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+          <DetailSidebar
+            rows={[
+              ...(varietyLabel ? [{ label: "Ποικιλίες", value: varietyLabel }] : []),
+              { label: "Περιοχή", value: wine.region.name, href: `/perioches/${wine.region.slug}` },
+              { label: "Οινοποιείο", value: wine.winery.name, href: `/oinopoieia/${wine.winery.slug}` },
+              ...(wine.vintage != null ? [{ label: "Εσοδεία", value: String(wine.vintage) }] : []),
+            ]}
+          />
         </div>
-      </section>
+      </div>
 
       {/* 7 — Προφίλ γεύσης */}
       {showTasteSection && (

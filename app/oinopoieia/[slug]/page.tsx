@@ -6,6 +6,8 @@ import { ContentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import JsonLd from "@/components/JsonLd";
 import WinePhoto from "@/components/WinePhoto";
+import BookmarkButton from "@/components/BookmarkButton";
+import DetailSidebar from "@/components/DetailSidebar";
 import { COLOR_NAME } from "@/lib/labels";
 import WineryProfile from "@/components/winery-profile/WineryProfile";
 import { WINERY_IMAGES } from "@/lib/winery-images";
@@ -176,67 +178,38 @@ export default async function WineryDetailPage({
       ) : (
         <>
 
-      {/* 2 — Hero */}
-      <div className="wrap winery-hero">
-        <div>
-          <p className="wine-hero-eyebrow">
-            Οινοποιείο · {winery.region.name}
-          </p>
-          {winery.logoImage && (
-            <img src={winery.logoImage} alt={`Λογότυπο ${winery.name}`} className="winery-hero-logo" />
-          )}
-          <h1 className="wine-hero-name">{winery.name}</h1>
-          <p className="wine-hero-place">
-            {winery.region.name}
-            {winery.subRegion ? `, ${winery.subRegion}` : ""} · Ελλάδα
-            {winery.foundedYear ? ` · Από το ${winery.foundedYear}` : ""}
-          </p>
-
-          <div className="winery-badges-row">
-            {winery.isVerified && <span className="winery-badge">Επαληθευμένο προφίλ</span>}
-            {winery.isOrganic && <span className="winery-badge">Βιολογική καλλιέργεια</span>}
-            {winery.isBiodynamic && <span className="winery-badge">Βιοδυναμική καλλιέργεια</span>}
-            {winery.acceptsVisitors && <span className="winery-badge">Δέχεται επισκέπτες</span>}
-          </div>
-        </div>
-
-        <div className="winery-hero-photo reveal img-reveal">
+      {/* 2 — Hero — full-bleed, ίδιο σύστημα με το premium WineryProfile
+          (.wprofile-hero), απλώς η πηγή εικόνας εδώ είναι πάντα γνωστού
+          domain (coverImage/region.heroImage/local fallback) οπότε next/image
+          είναι ασφαλές — σε αντίθεση με το curated WINERY_IMAGES hero που
+          είναι hotlinked από ~50 τυχαία domains και χρειάζεται plain <img>. */}
+      <section className="wprofile-hero">
+        <div className="wprofile-hero-bg">
           <Image
-            src={winery.coverImage ?? FALLBACK_WINERY_PHOTO}
+            src={winery.coverImage ?? winery.region.heroImage ?? FALLBACK_WINERY_PHOTO}
             alt=""
             fill
-            sizes="(max-width: 820px) 100vw, 44vw"
+            sizes="100vw"
             style={{ objectFit: "cover" }}
             priority
           />
         </div>
-      </div>
-
-      {/* 5 — Γρήγορα στοιχεία */}
-      <div className="wrap">
-        <div className="wine-quick-strip">
-          {winery.foundedYear && (
-            <div className="wine-quick-item">
-              <span className="l">Ίδρυση</span>
-              <span className="v">{winery.foundedYear}</span>
-            </div>
+        <div className="wprofile-hero-scrim" />
+        <BookmarkButton label={winery.name} />
+        <div className="wrap wprofile-hero-content">
+          <p className="wprofile-hero-eyebrow">Οινοποιείο · {winery.region.name}</p>
+          {winery.logoImage && (
+            <img className="wprofile-hero-logo" src={winery.logoImage} alt={`Λογότυπο ${winery.name}`} />
           )}
-          <div className="wine-quick-item">
-            <span className="l">Περιοχή</span>
-            <span className="v">{winery.region.name}</span>
-          </div>
-          {grapes.length > 0 && (
-            <div className="wine-quick-item">
-              <span className="l">Ποικιλίες</span>
-              <span className="v">{grapes.length}</span>
-            </div>
-          )}
-          <div className="wine-quick-item">
-            <span className="l">Ετικέτες</span>
-            <span className="v">{winery.wines.length}</span>
+          <h1 className="wprofile-hero-name">{winery.name}</h1>
+          <div className="winery-badges-row">
+            {winery.isVerified && <span className="winery-badge wprofile-badge-on-dark">Επαληθευμένο προφίλ</span>}
+            {winery.isOrganic && <span className="winery-badge wprofile-badge-on-dark">Βιολογική καλλιέργεια</span>}
+            {winery.isBiodynamic && <span className="winery-badge wprofile-badge-on-dark">Βιοδυναμική καλλιέργεια</span>}
+            {winery.acceptsVisitors && <span className="winery-badge wprofile-badge-on-dark">Δέχεται επισκέπτες</span>}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Sticky δευτερεύον μενού */}
       <nav className="wine-subnav">
@@ -251,19 +224,32 @@ export default async function WineryDetailPage({
         </div>
       </nav>
 
-      {/* 7 — Η ιστορία */}
-      {storyParagraphs.length > 0 && (
-        <section id="story">
-          <div className="wrap">
-            <h2 className="section-title section-title-lead">Η ιστορία</h2>
-            <div className="winery-story reveal home-reveal">
-              {storyParagraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </div>
+      {/* 7 — Η ιστορία + sticky sidebar στοιχείων (αντικατέστησε το παλιό
+          οριζόντιο .wine-quick-strip, βλ. app/globals.css §2) */}
+      <div className="wrap">
+        <div className="detail-top-grid">
+          <div>
+            {storyParagraphs.length > 0 && (
+              <section id="story">
+                <h2 className="section-title section-title-lead">Η ιστορία</h2>
+                <div className="winery-story reveal home-reveal">
+                  {storyParagraphs.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
-        </section>
-      )}
+          <DetailSidebar
+            rows={[
+              ...(winery.foundedYear ? [{ label: "Ίδρυση", value: String(winery.foundedYear) }] : []),
+              { label: "Περιοχή", value: winery.region.name, href: `/perioches/${winery.region.slug}` },
+              ...(grapes.length > 0 ? [{ label: "Ποικιλίες", value: String(grapes.length) }] : []),
+              { label: "Ετικέτες", value: String(winery.wines.length) },
+            ]}
+          />
+        </div>
+      </div>
 
       {/* 8 — Ο τόπος */}
       <section id="place" style={{ background: "var(--paper-alt)" }}>
